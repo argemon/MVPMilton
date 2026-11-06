@@ -1,0 +1,45 @@
+# 06 — Matriz de execução dos módulos
+
+Revisão documental em 06/11/2026. Esta matriz resume os documentos completos dos módulos; requests/responses/erros/estados/testes detalhados ficam em cada um. Nenhum software ou teste foi implementado nesta revisão.
+
+## Convenções
+
+API interna usa base `/api/v1`, salvo health; rotas de páginas são do host Blazor. `G/P/U/D` = GET/POST/PUT/DELETE, respectivamente. DELETE só existe para imagem substituível, nunca entidade comercial. P0/P1 integram MVP; P2 do 11 é proposta posterior condicionada a aceite. Dependências00–N significam todos os gates anteriores aprovados, não autorização para pular etapas.
+
+## Matriz consolidada
+
+| Módulo | Requisitos / prioridade | Endpoints e métodos previstos | Páginas / componentes principais | Dependências concluídas | Testes previstos |
+| --- | --- | --- | --- | --- | --- |
+| [00 Fundação](../modules/00-FUNDACAO.md) | RNF-04/07/08/09/10; P0 técnico, sem RF comercial | G `/health/live`, `/health/ready` | `/`, `/erro`, `/indisponivel`; LayoutPrincipal/EstadoApi | Nenhum bloco; SDK/Docker/configuração | xUnit configuração/erros; PostgreSQL/baseline/health503/reinício/referências; M00-CA01–04 |
+| [01 Autenticação](../modules/01-AUTENTICACAO.md) | RF-01/02 completos e RF-03 parcial; P0 | P auth login/logout/alterar-senha; G auth/me; G usuarios e detalhe; U usuario; P redefinir-senha; POST usuários não existe ainda | `/conta/entrar`, `/conta/senha`, `/usuarios`, `/usuarios/{id}`, `/`; formulários SSR/perfil | 00; bootstrap independente de Funcionário | Expiração/Identity/CSRF/cookie/isolamento/revogação/últimoAdmin; CA-01/02/17 parcial; M01-CA01–05 |
+| [02 Funcionários](../modules/02-FUNCIONARIOS.md) | RF-04 P1; concluir RF-03 P0 | G/P funcionarios; G/U detalhe; P usuarios vinculado | `/funcionarios`, `/funcionarios/novo`, `/funcionarios/{id}`, `/usuarios/novo`; formulário/vínculo | 00–01, Identity/sessões/auditoria | Contatos/CRUD/FK/UNIQUE/versão/conta versus inativação/revogação; CA-03; M02-CA01–05 |
+| [03 Clientes](../modules/03-CLIENTES.md) | RF-05 P1; RF-06 parcial P1 | G/P clientes; G/U detalhe; G cliente/vendas vazio tipado | `/clientes`, `/clientes/novo`, `/clientes/{id}`; DocumentoPfPj/HistoricoCliente | 00–02; nenhuma tabela Venda | CPF/CNPJ/duplicidade/versão/filters401/403/histórico vazio; CA-04 parcial; M03-CA01–05 |
+| [04 Produtos](../modules/04-PRODUTOS.md) | RF-07/08 P1 | G/P categorias/marcas/produtos; G/U detalhes; G/P/D imagem | `/produtos`, `/produtos/novo`, `/produtos/{id}`, `/categorias`, `/marcas`; preço/imagem/referências | 00–03; volume privado | Preço/SKU/arquivos/locks de referência/produto+saldo 0 atômicos; CA-05/17 parcial; M04-CA01–05 |
+| [05 Estoque](../modules/05-ESTOQUE.md) | RF-09/10/11 P0; RF-12 P1 | G saldos/movimentos/detalhe; P entradas/saidas/ajustes | `/estoque`, `/estoque/movimentos`, `/estoque/entrada`, `/estoque/saida`, `/estoque/ajuste`; quantidade/delta/recibo | 00–04, produto/saldo existente | Sinais/limites/PostgreSQL concorrente/idempotência/rollback/razão/ausência de saldo; CA-06/07; M05-CA01–05 |
+| [06 Vendas](../modules/06-VENDAS.md) | RF-13/14/16 P0; RF-15 P1; concluir RF-06 P1 | G/P vendas; G/U detalhe; P confirmacao/cancelamento/descarte; G cliente/vendas real | `/vendas`, `/vendas/nova`, `/vendas/{id}`; editor/total/confirmar/cancelar; histórico do cliente | 00–05; cliente/produto/movimento/idempotência | Decimal/estado/inativo/multi-item/locks/disputa/estorno/snapshots/permissão; CA-04 e 08–13; M06-CA01–07 |
+| [07 Dashboard](../modules/07-DASHBOARD.md) | RF-17/18 P1 | G dashboard; reutiliza G estoque/saldos | `/dashboard`; filtro/cartões/baixo estoque; link `/estoque?abaixoMinimo=true` | 00–06; sem Relatórios | Fórmulas/AwayFromZero/fuso/zero/snapshot/403/limite20; CA-14/15; M07-CA01–05 |
+| [08 Relatórios](../modules/08-RELATORIOS.md) | RF-19/20 P1 | G relatorios/vendas/estoque/movimentos e cada exportacao; handlerWeb G downloads/relatorios/{tipo} | `/relatorios/vendas`, `/relatorios/estoque`, `/relatorios/movimentos`; tabelas/totais/CSV | 00–07; sem serviço de PDF/email | Totais versus página/período/snapshot/limite10000/CSV fórmula/403; CA-14/15/17; M08-CA01–05 |
+| [09 Homologação](../modules/09-HOMOLOGACAO.md) | Todos RF-01–20/RNF-01–12; P0 gate | Nenhum novo; exercitar todos endpoints existentes | Todas páginas existentes em 360/1280 px; sem página nova | 00–08; ambiente de ensaio, sem host final | Suíte completa/contratos/carga/restore local/reconciliação/falhas; CA-01–18 de ensaio; M09-CA01–05 |
+| [10 Publicação](../modules/10-PUBLICACAO.md) | RF do MVP já entregues; RNF-01/04/05/06/07/08/10; P0 | Nenhum novo; health interno, auth/jornada e relatórios via BFF | Site final e páginas existentes; manutenção estática no proxy | 00–09; Q-02 resolvida, Q-03 para dados reais | TLS/WebSocket/rede/privilégios/reinício/restore final/smoke; CA-16/17/18 aplicáveis; M10-CA01–05 |
+| [11 Catálogo/pedidos](../modules/11-CATALOGO-PEDIDOS.md) | RF-21–24/RN-21–24 **propostos P2**, fora do MVP | Público G catalogo/detalhe/imagem e P pedidos; interno G/U publicacoes, G pedidos-online/detalhe e P encerramento | `/catalogo`, `/catalogo/{id}`, `/pedido`, `/administracao/catalogo`, `/pedidos-online`, `/pedidos-online/{id}` | 00–10; aceite ADR-18/Q-04 e tratamento Q-03 | Público sem PII/saldo, ativo+publicado, dedupe/limites/encerramento concorrente/zero movimento; M11-CA01–06 |
+
+## Verificação de ausência de dependência futura
+
+- 00 não cria autenticação/tabelas comerciais; schemas/baseline são suficientes para validar infraestrutura.
+- 01 usa bootstrap sem Funcionário; fixtures isoladas de perfis não são endpoints nem contas públicas alternativas. FK de funcionário só em 02.
+- 02 conclui conta vinculada e usa auditoria existente para comprovar preservação, sem exigir venda futura.
+- 03 retorna histórico vazio com contrato estável e marca RF-06 parcial; seu gate não exige preenchimento que só chega no 06.
+- 04 cria produto e saldo 0, sem operação de estoque. Gate não exige entrada para tornar produto testável.
+- 05 usa somente produto/saldo e movimentos manuais; FKs/índices de venda entram no 06, sem tabela futura na migration05.
+- 06 depende de Estoque concluído e comprova ciclo pela API/histórico; não precisa dashboard/relatório para reconciliar.
+- 07 usa lista de estoque já entregue, sem link obrigatório para relatório futuro.
+- 08 exporta CSV com recursos locais, sem PDF, email ou serviço posterior.
+- 09 faz restore/carga em ensaio equivalente; não precisa aguardar host final do 10 para passar seu gate.
+- 10 faz restore/smoke da topologia final e termina MVP; não precisa catálogo.
+- 11 especifica proposta independente de gateway, reserva, entrega ou módulo12. Está condicionado a **decisão externa de escopo**, não a implementação futura. Q-04 não é considerada resolvida automaticamente.
+
+**Conclusão documental:** nenhum gate exige software de bloco posterior. Dependências técnicas são exclusivamente anteriores; disponibilidade de ambiente, definições de operação/privacidade e aceite de escopo permanecem condições explícitas.
+
+## Uso pelo executor
+
+Ler módulo completo e fontes normativas, não implementar pela tabela resumida. Executar checklist e DoD; registrar arquivos, migrations, comandos, resultados e evidências no estado. Estados “pendente” deste projeto continuam pendentes após esta revisão documental.
