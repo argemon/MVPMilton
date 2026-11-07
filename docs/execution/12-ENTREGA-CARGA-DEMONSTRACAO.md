@@ -1,6 +1,6 @@
 # Entrega09 — Carga de demonstração acadêmica
 
-## Resultado local; CI integral pendente
+## Concluído — CI integral aprovado
 
 Somente09 implementado. ADR-37 e documentação oficial remota ada96fd conciliadas;10 é homologação futura e não foi iniciado. API, sessões Web e carga usam o único banco gestao_comercial_dev no Atlas existente. .env preservado; sem banco/ambiente Demo, outra URI, instância ou configuração obrigatória adicional. Nenhum deploy/merge de PR executado.
 
@@ -46,7 +46,7 @@ Consulta anterior à primeira carga confirmou users/customers/products/sales zer
 | Arquitetura / documentação / diff |Referências válidas,44 Markdown/137 links locais sem quebra; diff --check limpo |
 | .env |Hash SHA256 inalterado, conteúdo nunca exibido |
 
-O teste de regressão antes do complemento também executou interrupção antes de ProdutoCriado, retomada sem duplicação, duas cargas concorrentes, restauração sem confirmação400, falha de auditoria na restauração com rollback integral, cliente manual preservado e venda manual referenciando produto demonstrativo impedindo exclusão. O teste atual amplia as mesmas verificações para dois itens/inativos/última conclusão; sua execução integral é obrigatória no CI atual, ainda pendente neste registro. Não transferir a evidência da massa antiga para declarar esse teste atual executado localmente.
+O teste de regressão antes do complemento também executou interrupção antes de ProdutoCriado, retomada sem duplicação, duas cargas concorrentes, restauração sem confirmação400, falha de auditoria na restauração com rollback integral, cliente manual preservado e venda manual referenciando produto demonstrativo impedindo exclusão. O teste atual amplia as mesmas verificações para dois itens/inativos/última conclusão e foi executado/aprovado no CI integral c622648, com116 integrações. Não transferir a evidência da massa antiga para declarar esse teste atual executado localmente.
 
 Evidências locais ignoradas pelo Git: artifacts/block09/{unit,unit-final,focused,final,current-contracts}; ui para geração inicial, ui-final para restauração atual, ui-repeat para repetição; persistent-check.json para a conciliação. Testes técnicos continuam usando ADR-28, bancos descartáveis de fixture no mesmo Atlas; isso não cria um ambiente Demo da aplicação. CI existente usa MongoDB8.0.17/Testcontainers autenticado/replica set, sem Atlas, sem filtros ou testes ignorados.
 
@@ -71,7 +71,11 @@ Application: IDadosDemonstracao/resultado/estado sem driver. Infrastructure: ger
 
 Testes: DemonstrationTests, DemonstrationBffTests, DemonstrationWebTests, ConfigurationTests e OpenAPI em HostTests. Documentação: AGENTS explícito do usuário, README/índice, módulo09, arquitetura01/02/03/05/06/07/10, execução00/01/02/03/04/07/12 e Compose com banco único. Documentação remota de requisitos/plano/10 foi preservada; não reintroduzir módulos removidos.
 
-Rastreio: RF-03–05/07–19 e respectivos RN/CA são reutilizados, sem nova regra comercial. Aceites09: geração, quantidades, referências, repetição, restauração, conciliação, Dashboard/Relatórios e autorização demonstrados pelos testes/jornadas acima; CI atual deve fechar a regressão integral. Não alegar homologação10/backup/publicação. Próximo bloco10 exige nova solicitação, sem início nesta entrega.
+Rastreio: RF-03–05/07–19 e respectivos RN/CA são reutilizados, sem nova regra comercial. Aceites09: geração, quantidades, referências, repetição, restauração, conciliação, Dashboard/Relatórios e autorização demonstrados pelos testes/jornadas acima; CI atual fechou a regressão integral. Não alegar homologação10/backup/publicação. Próximo bloco10 exige nova solicitação, sem início nesta entrega.
+
+## GitHub e gate final
+
+Commit funcional c622648, [PR4](https://github.com/argemon/MVPMilton/pull/4) aberto. [CI PR42424883343](https://github.com/argemon/MVPMilton/actions/runs/42424883343) e [push42424854966](https://github.com/argemon/MVPMilton/actions/runs/42424854966) concluídos success em todas as etapas. Logs:126 unitários+116 integrações =242 aprovados,0 falhas/skips, sem filtros. Build0 avisos/erros, auditoria/scanner aprovados, artefato13595640050 confirmado. Isso inclui o teste atual de250 vendas com dois itens/inativos, reexecução/restauração, falha/rollback, concorrência e dependência manual. Sem pendência funcional09, deploy/merge ou início10.
 
 ### Inventário exato (37 arquivos)
 

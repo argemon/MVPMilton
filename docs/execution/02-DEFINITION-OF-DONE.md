@@ -13,11 +13,11 @@ A definição de pronto prioriza **funcionamento real e aparência adequada à b
 
 ## Gate do Bloco 09
 
-- [ ] Um único MongoDB Atlas existente, sem criar outro banco ou ambiente.
-- [ ] Carga gera usuários/perfis, funcionários, clientes, categorias, produtos, estoque e vendas históricas coerentes.
-- [ ] Reexecutar não duplica dados indevidamente; restauração opera só em registros identificados da carga e preserva dados manuais.
-- [ ] Estoque, cancelamentos/estornos, Dashboard e Relatórios conciliados.
-- [ ] Interface administrativa funcional e confirmação antes de restaurar.
+- [x] Um único MongoDB Atlas existente, sem criar outro banco ou ambiente.
+- [x] Carga gera usuários/perfis, funcionários, clientes, categorias, produtos, estoque e vendas históricas coerentes.
+- [x] Reexecutar não duplica dados indevidamente; restauração opera só em registros identificados da carga e preserva dados manuais.
+- [x] Estoque, cancelamentos/estornos, Dashboard e Relatórios conciliados.
+- [x] Interface administrativa funcional e confirmação antes de restaurar.
 
 ## Gate do Bloco 10
 
@@ -33,3 +33,5 @@ A definição de pronto prioriza **funcionamento real e aparência adequada à b
 ## Escopo09 vigente — ADR-37
 
 Carga acadêmica usa exclusivamente banco Atlas e conexão existentes no .env, sem banco Demo/instância/URI/ambiente adicional. Gate09: [carga](../modules/09-CARGA-DEMONSTRACAO.md), com quantidades, conciliação, reexecução, restauração confirmada, dependências manuais protegidas, autorização e resultados reais de restore/build/test/CI. Não exige nova infraestrutura nem libera10. Homologação/backup e metas comerciais antigas não são o escopo desta carga. Testes técnicos existentes mantêm ADR-28.
+
+Resultado09: DoD comum/específica demonstrada no relatório12; CI integral c622648 aprovado com242 testes,0 falhas/skips.10 não iniciado.
