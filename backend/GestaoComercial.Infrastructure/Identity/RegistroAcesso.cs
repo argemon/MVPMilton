@@ -20,6 +20,8 @@ public static class RegistroAcesso
         // UserManager and coordinator must use the exact same scoped store/session.
         services.AddScoped<IUserStore<UsuarioIdentity>>(s => s.GetRequiredService<MongoUserStore>());
         services.AddScoped<IAutenticacao, MongoAutenticacao>();
+        services.AddScoped<GestaoComercial.Application.Funcionarios.IFuncionarios, MongoAutenticacao>();
+        services.AddSingleton<GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema>();
         return services;
     }
 }

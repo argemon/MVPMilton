@@ -38,6 +38,10 @@ public static class EndpointsAcesso
             o.AddPolicy("Conta", new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
             o.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireClaim("troca", "nao").Build();
             o.AddPolicy("Usuarios.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador"));
+            o.AddPolicy("Funcionarios.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador"));
+            o.AddPolicy("Clientes.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Vendedor"));
+            o.AddPolicy("Produtos.Ler", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Vendedor", "Estoquista"));
+            o.AddPolicy("Produtos.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Estoquista"));
         });
         services.AddSingleton<IdentificadorThrottle>();
         services.AddRateLimiter(o =>

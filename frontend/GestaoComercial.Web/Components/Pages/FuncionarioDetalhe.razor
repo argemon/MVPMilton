@@ -1,0 +1,55 @@
+@page "/funcionarios/novo"
+@page "/funcionarios/{Id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Funcionarios.Gerenciar")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Funcionário · Gestão Comercial</PageTitle>
+<h1>@(Id is null ? "Cadastrar funcionário" : "Ficha do funcionário")</h1><a href="/funcionarios">Voltar à lista</a>
+@if (_message is not null) { <p role="alert" tabindex="-1" @ref="_alert">@_message</p> }
+@if (_loading) { <p role="status">Carregando…</p> }
+else if (_loaded) {
+    <form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
+        <label for="nome">Nome</label><input id="nome" @bind="_nome" required minlength="2" maxlength="150" />
+        <label for="email">Email de contato (opcional)</label><input id="email" type="email" @bind="_email" maxlength="254" />
+        <label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" @bind="_telefone" maxlength="25" />
+        @if (Id is not null) {
+            <label><input type="checkbox" @bind="_ativo" /> Funcionário ativo</label>
+            @if (!_ativo && _wasActive) { <p>A desativação também encerra o acesso da conta vinculada.</p><label><input type="checkbox" @bind="_confirm" required /> Confirmo a desativação e a revogação do acesso.</label> }
+            @if (_ativo && !_wasActive) { <p>A conta de acesso permanece inativa até ser reativada em Usuários.</p> }
+        }
+        <button disabled="@_busy">@(_busy ? "Salvando…" : "Salvar")</button>
+    </form>
+    @if (Id is not null) { <button @onclick="CarregarAsync" disabled="@_busy">Reler cadastro</button><p>O acesso ao sistema é administrado separadamente.</p><nav aria-label="Acesso do funcionário"><a href="@($"/usuarios/novo?funcionarioId={Id}")">Criar conta de acesso</a><a href="/usuarios">Consultar contas vinculadas</a></nav> }
+} else if (Id is not null) { <button @onclick="CarregarAsync">Repetir</button> }
+@code {
+    [Parameter] public Guid? Id { get; set; }
+    private readonly CancellationTokenSource _cts = new();
+    private string _nome = "", _email = "", _telefone = "";
+    private string? _message;
+    private bool _ativo = true, _wasActive = true, _confirm, _loading, _busy, _loaded, _focus;
+    private long _versao;
+    private ElementReference _alert;
+    protected override Task OnParametersSetAsync() => CarregarAsync();
+    protected override async Task OnAfterRenderAsync(bool first) { if (_focus) { _focus = false; await _alert.FocusAsync(); } }
+    private void Failure(ApiFailure e) {
+        if (e.Status is 401 or 403) Navigation.NavigateTo(e.Status == 401 ? "/conta/entrar" : "/acesso-negado", true);
+        else { _message = e.Status == 409 ? "Conflito: releia o cadastro. O último administrador deve permanecer ativo." : e.Status == 400 ? "Confira o nome, email e telefone informados." : e.Status == 404 ? "Funcionário não localizado." : "Serviço indisponível. Tente novamente."; _focus = true; }
+    }
+    private async Task CarregarAsync() {
+        _loading = true; _loaded = false; _message = null;
+        try {
+            if (Id is { } id) { var f = await Sessao.UsarAsync((a,t,c) => a.FuncionarioAsync(t,id,c), _cts.Token); _nome=f.Nome; _email=f.Email ?? ""; _telefone=f.Telefone ?? ""; _ativo=f.Ativo; _wasActive=f.Ativo; _versao=f.Versao; }
+            else { _nome=""; _email=""; _telefone=""; _ativo=true; _wasActive=true; }
+            _confirm=false; _loaded=true;
+        } catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _loading=false; }
+    }
+    private async Task SalvarAsync() {
+        if (_busy || (!_ativo && _wasActive && !_confirm)) return;
+        _busy=true;
+        try { var f = await Sessao.UsarAsync((a,t,c) => a.SalvarFuncionarioAsync(t,Id,_nome,_email,_telefone,_ativo,_versao,c), _cts.Token); if (Id is null) Navigation.NavigateTo($"/funcionarios/{f.Id}"); else { _versao=f.Versao; _wasActive=f.Ativo; _message="Alteração salva."; } }
+        catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _busy=false; }
+    }
+    public void Dispose() { _cts.Cancel(); _cts.Dispose(); }
+}

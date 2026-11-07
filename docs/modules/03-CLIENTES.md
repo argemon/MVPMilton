@@ -83,11 +83,11 @@ Unidade: documentos válidos/inválidos/ausentes, tipo, contatos, normalização
 
 ## 14. Checklist de execução
 
-- [ ] Implementar Cliente, validação e auditoria; criar adaptador vazio de histórico identificado para substituição.
-- [ ] Gerar/revisar evolução de persistência; testar base limpa e upgrade 02→03; aplicar explicitamente no ambiente local.
-- [ ] Implementar API/DTOs/UI/cliente HTTP e verificar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
-- [ ] Registrar CA-04 parcial/RF-06 parcial, M03-CA01–05 e próximos passos no estado.
+- [x] Implementar Cliente, validação e auditoria; criar adaptador vazio de histórico identificado para substituição.
+- [x] Gerar/revisar evolução de persistência; testar base limpa e upgrade 02→03; aplicar explicitamente no ambiente local.
+- [x] Implementar API/DTOs/UI/cliente HTTP e verificar OpenAPI.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
+- [x] Registrar CA-04 parcial/RF-06 parcial, M03-CA01–05 e próximos passos no estado.
 
 ## 15. DoD e desbloqueio
 

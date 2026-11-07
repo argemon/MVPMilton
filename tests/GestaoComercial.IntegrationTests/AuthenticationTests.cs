@@ -33,11 +33,14 @@ public sealed class AuthFixture : IAsyncLifetime
         await Mongo.InitializeAsync();
         Api = new WebApplicationFactory<ApiHost::Program>().WithWebHostBuilder(b =>
         {
-            b.UseEnvironment("Testing"); b.UseSetting("Mongo:ConnectionString", Mongo.Connection); b.UseSetting("Mongo:Database", Mongo.Name);
+            b.UseSetting("Images:RootPath", Path.Combine(Path.GetTempPath(), "gc_images_"+Mongo.Name)); b.UseEnvironment("Testing"); b.UseSetting("Mongo:ConnectionString", Mongo.Connection); b.UseSetting("Mongo:Database", Mongo.Name);
             b.ConfigureServices(s => s.AddSingleton<TimeProvider>(Clock));
         });
         await Mongo.Foundation.InitializeAsync(default);
         await Api.Services.GetRequiredService<AuthSchema>().InitializeAsync(default);
+        await Api.Services.GetRequiredService<GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema>().InitializeAsync(default);
+        await Api.Services.GetRequiredService<GestaoComercial.Infrastructure.Clientes.ClientesSchema>().InitializeAsync(default);
+        await Api.Services.GetRequiredService<GestaoComercial.Infrastructure.Produtos.ProdutosSchema>().InitializeAsync(default);
     }
     public async Task DisposeAsync() { await Api.DisposeAsync(); await Mongo.DisposeAsync(); }
     public async Task<UsuarioIdentity> SeedAsync(string perfil = "Vendedor", bool ativo = true, bool mustChange = false)

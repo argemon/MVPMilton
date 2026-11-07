@@ -4,10 +4,10 @@ using System.Net.Http.Json;
 using GestaoComercial.Contracts;
 namespace GestaoComercial.Web.ApiClients;
 
-public sealed class ApiFailure(int status) : Exception("Não foi possível concluir a solicitação.") { public int Status { get; } = status; }
+public sealed class ApiFailure(int status, string? code = null) : Exception("Não foi possível concluir a solicitação.") { public int Status { get; } = status; public string? Code { get; } = code; }
 // Host-private credential transports. Do not serialize into Blazor component state.
 internal record LoginResponse(string AccessToken, DateTimeOffset ExpiraEm, UsuarioAutenticado Usuario);
-public sealed class AcessoApiClient(HttpClient http)
+public sealed partial class AcessoApiClient(HttpClient http)
 {
     private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? token, object? body, CancellationToken ct)
     {
@@ -17,7 +17,11 @@ public sealed class AcessoApiClient(HttpClient http)
         try
         {
             var response = await http.SendAsync(request, ct);
-            if (!response.IsSuccessStatusCode) { var status = (int)response.StatusCode; response.Dispose(); throw new ApiFailure(status); }
+            if (!response.IsSuccessStatusCode) {
+                var status = (int)response.StatusCode; string? code=null;
+                try { using var doc=System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct)); if(doc.RootElement.TryGetProperty("code",out var value)) code=value.GetString(); } catch(System.Text.Json.JsonException) { }
+                response.Dispose(); throw new ApiFailure(status,code);
+            }
             return response;
         }
         catch (HttpRequestException) { throw new ApiFailure(503); }

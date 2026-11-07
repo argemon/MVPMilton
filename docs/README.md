@@ -4,7 +4,7 @@ Documentação inicial em português do Brasil, preparada em 06/11/2026. A pasta
 
 ## Como usar
 
-Estado atual:00 e01 implementados no caminho .NET+Atlas. Autenticação real BFF/cookie, sessões e políticas conforme ADR-30. Ler [estado atual](execution/03-ESTADO-PROJETO.md); auditorias06/08 são históricas.02 não iniciado.
+Estado atual:00–04 aprovados no caminho .NET+Atlas,139 testes locais passaram; publicação GitHub/CI registrada no estado. Autenticação BFF/cookie, funcionários/contas e clientes PF/PJ demonstrados. Produtos/categorias/marcas/imagens não incluem movimentos ou vendas. Ler [estado atual](execution/03-ESTADO-PROJETO.md); auditorias06/08 são históricas.05 não autorizado.
 
 Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo referencia os contratos e critérios que o executor deve satisfazer. RF identifica requisito funcional; RNF, requisito não funcional; RN, regra de negócio; CA, cenário de aceite; ADR, decisão técnica; H, hipótese; Q, questão aberta.
 
@@ -57,6 +57,7 @@ Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo refe
 7. [Roteiro alvo da fundação](execution/07-EXECUCAO-LOCAL-FUNDACAO.md)
 8. [Primeira revisão documental MongoDB](execution/08-REVISAO-MONGODB.md)
 9. [Auditoria de arquitetura MongoDB — resultado vigente](execution/06-AUDITORIA-MONGODB.md)
+10. [Entrega dos cadastros02–04](execution/09-ENTREGA-CADASTROS.md)
 
 Instrução permanente: [AGENTS.md](../AGENTS.md).
 

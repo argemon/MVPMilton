@@ -10,9 +10,10 @@ services:
       ASPNETCORE_URLS: https://+:8443;https://+:8081
       MONGODB_URI: ${MONGODB_URI:?Forneça MONGODB_URI no .env existente}
       Mongo__Database: gestao_comercial_dev
+      Images__RootPath: /app/images
       ASPNETCORE_Kestrel__Certificates__Default__Path: /certs/local.pfx
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${TLS_PASSWORD:?Forneça TLS_PASSWORD externamente}
-    volumes: ["${CERT_DIR:?Forneça CERT_DIR externamente}:/certs:ro"]
+    volumes: ["${CERT_DIR:?Forneça CERT_DIR externamente}:/certs:ro", "productimages:/app/images"]
     ports: ["127.0.0.1:7143:8443"]
   web:
     build:
@@ -34,3 +35,4 @@ services:
     depends_on: [api]
 volumes:
   webkeys:
+  productimages:

@@ -1,0 +1,41 @@
+@page "/funcionarios"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Funcionarios.Gerenciar")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Funcionários · Gestão Comercial</PageTitle>
+<h1>Funcionários</h1><a href="/funcionarios/novo">Cadastrar funcionário</a>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+    <label for="busca">Nome começa com</label><input id="busca" @bind="_search" maxlength="150" />
+    <label for="status">Situação</label><select id="status" @bind="_ativo"><option value="true">Ativos</option><option value="false">Inativos</option><option value="todos">Todos</option></select>
+    <button disabled="@_loading">Pesquisar</button>
+</form>
+@if (_loading) { <p role="status">Carregando…</p> }
+else if (_error) { <p role="alert">Não foi possível consultar.</p><button @onclick="CarregarAsync">Repetir</button> }
+else if (_data is { } data) {
+    @if (data.Items.Count == 0) { <p>Nenhum funcionário encontrado.</p> }
+    else { <div class="tabela"><table><caption>Funcionários — total @data.TotalItems</caption><thead><tr><th>Nome</th><th>Email de contato</th><th>Situação</th><th>Ação</th></tr></thead><tbody>
+        @foreach (var f in data.Items) { <tr><td>@f.Nome</td><td>@f.Email</td><td>@(f.Ativo ? "Ativo" : "Inativo")</td><td><a href="@($"/funcionarios/{f.Id}")">Consultar @f.Nome</a></td></tr> }
+    </tbody></table></div> }
+    <nav aria-label="Paginação"><button @onclick="AnteriorAsync" disabled="@(_page <= 1)">Anterior</button><span>Página @_page</span><button @onclick="ProximaAsync" disabled="@((long)_page * data.PageSize >= data.TotalItems)">Próxima</button></nav>
+}
+@code {
+    private readonly CancellationTokenSource _cts = new();
+    private string _search = "", _ativo = "true";
+    private int _page = 1;
+    private bool _loading, _error;
+    private FuncionariosResponse? _data;
+    protected override Task OnInitializedAsync() => CarregarAsync();
+    private async Task PesquisarAsync() { _page = 1; await CarregarAsync(); }
+    private async Task AnteriorAsync() { _page--; await CarregarAsync(); }
+    private async Task ProximaAsync() { _page++; await CarregarAsync(); }
+    private async Task CarregarAsync() {
+        _loading = true; _error = false;
+        try { _data = await Sessao.UsarAsync((a,t,c) => a.FuncionariosAsync(t,_page,_search,_ativo,c), _cts.Token); }
+        catch (ApiFailure e) { if (e.Status is 401 or 403) Navigation.NavigateTo(e.Status == 401 ? "/conta/entrar" : "/acesso-negado", true); else _error = true; }
+        catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        finally { _loading = false; }
+    }
+    public void Dispose() { _cts.Cancel(); _cts.Dispose(); }
+}

@@ -44,6 +44,28 @@ Transportes de login com segredo são tipos exclusivos internos dos hosts, com c
 
 Complemento operacional01: Api__BaseUrl de negócio (7143 local/8443 Compose) é separado de Api__HealthBaseUrl (8081 privado). As URLs são validadas como HTTPS, sem credenciais/query. Readiness passa a exigir os catálogos00+01. Audit01 preserva traceId do host HTTP ou um identificador técnico do bootstrap. Cookie válido já conectado exige logout antes de nova identidade; cookie revogado é removido ao revalidar para que o próximo login não reutilize ticket antigo. O armazenamento segue o ciclo do [CookieAuthenticationHandler oficial .NET10](https://github.com/dotnet/aspnetcore/blob/v10.0.12/src/Security/Authentication/Cookies/src/CookieAuthenticationHandler.cs); nenhuma alteração de headers dentro de circuito.
 
+## ADR-31 — Execução autorizada02/03 e esclarecimentos02 (07/11/2026)
+
+Solicitação anexada autoriza02 e03 sequencialmente, sem confirmação intermediária, após os gates já demonstrados00/01. Não libera04, commit, push ou deploy. Prevalece sobre a autorização anterior em AGENTS.
+
+Somente Administrador gerencia funcionários e contas. A frase que simultaneamente autorizava e proibia Administrador de desativar funcionário ligado a Admin em M02 era contraditória após ADR-30. Administrador pode desativar outro Admin, mas nunca o último ativo; controle administrativo, revogação e auditoria permanecem atômicos. M02-CA04 passa a provar negação a Vendedor/Estoquista e proteção do último Admin em cenário próprio.
+
+Funcionário não possui matrícula/CPF obrigatório nem contato único: UUID é seu identificador, repetição de contato é permitida. Identificadores duplicados de contas são email normalizado e vínculo employeeId, inclusive contas inativas. Criação de conta com senha temporária usa transporte privado dos hosts, POST HTTP SSR com antiforgery no Web, sem senha em Shared Contracts/estado interativo. Nome de conta é snapshot inicial do nome do funcionário.
+
+## ADR-32 — Incremento03 (07/11/2026)
+
+Após gate02 (88 testes e E2E), liberar03 conforme solicitação. Documento continua opcional; null representa ausência, string vazia é inválida. PF/PJ valida somente CPF/CNPJ numéricos com dígitos verificadores; não consultar situação externa. Busca combina prefixo do nome, documento exato e email exato (solicitação atual); contatos de cliente não são identidade de acesso e não são únicos. Histórico retorna página tipada vazia após conferir cliente, policy e período; nenhuma coleção sales ou conta de cliente.
+
+Reutilizar validação de contato e um executor técnico concreto de transação/revalidação/auditoria na Infrastructure para cadastros; sem Repository, Unit of Work ou sessões nas portas. A política mantém snapshot/majority/primary, duas novas tentativas/5s e repetição exclusiva do commit incerto. Nenhum mecanismo de produto/estoque antecipado.
+
+## ADR-33 — Implementação04 e imagens privadas (07/11/2026)
+
+Gate03 comprovado, solicitação complementar libera04 e publicação Git/PR/CI, sem merge/deploy/05. Implementar categoria/marca/produto com saldo incorporado zero e updates pontuais; nenhuma API aceita saldo editável. Preço decimal em reais convertido exatamente na borda para long centavos checked. Descrição é texto simples, rejeita delimitadores HTML.
+
+Imagem usa volume privado configurável por Images:RootPath, fora do webroot, chave UUID gerada no servidor, nunca caminho/nome fornecido. SkiaSharp e NativeAssets.Linux.NoDependencies3.119.4 fixados para decodificar JPEG/PNG, verificar dimensões antes de alocar e reencodar pixels em PNG sem metadados; formato real prevalece sobre extensão/MIME. Limites2MiB entrada/4096 por dimensão e2MiB saída. Binário novo é criado antes da transação; metadados/versão/auditoria são atômicos. Remover arquivo substituído só após commit conhecido. Falha/commit incerto preserva arquivos; limpeza explícita em manutenção remove somente chaves UUID não referenciadas, nunca no startup. Web serve imagem por proxy HTTP autenticado, token só entre servidores.
+
+Biblioteca necessária para validar decodificação/reencodar, sem parser caseiro. Versões e API conferidas nas fontes primárias: [SkiaSharp3.119.4](https://www.nuget.org/packages/SkiaSharp/3.119.4), [assets Linux](https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux.NoDependencies/3.119.4), [SKCodec](https://learn.microsoft.com/en-us/dotnet/api/skiasharp.skcodec?view=skiasharp). Licença MIT do projeto; auditoria NuGet e teste Ubuntu/CI validarão a dependência. ImageSharp3.1.12 foi descartado antes da implementação devido aos avisos de vulnerabilidade da página oficial, sem instalar esse pacote.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

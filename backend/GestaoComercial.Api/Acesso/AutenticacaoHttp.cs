@@ -30,6 +30,7 @@ public sealed class AcessoErro : IExceptionHandler
     {
         var (status, code) = e switch
         {
+            GestaoComercial.Application.Clientes.CadastroException cadastro => (cadastro.Status, cadastro.Code),
             AcessoException a => a.Falha switch
             {
                 FalhaAcesso.Credenciais => (401, "CREDENCIAIS_INVALIDAS"),
@@ -39,6 +40,9 @@ public sealed class AcessoErro : IExceptionHandler
                 FalhaAcesso.Versao => (409, "VERSAO_DESATUALIZADA"),
                 FalhaAcesso.UltimoAdministrador => (409, "ULTIMO_ADMINISTRADOR"),
                 FalhaAcesso.EmailDuplicado => (409, "EMAIL_DUPLICADO"),
+                FalhaAcesso.VinculoOcupado => (409, "VINCULO_OCUPADO"),
+                FalhaAcesso.FuncionarioInativo => (409, "RECURSO_INATIVO"),
+                FalhaAcesso.FuncionarioNaoEncontrado => (404, "FUNCIONARIO_NAO_ENCONTRADO"),
                 _ => (400, "VALIDACAO")
             },
             MongoException => (503, "PERSISTENCIA_INDISPONIVEL"),

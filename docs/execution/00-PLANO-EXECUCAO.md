@@ -1,6 +1,6 @@
 # 00 — Plano de execução
 
-Estado vigente:00 aprovado e01 autorizado pelo usuário. Implementar somente autenticação conforme ADR-30 e módulo01. O estado03 registra resultados; descrições documentais históricas abaixo não substituem a implementação atual. Não iniciar02 automaticamente.
+Estado vigente:00–03 aprovados e04 autorizado em execução após os gates anteriores. Solicitação complementar inclui commit/push/PR/CI, sem merge/deploy/05. O estado03 registra resultados; descrições documentais históricas abaixo não substituem a implementação atual.
 
 
 > Atualização vigente00 — ADR-27–29: implementação autorizada com Atlas já configurado em .env, sem sobrescrever segredos. Development reutiliza MONGODB_URI; Production/Staging exigem configuração externa específica. Integração pode executar transações reais em bancos efêmeros exclusivos no mesmo cluster ou perfil Testcontainers explícito; não criar outro MongoDB quando Atlas atende. rs0 é nome apenas do perfil local, não do Atlas. As exigências universais de Docker/rs0, somente Markdown e adaptação ainda não autorizada nas seções históricas anteriores ficam superadas nesses pontos.
@@ -8,7 +8,7 @@ Estado vigente:00 aprovado e01 autorizado pelo usuário. Implementar somente aut
 
 ## Estado e regra de sequência
 
-Esta revisão produz somente documentos MongoDB. Há código preexistente da fundação anterior, não adaptado nem aprovado para a nova baseline; o00 exige adaptação futura e novas evidências antes de liberar01. A sequência abaixo é obrigatória, sem execução simultânea de blocos que alterem contratos/modelos comuns. Não delegar trabalho a outros agentes sem instrução do usuário ou regra aplicável que o solicite.
+A revisão documental histórica foi sucedida pelas implementações00–04 autorizadas. A sequência abaixo é obrigatória, sem execução simultânea de blocos que alterem contratos/modelos comuns. Não delegar trabalho a outros agentes sem instrução do usuário ou regra aplicável que o solicite. Evidências correntes ficam no estado03, preservando as históricas.
 
 | Ordem | Bloco | Resultado demonstrável | Gate mínimo |
 | --- | --- | --- | --- |

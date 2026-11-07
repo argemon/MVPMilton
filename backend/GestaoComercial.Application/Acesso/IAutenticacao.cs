@@ -5,7 +5,7 @@ public record UsuarioResumo(Guid Id, string Nome, string Email, string Perfil, b
 public record PaginaUsuarios(IReadOnlyList<UsuarioResumo> Items, int Page, int PageSize, long Total);
 public record SessaoAtual(Guid Id, UsuarioAcesso Usuario, string Stamp, DateTimeOffset ExpiraEm);
 public record EntradaSessao(string AccessToken, DateTimeOffset ExpiraEm, UsuarioAcesso Usuario);
-public enum FalhaAcesso { Validacao, Credenciais, Proibido, TrocaObrigatoria, NaoEncontrado, Versao, UltimoAdministrador, EmailDuplicado }
+public enum FalhaAcesso { Validacao, Credenciais, Proibido, TrocaObrigatoria, NaoEncontrado, Versao, UltimoAdministrador, EmailDuplicado, VinculoOcupado, FuncionarioInativo, FuncionarioNaoEncontrado }
 public sealed class AcessoException(FalhaAcesso falha) : Exception("Operação de acesso não permitida.")
 {
     public FalhaAcesso Falha { get; } = falha;

@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00 e01 implementados: MongoDB Atlas, API/Blazor HTTPS, autenticação BFF, perfis, sessões e manutenção de contas.02 não iniciado. Resultados e limites no estado03.
+> **Estágio atual:** blocos00–04 implementados e aprovados,139 testes locais passaram. Publicação GitHub/CI no estado. Funcionários com acesso vinculado, clientes PF/PJ e produtos/categorias/marcas/imagens privadas. Estoque e vendas ainda não implementados. Resultados e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
 
 ## Objetivo
 
@@ -203,3 +203,13 @@ A tarefa só cria Admin se nenhum existir e nunca redefine uma conta existente. 
 Não altere o .env existente para testar: forneça configurações específicas no processo. Api__BaseUrl=https://localhost:7143/ e Api__HealthBaseUrl=https://localhost:8081/ já estão no perfil Web; Compose usa8443/8081 internos. Data Protection persiste em .local/keys no desenvolvimento e em volume privado no Compose. Perder as chaves invalida tickets. Cookies são Secure/HttpOnly/Lax; todos os POSTs de conta exigem antiforgery. Não há JWT nem tokens em storage do navegador.
 
 Testes usam somente bancos próprios verificados vazios, com limpeza limitada ao nome reservado. Resultados detalhados: [Bloco01](docs/execution/03-ESTADO-PROJETO.md). Docker/Testcontainers/CI continuam perfis preparados, sem execução local nesta máquina. RBAC por credenciais de banco separadas, proteção operacional do key ring, publicação/backup e Q-02/Q-03 permanecem gates de produção.
+
+## Cadastros e imagens (02–04)
+
+Rotas: /funcionarios, /usuarios/novo, /clientes, /produtos, /categorias e /marcas. Cada cadastro possui consulta/edição e desativação lógica. Apenas Administrador mantém funcionários/contas; Administrador/Vendedor mantêm clientes; Administrador/Estoquista mantêm produtos e referências. Vendedor consulta produtos. Clientes têm histórico vazio tipado nesta etapa; vendas chegam somente no06.
+
+A tarefa explícita --initialize-persistence aplica as evoluções00–04; nunca ocorre alteração de schema no startup. Development reutiliza o .env ignorado, sem sobrescrevê-lo. Testes usam bancos descartáveis exclusivos. Senhas de contas humanas não aparecem em Shared Contracts nem são devolvidas pela API.
+
+Images__RootPath configura o diretório privado da API, obrigatório fora de Development/Testing. Development usa .local/images; Compose usa volume productimages em /app/images, com acesso do usuário app. Backup deve incluir esse volume. Nunca montar o diretório no Web/wwwroot. JPEG/PNG: até2MiB e4096×4096; conteúdo decodificado/reencodado em PNG sem metadados. Atualizar cadastro não altera saldo, cuja criação é zero.
+
+Para remover órfãos, interrompa todas as escritas/API e faça backup de banco+imagens. No mesmo ambiente e diretório configurados, execute o binário API com --cleanup-orphan-images --maintenance. O comando remove apenas nomes UUID.png não referenciados pelo banco selecionado; não limpa no startup, não apaga diretórios e não altera metadados comerciais. Nunca executar apontando para banco diferente do volume. Falha de commit mantém arquivos para essa manutenção, preservando a imagem anterior.
