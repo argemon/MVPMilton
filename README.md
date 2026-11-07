@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–08 aprovados localmente; CI integral em acompanhamento. Dashboard com evolução/ranking/recentes e cinco relatórios paginados com exportação CSV segura. Estoque e vendas transacionais preservados. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
+> **Estágio atual:** blocos00–08 aprovados,236 testes no CI integral (125 unitários+111 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Dashboard com evolução/ranking/recentes e cinco relatórios paginados com exportação CSV segura. Estoque e vendas transacionais preservados. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
 
 ## Objetivo
 

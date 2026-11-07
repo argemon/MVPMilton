@@ -4,7 +4,7 @@ Documentação inicial em português do Brasil, preparada em 06/11/2026. A pasta
 
 ## Como usar
 
-Estado atual:00–08 aprovados localmente, CI integral em acompanhamento, conforme ADR-36. Estoque e vendas têm contratos no código; evidências correntes, CI e histórico de falhas estão no [estado](execution/03-ESTADO-PROJETO.md) e no [relatório05–06](execution/10-ENTREGA-ESTOQUE-VENDAS.md). Auditorias06/08 são históricas.
+Estado atual:00–08 aprovados,236 testes no CI integral do código07c8065,0 falhas/skips, conforme ADR-36. Estoque e vendas têm contratos no código; evidências correntes, CI e histórico de falhas estão no [estado](execution/03-ESTADO-PROJETO.md) e no [relatório05–06](execution/10-ENTREGA-ESTOQUE-VENDAS.md). Auditorias06/08 são históricas.
 
 Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo referencia os contratos e critérios que o executor deve satisfazer. RF identifica requisito funcional; RNF, requisito não funcional; RN, regra de negócio; CA, cenário de aceite; ADR, decisão técnica; H, hipótese; Q, questão aberta.
 

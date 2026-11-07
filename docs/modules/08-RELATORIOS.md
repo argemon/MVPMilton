@@ -106,4 +106,6 @@ Unidade: datas/fuso, escaping/neutralização CSV, centavos Int64 e conversão d
 
 DoD global, RF-19/20, filtros/segurança CSV e limites comprovados. Desbloquear **09**. Nenhuma dependência de publicação, PDF ou serviço financeiro futuro.
 
-Gate08 local aprovado em07/11/2026:125 unitários+107 integrações Atlas e teste de escala isolado10.000/10.001,0 falhas/skips. Jornada real dos cinco relatórios e oito downloads CSV concluída, capturas360/1280 revistas. Sem evolução de schema/índice, sem PDF. CI integral pendente neste candidato; evidências/DoD/inventário no relatório11/estado03. Próximo09 somente mediante nova solicitação.
+Gate08 local aprovado em07/11/2026:125 unitários+107 integrações Atlas e teste de escala isolado10.000/10.001,0 falhas/skips. Jornada real dos cinco relatórios e oito downloads CSV concluída, capturas360/1280 revistas. Sem evolução de schema/índice, sem PDF. CI integral do código07c8065 posteriormente aprovado236/236,0 falhas/skips; evidências/DoD/inventário no relatório11/estado03. Próximo09 somente mediante nova solicitação.
+
+Validação final do código07c8065: CI236/236,0 falhas/skips; pré-condição de persistência, snapshot e jornada HTTPS/teclado/downloads aprovados. Estado03/relatório11 contêm os links e evidências.09 aguarda nova solicitação.

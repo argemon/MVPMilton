@@ -1,8 +1,18 @@
 # 03 — Estado do projeto
 
-## Execução07–08 — 07/11/2026 America/Cuiaba, EM ANDAMENTO
+## Execução07–08 — 07/11/2026 America/Cuiaba, CONCLUÍDA; sem deploy/merge
+
+### Resultado final do código — 14h46
+
+07-Dashboard e08-Relatórios concluídos/aprovados sequencialmente. Branch codex/dashboard-reports, commits funcionais a51438d/e60e900 e correção07c8065. [PR3](https://github.com/argemon/MVPMilton/pull/3) aberto, sem merge/deploy. [CI PR42402364442](https://github.com/argemon/MVPMilton/actions/runs/42402364442) e [push42402359673](https://github.com/argemon/MVPMilton/actions/runs/42402359673) concluídos com todos os passos success após a correção:125 unitários+111 integrações MongoDB8.0.17 Testcontainers autenticado/replica set =236 aprovados,0 falhas/0 skips, sem filtros. Build Release0 avisos/erros, auditoria e gitleaks aprovados; artefato13585992783 confirmado. Este registro refere-se ao último código funcional07c8065; o commit documental posterior também será acompanhado até conclusão, sem mudança funcional.
+
+DoD07/08 demonstrada: critérios M07-CA01–05/M08-CA01–05, consultas reais/agregações/snapshot, fórmulas/Int64/overflow, autorização API/BFF, canceladas/snapshots, paginação/ordenação/filtros/limite10.000/CSV seguro, mensagens de erro/vazio/carregamento, cinco telas360/1280 e oito downloads/teclado confirmados. Instalação parcial retorna503, não zeros aparentes. Sem schema/índice/coleção novo, sem PDF conforme escopo, sem dependência de09. Inventários, comandos e histórico das falhas/correções no [relatório11](11-ENTREGA-DASHBOARD-RELATORIOS.md).
+
+Pendências preservadas: aplicação das evoluções anteriores ao banco persistente continua aguardando autorização específica (rejeição automática histórica abaixo), Q-01/02/03 e ensaios/carga/backup dos blocos posteriores. Nada disso foi declarado executado aqui; somente bancos descartáveis autorizados foram utilizados/removidos. .env intacto e sem segredo/PII real versionado. Próximo bloco09-HOMOLOGACAO, somente mediante nova solicitação. Primeira ação futura:ler este estado, confirmar código/PR e tratar os pré-requisitos operacionais de09 antes de iniciar;10/11 não liberados.
 
 ### Git/CI e correção final de prontidão — 14h37
+
+Correção publicada em07c8065; [novo CI PR42402364442](https://github.com/argemon/MVPMilton/actions/runs/42402364442) e [push42402359673](https://github.com/argemon/MVPMilton/actions/runs/42402359673) em acompanhamento. Jornada final repetida com esse código:cinco relatórios360/1280, oito downloads concluídos e arquivos conferidos, seleção de relatório por dropdown e rolagem horizontal das tabelas por teclas ArrowRight com foco real, filtros/vazio/erro/recuperação,0 JS/5xx. Bancos exclusivos removidos. Nenhum comportamento de09 foi iniciado.
 
 Branch codex/dashboard-reports publicada, commits a51438d (Dashboard) e e60e900 (Relatórios), [PR3](https://github.com/argemon/MVPMilton/pull/3) aberto contra main. [CI PR42401350272](https://github.com/argemon/MVPMilton/actions/runs/42401350272) e [push42401320201](https://github.com/argemon/MVPMilton/actions/runs/42401320201) concluídos com sucesso em todos os passos. Logs PR confirmam125 unitários+110 integrações Testcontainers Mongo8.0.17 autenticado/replica set =235 aprovados,0 falhas/0 skips; build0 avisos/erros, auditoria/scanner aprovados, artefato13585711518 presente. Nenhuma alteração do CI para esconder falhas.
 

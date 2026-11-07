@@ -87,3 +87,5 @@ Unidade: período/fuso, mês padrão, zero denominador e arredondamento AwayFrom
 DoD global, RF-17/18 e fórmulas/segurança demonstradas; zeros distinguíveis de falha. Desbloquear **08**. Nenhum teste ou link depende da implementação futura de relatórios.
 
 Gate07 aprovado localmente em07/11/2026:115 unitários+101 integrações Atlas,0 falhas/skips; perfis ContainerSecurity/ContainerScale serão executados integralmente no CI final. Duas jornadas HTTPS concluídas, incluindo revisão visual360/1280 e correção de legibilidade das tabelas. Sem alteração de schema; evidências, falhas corrigidas e inventário no relatório11/estado03.08 liberado pela solicitação atual, sem09.
+
+Validação final do código07c8065: CI236/236,0 falhas/skips; pré-condição de persistência, snapshot e jornada HTTPS/teclado/downloads aprovados. Estado03/relatório11 contêm os links e evidências.09 aguarda nova solicitação.

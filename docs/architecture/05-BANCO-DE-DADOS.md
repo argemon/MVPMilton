@@ -15,6 +15,8 @@ Todo documento persistido possui schemaVersion BSON Int32; o dicionário pode ab
 
 Dinheiro: BRL em centavos long; preço 1–999.999.999 centavos (R$ 9.999.999,99), total de venda/item <=99.999.999.999.999 centavos (R$ 999.999.999.999,99). Multiplicar quantidade e somar com checked e verificar limites; overflow nunca grava parcial. HTTP mantém decimal em reais, com conversão exata na borda: 12.50 ↔ 1250 centavos, rejeitando valor com fração de centavo. Divisão para média usa quociente/resto e AwayFromZero uma única vez no centavo final. Agregações de muitos totais usam acumulação exata com limite explícito e BigInteger na aplicação quando necessário; não usar $sum que possa promover overflow Int64 a double. Resultado monetário HTTP deve caber no decimal do contrato; excedente retorna 400 LIMITE_MONETARIO_EXCEDIDO, sem arredondamento/truncamento.
 
+Incremento07–08/ADR-36: acumulador transitório $toDecimal/$sum em centavos, com soma exata de até33 dígitos (limites de total por venda e contagem Int64), sem persistir Decimal128. A infraestrutura valida integralidade e limite long antes de mapear para Application; agregado maior que long.MaxValue centavos retorna400 LIMITE_MONETARIO_EXCEDIDO mesmo que pudesse caber em outro transporte. Não há promoção para double ou arredondamento de totais. Testes cobrem valor acima2^53, long.MaxValue, fração e overflow; ticket arredonda só no final.
+
 ## Dicionário mínimo
 
 Campos abaixo são obrigatórios salvo ?; timestamps/versao/schemaVersion seguem a convenção acima para mutáveis. Null/ausente em campos opcionais é normalizado pelo mapeamento; validadores aceitam apenas os casos explicitados. Nomes de coleções são escolhas técnicas, endpoints e linguagem de negócio permanecem em português.
