@@ -115,8 +115,10 @@ public sealed class MongoEstoque(OperacoesCadastro operations, IMongoClient clie
                 } catch(OperationCanceledException) when(!ct.IsCancellationRequested) { }
                 throw new CadastroException("OPERACAO_EM_ANDAMENTO",409);
             }
-            catch(MongoException e) when(!committing && e.HasErrorLabel("TransientTransactionError") && attempt<2 && !token.IsCancellationRequested)
+            catch(MongoException e) when(e.HasErrorLabel("TransientTransactionError") && !e.HasErrorLabel("UnknownTransactionCommitResult") && attempt<2 && !token.IsCancellationRequested)
             { await Abort(session);await Task.Delay(250*(attempt+1)+Random.Shared.Next(20,70),token); }
+            catch(MongoException e) when(e.HasErrorLabel("TransientTransactionError") && !e.HasErrorLabel("UnknownTransactionCommitResult"))
+            { await Abort(session);throw; }
             catch(Exception e) when(committing && (e is MongoException or OperationCanceledException))
             { throw new CadastroException("RESULTADO_DESCONHECIDO",503); }
             catch { await Abort(session);throw; }

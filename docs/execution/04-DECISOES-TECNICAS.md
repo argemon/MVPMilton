@@ -74,6 +74,8 @@ Estoque mantém products.saldo como fonte operacional única; ajuste é delta as
 
 Complemento ADR-34: duas fixtures de integração simultâneas no máximo (xUnit MaxParallelThreads=2). A execução de todas as classes junto ao navegador saturou o Atlas compartilhado, provocando503/timeouts em preparação e nos testes antigos. Não ampliar orçamento5s, aceitar503 como sucesso ou remover testes; as disputas de cada cenário continuam paralelas em sessões independentes. Navegador e regressão pesada são validados em execuções separadas. Perfil ContainerSecurity roda integralmente no CI autenticado; Atlas não recebe criação de usuários/roles.
 
+Prova de falhas05: decorator exclusivamente nos testes envolve IMongoClient/IClientSessionHandle, delega todos os dados ao MongoDB real e injeta rótulos oficiais no controle de commit. UnknownTransactionCommitResult após commit real não repete corpo nem aborta; falha persistente dá503 e mesma chave resolve recibo. TransientTransactionError antes de confirmar aborta e recomeça o corpo inteiro, inclusive quando originado no commit (corrigido após a prova). Não há endpoint de falha, banco em memória ou mudança do orçamento operacional.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

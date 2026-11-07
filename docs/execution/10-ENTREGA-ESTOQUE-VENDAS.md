@@ -29,6 +29,10 @@ Alterados: composição e policies Api/Web, cliente HTTP para chave opcional, me
 
 Regressão final: `dotnet test GestaoComercial.slnx -c Release --no-build -m:1 --filter 'Category!=ContainerSecurity' --logger trx --results-directory artifacts/block05/gate`:75 integrações+93 unitários =168 aprovados,0 falhas/0 ignorados. Build Release final sem avisos/erros. Gitleaks8.24.2:188 arquivos/~939KB,0 segredos;43 Markdown/117 links locais válidos; .env ignorado/hash preservado. Gate05 aguarda CI autenticado (inclui ContainerSecurity);06 ainda não iniciado. Não avançar enquanto houver item obrigatório pendente.
 
+Complemento de integridade05: StockCommitTests executado contra Atlas real,3 casos aprovados/0 falhas/0 ignorados (artifacts/block05/commit-faults). Falha após commit real repete só commit (um corpo, dois commits, zero aborts); rótulo transitório antes de commit aborta/reinicia corpo (dois corpos, um abort); ambiguidade persistente retorna503 RESULTADO_DESCONHECIDO, sem repetir corpo/abortar, e mesma chave recupera recibo. Todos terminam com saldo3/um movimento. Correção: aceitar retry de TransientTransactionError também quando retornado pelo commit; desconhecido continua repetindo só commit. Regressão integral após essa correção em execução. Build inicial desse teste falhou por using ausente, corrigido; build seguinte0 avisos/erros.
+
 ## Vendas06
+
+Validação adicional05: suíte com uma fixture Atlas por vez teve74 integrações aprovadas e5 falhas,0 ignoradas; timeouts no mesmo cliente da fixture StockTests afetaram criação de produto/usuário e limpeza do banco descartável. Os quatro StockCommitTests (incluindo tentativas esgotadas) passaram. Probe novo com cliente independente confirmou novamente conexão/topologia Atlas. Não contar essa suíte como aprovada; usar CI isolado para validar o commit completo e registrar banco de fixture cuja limpeza não concluiu. Nenhuma conexão/banco de desenvolvimento foi alterado.
 
 Não iniciado. Pré-requisito é gate05 integralmente comprovado. Próximo após06 será07-DASHBOARD, sem autorização para implementação nesta solicitação.
