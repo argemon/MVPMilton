@@ -2,6 +2,14 @@
 
 ## Estado vigente — Bloco01, 06/11/2026 (America/Cuiaba)
 
+### Publicação GitHub e primeira execução CI (06/11/2026)
+
+Envio autorizado pelo usuário para argemon/MVPMilton/main: commit a8146cd. .env permaneceu ignorado, não rastreado e fora do índice;124 arquivos publicados, sem correspondência da URI/senha fornecida. Checkout local limpo após o commit.
+
+[Execução42330495471](https://github.com/argemon/MVPMilton/actions/runs/42330495471): arquitetura, restore locked, build Release (zero avisos/erros),40 testes unitários e32 integrações passaram em Ubuntu24.04/SDK10.0.401 com Testcontainers/MongoDB8.0.17 replica set. Auditoria de dependências passou. Perfil Docker/CI agora possui evidência real; a indisponibilidade de Docker registrada abaixo refere-se somente à máquina Windows local. Nenhuma credencial Atlas foi enviada ao Actions.
+
+O scanner de segredos sobre todo o diretório pós-build sinalizou1 ocorrência sem informar arquivo. A mesma versão oficial Gitleaks8.24.2 sobre um git archive exato de a8146cd encontrou zero segredos (~646KB). A CI foi corrigida para verificar somente o conteúdo integral publicado do commit, em diretório temporário/read-only, separado de .git/config, chaves/senhas efêmeras de testes e artefatos gerados. Não há regra desabilitada, allowlist ou supressão de erro: qualquer ocorrência no commit continua falhando a execução. Relatório JSON com redação100% é anexado às evidências. Nova execução aguardando envio da correção; resultado final será registrado após conferência.
+
 **01 AUTENTICACAO concluído e aprovado para avançar no caminho de desenvolvimento .NET10 + MongoDB Atlas.**00 permanece aprovado, com regressões revalidadas.02 FUNCIONARIOS está disponível somente mediante nova autorização e não foi iniciado. Esta aprovação não libera publicação/produção.
 
 RF-01/02 completos; RF-03 parcial conforme incremento aprovado: consulta/manutenção de perfil/status/redefinição. Criação humana e vínculo aguardam02. Nenhum cliente, produto, estoque, venda, dashboard ou relatório foi implementado.

@@ -25,7 +25,13 @@ jobs:
           $report = Get-Content artifacts/vulnerabilities.json -Raw | ConvertFrom-Json
           foreach ($project in $report.projects) { foreach ($framework in $project.frameworks) { if ($framework.topLevelPackages -or $framework.transitivePackages) { throw 'Dependência vulnerável detectada' } } }
       - name: Verificar segredos
-        run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.24.2 detect --source /repo --no-git --redact
+        run: |
+          scan_dir="$(mktemp -d "$RUNNER_TEMP/gitleaks-source.XXXXXX")"
+          git archive HEAD | tar -x -C "$scan_dir"
+          docker run --rm --user "$(id -u):$(id -g)" \
+            -v "$scan_dir:/repo:ro" -v "$PWD/artifacts:/reports" \
+            zricethezav/gitleaks:v8.24.2 dir /repo --redact=100 \
+            --report-format json --report-path /reports/gitleaks.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
