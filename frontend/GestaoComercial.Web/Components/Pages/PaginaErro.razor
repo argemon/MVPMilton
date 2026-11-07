@@ -1,0 +1,4 @@
+@page "/erro"
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@inject IHttpContextAccessor Context
+<PageTitle>Erro · Gestão Comercial</PageTitle><h1>Não foi possível concluir</h1><p>Tente novamente. Se o problema persistir, informe esta referência ao suporte.</p><p>Referência: @Context.HttpContext?.TraceIdentifier</p><a href="/">Voltar ao início</a>

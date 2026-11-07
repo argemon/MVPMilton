@@ -47,10 +47,10 @@ Rascunho pode ter zero itens durante edição, mas requer cliente ativo e pelo m
 ## Invariantes e snapshots
 
 - Quantidades inteiras em unidade `UN` (H-02); máximo 1.000.000 por item/operação e 100 itens distintos por venda.
-- Preço decimal positivo, duas casas, máximo R$ 9.999.999,99. Total máximo R$ 999.999.999.999,99; exceder é validação, nunca overflow.
+- Preço positivo em centavos Int64 (BRL), convertido de/para reais na borda, máximo R$ 9.999.999,99. Total máximo R$ 999.999.999.999,99; exceder é validação, nunca overflow.
 - Rascunho copia preço/nome/SKU ao incluir produto. Confirmar exige que preço copiado ainda seja o atual; conflito `PRECO_ALTERADO` pede atualização explícita do rascunho. Confirmar não muda preços silenciosamente.
 - Confirmar copia nome/documento do cliente e preserva snapshots dos produtos e identificação do operador. Consultas históricas usam snapshots; cadastro atual aparece separado.
-- Rascunho não reserva estoque. Confirmar lê saldo sob bloqueio e valida todas as quantidades; cancelamento estorna somente a baixa daquela venda.
+- Rascunho não reserva estoque. Confirmar baixa saldo por atualização condicional na transação e valida o resultado para todos os itens; cancelamento estorna somente a baixa daquela venda.
 - Saldo é materializado, movimentos são razão auditável. Não são Event Sourcing; entidade atual permanece a fonte operacional.
 - Desativar produto/cliente bloqueia novas confirmações, mas não estorno. Desativar funcionário revoga conta/sessões vinculadas na mesma transação.
 
@@ -63,3 +63,9 @@ Modelo de publicação e PedidoOnline/ItemPedido está especificado somente em m
 ## Limites
 
 Sem descontos, frete, impostos, pagamento parcelado, custo/lucro, devolução parcial ou edição retroativa. Campos de endereço e documento obrigatório dependem de Q-01; MVP usa contato mínimo. As regras completas são [RN-01 a RN-20](../requirements/04-REGRAS-DE-NEGOCIO.md).
+
+## Representação documental e valores financeiros (ADR-21/23)
+
+O diagrama acima descreve cardinalidades de negócio, sem impor coleções por classe nem chaves estrangeiras. Produto incorpora SaldoEstoque e metadados de imagem no mesmo documento; Venda incorpora até 100 ItemVenda e snapshots, com IDs estáveis para conciliar movimentos. Referências a cliente/produto/operador são UUID, sem incorporar cadastros inteiros mutáveis. Movimentos e auditoria são coleções separadas imutáveis; não são arrays ilimitados em Produto/Venda. Categoria e Marca permanecem coleções distintas por possuírem gestão e unicidade próprias.
+
+Domínio e aplicação usam centavos long: 1250 × 2 = 2500 centavos. Multiplicação e soma checked, limite por venda 99.999.999.999.999 centavos, sem fração de centavo ou double. Preços HTTP com terceira casa são rejeitados antes da conversão; domínio não recebe decimal em reais como unidade ambígua. Snapshot mantém preço unitário e total em centavos. Apenas média final de indicadores arredonda por AwayFromZero; preço/total de item não arredondam. Tipos BSON e MongoDB.Driver não aparecem no domínio.

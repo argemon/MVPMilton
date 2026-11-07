@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–04 aprovados, especialmente produto existente com saldo zero, policies e auditoria. Não executar este bloco antes de Produtos. Ler protocolos de banco/API e ADR-03/04/07/10.
 
 ## 3. Requisitos e prioridades
@@ -18,18 +20,16 @@ Dentro: entrada, saída manual, ajuste por delta, saldos, histórico, idempotên
 
 ## 5. Atores e permissões
 
-Estoque.Ler: todos. Historico/Movimentar: Admin/Gerente/Estoquista. Ajustar: Admin/Gerente. Vendedor não lê histórico nem movimenta; Estoquista não ajusta. Nunca aceitar ator enviado pelo cliente.
+Estoque.Ler: todos. Historico/Movimentar: Administrador/Estoquista. Ajustar: Administrador. Vendedor não lê histórico nem movimenta; Estoquista não ajusta. Nunca aceitar ator enviado pelo cliente.
 
-## 6. Entidades e migrations
+## 6. Entidades e evoluções de persistência
 
-Reusar saldos_estoque do 04. Criar movimentos_estoque com produto, delta, saldoAntes/Depois, tipo, motivo, ator, instante e operação manual; criar operacoes_idempotentes e índices únicos. CHECK saldo>=0, delta não zero, saldoDepois=saldoAntes+delta e sinal coerente. Produto/ator/operacao com FKs RESTRICT. Tipos comerciais podem estar reservados como nomenclatura, mas não são aceitos no POST nem inseridos; colunas/FKs de Venda/Item só são acrescentadas no 06. Não criar FK apontando para tabela futura.
-
-Movimentos/auditoria não concedem UPDATE/DELETE ao runtime. Quantidade final deve caber em int (0–2.147.483.647); limite por operação é 1.000.000. Saldo ausente é inconsistência, não zero: abortar e exigir investigação sem criar saldo automaticamente.
+Reusar products.saldo incorporado desde 04. Criar `stock_movements` e `idempotency_receipts`. Movimento imutável contém _id, produtoId, delta int não zero, saldoAntes/Depois int >=0, tipo, motivo 10–500, atorId e nome snapshot, ocorridoEm e operacaoId UUID. Validadores verificam tipos, sinal e expressão saldoDepois=saldoAntes+delta; referências e auditoria são verificadas na transação. Índice unique parcial em operacaoId UUID para manuais. Sem sales antecipada; campos opcionais vendaId/itemId e índices de baixa/estorno só chegam no 06. Saldo final limitado a 2.147.483.647, limite por operação 1.000.000. Runtime sem update/remove em movimentos/auditoria. Saldo ausente/corrompido nunca é autocriado.
 
 ## 7. Fluxos principais e alternativos
 
 1. Consultar produto/saldo → escolher entrada/saída/ajuste → informar quantidade/delta e motivo → BFF cria chave UUID da intenção.
-2. API valida policy/formato → transação registra chave → bloqueia produto e saldo → revalida ativo/saldo → calcula saldo novo → grava movimento, saldo, auditoria e resposta juntos.
+2. API valida policy/formato → transação registra chave → atualiza product/saldo com filtro condicional → revalida ativo/saldo → calcula saldo novo → grava movimento, saldo, auditoria e resposta juntos.
 3. Entrada soma; saída subtrai; ajuste usa delta assinado. Saldo negativo/overflow não aplica nada.
 4. Retry/time-out preserva mesma chave/corpo; resultado concluído retorna recibo; mesma chave diferente corpo dá 409.
 5. Produto inativo → 409; saldo inexistente → 409 SALDO_INEXISTENTE, log de integridade; sem mutação.
@@ -52,7 +52,7 @@ Base `/api/v1`. `Movimento={id,produtoId,tipo,delta,saldoAntes,saldoDepois,motiv
 | POST `/estoque/saidas` | Mesmo formato | 201 Movimento + Location | 400; 401/403/404; 409 ESTOQUE_INSUFICIENTE |
 | POST `/estoque/ajustes` | Header Idempotency-Key; `{produtoId,delta,motivo}` | 201 Movimento + Location | 400; 401/403/404; 409 insuficiente/overflow |
 
-Conflitos comuns: RECURSO_INATIVO, SALDO_INEXISTENTE, SALDO_EXCEDE_LIMITE, CHAVE_REUTILIZADA e OPERACAO_EM_ANDAMENTO (espera >5 s). Erros usam ProblemDetails e não expõem SQL. Deadlock/serialização: rollback e até duas novas tentativas completas; esgotado 503/Retry-After. Nenhum DELETE/PUT de movimento.
+Conflitos comuns: RECURSO_INATIVO, SALDO_INEXISTENTE, SALDO_EXCEDE_LIMITE, CHAVE_REUTILIZADA e OPERACAO_EM_ANDAMENTO (espera >5 s). Erros usam ProblemDetails e não expõem detalhes do armazenamento. Conflito transitório: abortar/repetir a transação inteira com mesma chave e limite da arquitetura05; commit incerto repete só commit e pode retornar503 RESULTADO_DESCONHECIDO. Nenhum DELETE/PUT de movimento.
 
 ## 10. Páginas, componentes e estados
 
@@ -67,11 +67,11 @@ Botão desabilitado ao enviar não substitui idempotência. Timeout mostra “Re
 
 ## 11. Erros e concorrência
 
-Ordem: chave → produto → saldo; múltiplos produtos sempre por UUID. PostgreSQL real, uma conexão/transação por comando. Duas saídas com saldo 1: uma vence, outra 409; nenhum negativo. UNIQUE na operação manual e na chave evita duplicidade. Falha ao inserir auditoria/movimento reverte saldo. Nunca editar movimento para corrigir erro: gerar ajuste autorizado justificado.
+Uma sessão por comando, transação snapshot/majority no primary. Registrar chave, obter produto ativo, aplicar update condicional ao mesmo documento products: saída exige saldo.quantidade >= quantidade; entrada/estorno exige saldo <= int.MaxValue-delta; incremento/decremento e versão de saldo são atômicos. Conferir MatchedCount/ModifiedCount; zero correspondência exige distinguir ausente, inativo, saldo ausente/insuficiente/overflow. Gravar movimento, audit_events e recibo na mesma transação. Chamadas de driver são sequenciais, nunca Task.WhenAll. Duas sessões disputando saldo 1 produzem um sucesso e outro 409 após retry/revalidação. Política de conflito/commit incerto/idempotência na arquitetura 05.
 
 ## 12. Testes unitários e integração
 
-Unidade: sinais, motivo, limite, negativo e overflow calculados antes da atribuição; soma de deltas. Integração xUnit/PostgreSQL: CA-06/07, duas conexões com barreira, idempotência paralela/corpo diferente, falha antes do commit, resposta perdida após commit, saldo ausente, produto inativo, permissões, constraint negativa e imutabilidade com usuário runtime. Testar que mesma chave de outro ator não recupera o recibo original.
+Unidade: sinais, motivo, limite, negativo e overflow calculados antes da atribuição; soma de deltas. Integração xUnit/MongoDB: CA-06/07, duas sessões com barreira, idempotência paralela/corpo diferente, falha antes do commit, resposta perdida após commit, saldo ausente, produto inativo, permissões, validação documental negativa e imutabilidade com usuário runtime. Testar que mesma chave de outro ator não recupera o recibo original.
 
 ## 13. Given/When/Then
 
@@ -80,16 +80,16 @@ Unidade: sinais, motivo, limite, negativo e overflow calculados antes da atribui
 | M05-CA01 / CA-06 | Produto ativo saldo 0 | Entrada 10, saída 2, ajuste -1 | Saldo 7, três movimentos e auditorias, soma 7 |
 | M05-CA02 / CA-07 | Saldo 1 | Duas saídas de 1 concorrentes | Uma 201, outra 409, saldo 0, uma baixa manual |
 | M05-CA03 / RN-05 | Entrada válida e chave única | Repetir em paralelo após perda de resposta | Mesmo recibo, uma entrada |
-| M05-CA04 / RN-02 | Produto sem linha de saldo em fixture de corrupção | Tentar saída | 409 SALDO_INEXISTENTE, nenhum movimento ou saldo criado |
+| M05-CA04 / RN-02 | Produto sem saldo incorporado em fixture de corrupção com operador de teste privilegiado | Tentar saída | 409 SALDO_INEXISTENTE, nenhum movimento ou saldo criado |
 | M05-CA05 / RN-15 | Estoquista autenticado | POST ajuste direto | 403 e saldo preservado |
 
 ## 14. Checklist de execução
 
 - [ ] Confirmar gate Produtos e ausência de estoque manipulado por cadastro.
-- [ ] Criar modelo/portas/transação/idempotência sem tabelas de Venda.
-- [ ] Gerar/revisar migrations e privilégios; testar do zero e upgrade 04→05; aplicar explicitamente.
+- [ ] Criar modelo/portas/transação/idempotência sem coleções de Venda.
+- [ ] Gerar/revisar evoluções de persistência e privilégios; testar do zero e upgrade 04→05; aplicar explicitamente.
 - [ ] Implementar API/UI/HTTP/OpenAPI, timeout e repetição segura.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
 - [ ] Registrar concorrência, rollback, reconciliação e M05-CA01–05 no estado.
 
 ## 15. DoD e desbloqueio

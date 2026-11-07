@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–07 aprovados, especialmente fórmulas de venda, fuso, saldo e histórico. Ler arquitetura 06/07/09 e ADR-11/12. Não depende de publicação, serviço de email, gerador PDF ou integração externa.
 
 ## 3. Requisitos e prioridades
@@ -18,11 +20,11 @@ Dentro: vendas por período de confirmação, estoque atual e movimentos por per
 
 ## 5. Atores e permissões
 
-Relatorios.Vendas: Admin/Gerente. Relatorios.Estoque/Movimentos: Admin/Gerente/Estoquista. Vendedor negado em todos. Exportação exige a mesma policy da consulta; BFF não substitui autorização API. Não retornar documento completo do cliente por conveniência se não consta no resumo necessário.
+Relatorios.Vendas: Administrador. Relatorios.Estoque/Movimentos: Administrador/Estoquista. Vendedor negado em todos. Exportação exige a mesma policy da consulta; BFF não substitui autorização API. Não retornar documento completo do cliente por conveniência se não consta no resumo necessário.
 
 ## 6. Entidades e banco
 
-Sem tabela nova obrigatória. Projeções de vendas/itens/produtos/saldos/movimentos existentes. Consultas somente leitura em snapshot consistente: uma query ou REPEATABLE READ curta para totais/linhas. Índice adicional só com evidência, migration revisada e upgrade testado. Não materializar saldos históricos fictícios.
+Sem coleção duplicada de relatórios. Projetar sales com itens incorporados, products com saldo e stock_movements; não incorporar histórico ilimitado em cadastros. Uma resposta tem snapshot consistente em transação curta somente leitura ou agregação com garantia equivalente. Índices adicionais somente com plano explain e evolução explícita testada. Sem saldo histórico fictício.
 
 ## 7. Fluxos principais e alternativos
 
@@ -72,7 +74,7 @@ Linhas/totais de uma resposta têm o mesmo snapshot. Escrita concorrente não mi
 
 ## 12. Testes unitários e integração
 
-Unidade: datas/fuso, escaping/neutralização CSV, valores decimais, filtros e limite. Integração PostgreSQL: totais independentes da página; 21 linhas/página 20/export21; bordas locais; cancelamento posterior; produto inativo e movimento original; 10.000 versus 10.001 linhas; snapshot concorrente; policies iguais nos seis endpoints; handler BFF não transforma erro em arquivo CSV. Conferir Content-Type/Disposition e ausência de token em URL.
+Unidade: datas/fuso, escaping/neutralização CSV, centavos Int64 e conversão decimal de transporte, filtros e limite. Integração MongoDB: totais independentes da página; 21 linhas/página 20/export21; bordas locais; cancelamento posterior; produto inativo e movimento original; 10.000 versus 10.001 linhas; snapshot concorrente; policies iguais nos seis endpoints; handler BFF não transforma erro em arquivo CSV. Conferir Content-Type/Disposition e ausência de token em URL.
 
 ## 13. Given/When/Then
 
@@ -87,9 +89,9 @@ Unidade: datas/fuso, escaping/neutralização CSV, valores decimais, filtros e l
 ## 14. Checklist de execução
 
 - [ ] Implementar consultas/totais/snapshot e políticas, sem schema comercial duplicado.
-- [ ] Registrar ausência de migration ou revisar/testar índice novo do zero/upgrade 07→08.
+- [ ] Registrar ausência de evolução de persistência ou revisar/testar índice novo do zero/upgrade 07→08.
 - [ ] Implementar CSV/handler BFF/UI/contratos e OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
 - [ ] Comparar dashboard/relatório sobre fixture estável; registrar M08-CA01–05 e resultados no estado.
 
 ## 15. DoD e desbloqueio

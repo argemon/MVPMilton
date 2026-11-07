@@ -4,11 +4,11 @@
 
 Base `/api/v1`, JSON camelCase, UUIDs, datas ISO 8601 UTC, decimais JSON numéricos com até duas casas. UI formata R$ e pt-BR; API nunca recebe `12,50`. Campos desconhecidos são rejeitados nos comandos. Não aceitar `atorId`, total calculado, saldo ou perfil do cliente como autoridade.
 
-Bearer opaco de sessão da API trafega somente entre BFF e API por TLS. A API não autentica por cookie. Endpoints de login são internos, limitados por rede e taxa; todo o restante exige sessão ativa e policy, exceto liveness. [Permissões exatas](../requirements/05-MATRIZ-PERMISSOES.md).
+Bearer opaco de sessão da API trafega somente entre BFF e API por TLS. A API não autentica por cookie. Endpoints de login são internos, limitados por rede e taxa; demais rotas exigem sessão ativa e policy, salvo liveness e readiness mínimo restrito à rede interna; páginas técnicas do00 são as exceções transitórias do módulo. [Permissões exatas](../requirements/05-MATRIZ-PERMISSOES.md).
 
-Listagens: `page=1&pageSize=20`, máximo 100; `search` até 100 caracteres; filtros combinam por AND; ordenação explícita permitida, padrão nome+id para cadastro e data decrescente+id para eventos. Retorno `{ items, page, pageSize, totalItems }`. `ativo=true|false|todos`, padrão true nos cadastros. Histórico nunca desaparece com esse filtro.
+Listagens: `page=1&pageSize=20`, máximo 100; `search` até 100 caracteres; filtros combinam por AND; ordenação explícita permitida, padrão nome normalizado+id para cadastro e data decrescente+id para eventos. Retorno `{ items, page, pageSize, totalItems }`. `ativo=true|false|todos`, padrão true nos cadastros. Histórico nunca desaparece com esse filtro.
 
-Busca textual inicial por prefixo do nome normalizado; documento e SKU por igualdade normalizada. Não interpretar `search` como SQL nem prometer busca por trecho arbitrário. Data de ordenação de movimentos é `ocorridoEm`; de vendas, `criadoEm`. Use id como desempate determinístico.
+Busca textual inicial por prefixo do nome normalizado; documento e SKU por igualdade normalizada. Não interpretar `search` como detalhes do armazenamento nem prometer busca por trecho arbitrário. Data de ordenação de movimentos é `ocorridoEm`; de vendas, `criadoEm`. Use id como desempate determinístico.
 
 PUT exige `versao` no corpo; comandos de venda exigem `versaoEsperada`. Respostas de detalhe contêm `versao`. Versão ausente: 400; divergente: 409. UUID inexistente: 404. Validação de formato/negócio sem conflito: 400. Sem sessão: 401; sem permissão: 403; propriedade de venda fora do escopo resulta 404 para não revelar conteúdo.
 
@@ -67,7 +67,7 @@ POST manual exige `Idempotency-Key` e retorna 201 + Location do movimento. GET `
 | POST `/vendas/{id}/cancelamento` | `{versaoEsperada,motivo}` → venda cancelada | Vendas.Cancelar; 200 |
 | POST `/vendas/{id}/descarte` | `{versaoEsperada,motivo}` → rascunho descartado | Vendas.Editar; 200 |
 
-POST criar, confirmar, cancelar e descartar exigem chave idempotente. PUT usa versão: retry cego pode gerar 409, então reler antes de decidir. Vendedor acessa/edita/confirma/descarta apenas próprias vendas; gerente e administrador, todas. Nenhum perfil edita venda confirmada. Preço nunca é aceito no request de item. Rascunhos com zero itens são permitidos. Exemplo: duas unidades cujo preço atual é 12.50 retornam item total 25.00 e total da venda 25.00.
+POST criar, confirmar, cancelar e descartar exigem chave idempotente. PUT usa versão: retry cego pode gerar 409, então reler antes de decidir. Vendedor acessa/edita/confirma/descarta apenas próprias vendas; administrador, todas. Nenhum perfil edita venda confirmada. Preço nunca é aceito no request de item. Rascunhos com zero itens são permitidos. Exemplo: duas unidades cujo preço atual é 12.50 retornam item total 25.00 e total da venda 25.00.
 
 ## Dashboard e relatórios
 
@@ -83,7 +83,7 @@ Datas civis usam fuso da instalação (`America/Cuiaba` por H-04), início inclu
 
 `Idempotency-Key` é UUID criado pelo BFF por intenção do usuário e preservado até resultado conhecido, incluindo retries. Escopo = método + rota normalizada, incluindo id. Hash inclui corpo normalizado e versão; ator vem da sessão. Chave igual/corpo diferente: 409 `CHAVE_REUTILIZADA`. A mesma operação concluída devolve status e corpo originais, após autenticar e revalidar policy atual; não gera novos efeitos.
 
-A chave é gravada na mesma transação dos efeitos. Conflito de índice deve aguardar commit e consultar resultado em nova transação; se a primeira fez rollback, a segunda pode executar. Após espera limitada de 5 s, devolver 409 `OPERACAO_EM_ANDAMENTO`, sem declarar sucesso. Falhas de validação não são persistidas como sucesso. Estado/índices únicos reforçam que nova chave não causa nova baixa/estorno. Manter chaves de vendas e movimentos enquanto houver histórico; sem purga automática no MVP.
+A chave é gravada na mesma transação dos efeitos. DuplicateKey aborta a tentativa; consultar o recibo fora da transação abortada no primary/majority, com nova sessão de leitura se necessário. Só uma nova tentativa completa pode escrever após rollback conhecido; nunca continuar a transação abortada. Após espera limitada de 5 s, devolver 409 `OPERACAO_EM_ANDAMENTO`, sem declarar sucesso. Falhas de validação não são persistidas como sucesso. Estado/índices únicos reforçam que nova chave não causa nova baixa/estorno. Manter chaves de vendas e movimentos enquanto houver histórico; sem purga automática no MVP.
 
 Resposta idempotente é um recibo do instante original: repetir confirmação após posterior cancelamento ainda retorna o recibo original da confirmação, sem transicionar o estado novamente. O BFF relê GET da venda para exibir o estado atual após resolver uma repetição. Diferenciar recibo de estado atual evita que retry antigo faça a UI apresentar Confirmada como situação corrente de uma venda Cancelada.
 
@@ -109,13 +109,13 @@ Códigos estáveis adicionais: `VALIDACAO`, `DOCUMENTO_DUPLICADO`, `SKU_DUPLICAD
 
 ADR-15/17 detalham a baseline, sem alterar autenticação ou camadas:
 
-- POST/PUT rascunho rejeita qualquer produto inativo com 409 RECURSO_INATIVO. Rascunho não reserva saldo; confirmação exige linha de saldo e quantidade para todos. Ausência dá409 SALDO_INEXISTENTE, overflow de saldo/estorno409 SALDO_EXCEDE_LIMITE. Nada é parcialmente aplicado.
+- POST/PUT rascunho rejeita qualquer produto inativo com 409 RECURSO_INATIVO. Rascunho não reserva saldo; confirmação exige saldo incorporado e quantidade para todos. Ausência dá409 SALDO_INEXISTENTE, overflow de saldo/estorno409 SALDO_EXCEDE_LIMITE. Nada é parcialmente aplicado.
 - Conflitos complementares de cadastro:409 EMAIL_DUPLICADO, VINCULO_OCUPADO, REFERENCIA_EM_USO. Falta de referência existente requerida por UUID dá404; referência inativa dá409. Erros de formato continuam400.
-- GET usuários usa `search,ativo,page,pageSize`; resumo/detalhe administrativo inclui id/nome/email/funcionarioId/perfil/ativo/versao/deveAlterarSenha, sem senha/hash. GET me inclui usuario/expiraEm; login continua exclusivamente entre servidores. Conta bootstrap tem funcionário null; conta humana tem FK válida após 02.
+- GET usuários usa `search,ativo,page,pageSize`; resumo/detalhe administrativo inclui id/nome/email/funcionarioId/perfil/ativo/versao/deveAlterarSenha, sem senha/hash. GET me inclui usuario/expiraEm; login continua exclusivamente entre servidores. Conta bootstrap tem funcionário null; conta humana tem referência válida após 02.
 - Health é exceção ao envelope de erro: live200 `{status:"ok"}`, ready200 `{status:"ready"}` ou 503 `{status:"unavailable"}`, sem diagnóstico. Rede mantém readiness privado.
 - Período opcional deve trazer início/fim juntos ou omitir ambos; início<fim e <=366 dias. Dashboard padrão vai do primeiro dia do mês ao primeiro do seguinte no fuso. Exportação rejeita paginação e usa filtro completo.
 - GET saldos/relatório estoque aceita `ativo=true|false|todos` (padrão true). Baixo estoque sempre exige produto ativo e ordena saldo/nome/id; painel retorna primeira página 20 com totalItems.
-- DTOs concretos de detalhe/lista/indicador e componentes/rotas Web estão detalhados nos respectivos módulos00–10. Campo de metadado genérico usa createdAt/updatedAt; evento comercial usa criadoEm/confirmadoEm/ocorridoEm conforme recurso. Não retornar propriedades EF indiscriminadamente.
+- DTOs concretos de detalhe/lista/indicador e componentes/rotas Web estão detalhados nos respectivos módulos00–10. Campo de metadado genérico usa createdAt/updatedAt; evento comercial usa criadoEm/confirmadoEm/ocorridoEm conforme recurso. Não retornar documentos BSON ou detalhes do driver indiscriminadamente.
 - Totais de movimentos: entradas=soma de delta positivo, saídas=valor absoluto da soma negativa e delta=entradas-saidas, respeitando tipo/filtro. Exportações têm geradoEm do instante próprio; tela não congela consulta posterior.
 - Endpoints HTTP do host Web: GET/POST `/conta/entrar`, POST `/conta/sair`, GET/POST `/conta/senha`, com antiforgery nos POSTs, redirect303 local no sucesso e sem token na resposta ao browser. GET `/downloads/relatorios/{tipo}` usa cookie, allowlist de tipos, policy e encaminha CSV ou erro seguro.
 
@@ -124,3 +124,11 @@ Superfície P2 proposta em módulo11/ADR-18 não integra `/api/v1` do MVP. Após
 ## Contrato publicado e validação
 
 Gerar OpenAPI da API, conferir exemplos/nullable/status e comparar mudanças em CI. Swagger UI apenas em desenvolvimento ou homologação restrita. `/health/live` público mínimo e `/health/ready` interno não contêm segredos. Frontend usa clientes tipados e contratos compilados compartilhados; incompatibilidade deve falhar em teste de contrato.
+
+## Persistência MongoDB e compatibilidade do transporte
+
+ADR-23 mantém os campos monetários HTTP existentes (preco, precoUnitario, total, receitaLiquida, ticketMedio e totalEstimado) como números decimais em **reais**, nunca números BSON/Extended JSON ou centavos disfarçados sob o mesmo nome. Na borda API, validar escala <=2 e limites, converter exatamente para long centavos; na saída dividir por 100m. UUIDs continuam strings UUID, datas ISO UTC. Nenhum ObjectId, filtro MongoDB ou operador recebido do cliente é usado como autoridade. JSON de comando rejeita campos desconhecidos como antes.
+
+Conversão 12.50 →1250→12.50; 12.505 dá400 VALIDACAO. Total calculado internamente e snapshots em centavos. CSV mantém reais decimais com ponto, sem mudar unidade dos relatórios. Versao é versão de negócio, não guardVersion. Registro/commit MongoDB incerto dá503 RESULTADO_DESCONHECIDO com Retry-After e repetição da mesma Idempotency-Key, sem afirmar rollback ou criar nova intenção. Limite de representação de agregado dá400 LIMITE_MONETARIO_EXCEDIDO. OpenAPI/cliente/tests de conversão devem refletir esses limites na implementação; rotas, policies, status de sucesso e escopo dos módulos permanecem iguais.
+
+Os nomes físicos users/employees/customers/categories/brands/products/sales/stock_movements não renomeiam rotas/DTOs em português. API mapeia explicitamente employeeId persistido para funcionarioId de transporte, preço em centavos para preco em reais e saldo incorporado para o saldo informativo existente. Nenhum documento de persistência é retornado diretamente.

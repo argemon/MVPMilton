@@ -2,7 +2,7 @@
 
 ## Entrega desta etapa
 
-Somente documentação Markdown para execução sequencial por agentes. Não implementar código-fonte, projetos .NET, migrations, testes executáveis, Dockerfiles ou Compose agora. A árvore técnica descrita é futura.
+A execução permanece sequencial.00 está aprovado e a solicitação atual autoriza exclusivamente01 (autenticação, autorização e manutenção de contas incremental), conforme ADR-30. Não iniciar02 ou recursos comerciais futuros. A antiga restrição a Markdown foi superada pelas autorizações de software00/01.
 
 ## MVP interno
 
@@ -28,7 +28,7 @@ Catálogo/pedido público, carrinho e consumidor autenticado pertencem ao bloco 
 - H-04: BRL, interface pt-BR e fuso inicial America/Cuiaba configurável por instalação.
 - H-05: preço positivo sem desconto/frete/tributo e sem registro de recebimento; confirmar representa operação comercial, não comprovação de pagamento.
 - H-06: uma réplica e backup diário; metas de desempenho/recuperação são propostas a medir.
-- H-07: perfis fixos e acesso de vendedor às próprias vendas; relatórios comerciais ficam com gerente/admin.
+- H-07: perfis fixos e acesso de vendedor às próprias vendas; relatórios comerciais ficam com administrador.
 
 Hipóteses são decisões de projeto propostas, não informações extraídas do TCC. Mudança que afete domínio exige revisar banco, contratos e testes antes de executar o bloco correspondente.
 
@@ -47,3 +47,6 @@ A revisão detalhou em módulo11/ADR-18 uma proposta P2 de catálogo e solicita�
 
 MVP completo exige todos os RF-01 a RF-20, RNF e CA-01 a CA-18. Catálogo não compensa pendências do MVP. Não declarar conformidade legal ou prontidão produtiva apenas pela existência desta documentação.
 
+## Revisão técnica MongoDB
+
+Mudança exclusivamente de persistência e representação interna, conforme ADR-20–25. RF/RN/CA, prioridades, exclusões, hipóteses e sequência não são ampliados. Nenhuma reserva de estoque foi liberada. MongoDB.Driver oficial, documentos/índices e transações de replica set substituem a arquitetura de armazenamento anterior; a revisão documental original não alterou código; as autorizações00/01 posteriores converteram a fundação e implementaram autenticação, conforme estado03. Valores internos em centavos Int64 BRL, preservando contratos HTTP em reais.

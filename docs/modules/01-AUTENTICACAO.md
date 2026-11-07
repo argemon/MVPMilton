@@ -2,11 +2,13 @@
 
 ## 1. Identificação, objetivo e valor
 
-**Bloco 01, P0, software pendente.** Entregar acesso seguro e manutenção inicial de contas, com sessão API/BFF isolada por usuário e autorização no backend. Valor: nenhum cadastro futuro precisa criar mecanismo próprio de acesso.
+**Bloco 01, P0, implementado; evidências em estado03.** Entregar acesso seguro e manutenção inicial de contas, com sessão API/BFF isolada por usuário e autorização no backend. Valor: nenhum cadastro futuro precisa criar mecanismo próprio de acesso.
 
 ## 2. Pré-requisitos e dependências concluídas
 
-00 aprovado: API/Web/PostgreSQL, contexts, configuração, TLS local, build e testes. Ler arquitetura 06/07, matriz e ADR-02/09/14. Este bloco não depende de Funcionário: somente bootstrap cria conta operacional; outras contas em fixtures de teste não são um recurso público.
+Normas transversais: arquitetura05/09 e ADR-20–30, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
+00 aprovado: API/Web/MongoDB replica set, adaptadores de persistência, configuração, TLS local, build e testes. Ler arquitetura 06/07, matriz e ADR-02/09/14. Este bloco não depende de Funcionário: somente bootstrap cria conta operacional; outras contas em fixtures de teste não são um recurso público.
 
 ## 3. Requisitos e prioridades
 
@@ -18,13 +20,11 @@ Dentro: Identity, bootstrap único seguro, login/logout SSR, troca obrigatória,
 
 ## 5. Atores e permissões
 
-Todos os perfis autenticados: me/logout/alterar senha. Administrador: Usuarios.Gerenciar. Gerente/Vendedor/Estoquista não administram contas. Perfil único e negação por padrão; troca pendente permite somente me/logout/senha. Perfis diferentes podem ser construídos em fixtures isoladas para testar policies sem depender do 02.
+Todos os perfis autenticados: me/logout/alterar senha. Administrador: Usuarios.Gerenciar. Vendedor/Estoquista não administram contas. Perfil único e negação por padrão; troca pendente permite somente me/logout/senha. Perfis diferentes podem ser construídos em fixtures isoladas para testar policies sem depender do 02.
 
-## 6. Entidades e migrations
+## 6. Entidades e evoluções de persistência
 
-Criar tabelas Identity, `sessoes_api`, `auditorias`, singleton `controle_administracao` e `web.tickets`. Usuário tem nome de exibição, email de login, perfil, ativo, versão e flag de troca de senha. Nome do bootstrap vem de configuração não secreta; senha vem de segredo externo. Campo UUID `funcionario_id` pode existir nulo, mas FK/índice de vínculo só entram em 02. Não criar tabela Funcionário antecipadamente.
-
-Token API aleatório 32 bytes, somente hash no backend; ticket/token protegidos via Data Protection no servidor Web. Cookie __Host-GestaoComercial contém referência, Secure/HttpOnly/Lax. Não incluir credenciais em Shared Contracts renderizáveis; resposta de login é transporte exclusivo servidor-servidor.
+Criar no banco comercial `users`, `api_sessions`, `audit_events` e singleton `administration_control`; no banco Web `tickets`. Conta guarda nome de exibição, nomeNormalizado para busca/ordenação, email normalizado único, hash Identity versionado, perfil fixo, ativo, versão, securityStamp, troca obrigatória, contador/lockout e timestamps. employeeId nulo somente no bootstrap; coleção employees e índice parcial de vínculo surgem no 02. Implementar stores mínimos de ASP.NET Core Identity via MongoDB.Driver, sem provedor implícito e sem hash próprio, conforme arquitetura 07. Token API de 32 bytes: somente hash no backend; ticket e token protegidos por Data Protection no Web, cookie de referência Secure/HttpOnly/Lax. Evolução explícita das coleções/validadores/índices, sem antecipar funcionários.
 
 ## 7. Fluxos principais e alternativos
 
@@ -41,7 +41,7 @@ RN-15/16/18, ADR-02/09/14. Email obrigatório válido; senha 12–128, maiúscul
 
 ## 9. Endpoints REST e HTTP do BFF
 
-Base API `/api/v1`; todas as falhas não-health usam ProblemDetails. `UsuarioResumo={id,nome,perfil,ativo,versao,deveAlterarSenha,funcionarioId:null}`; nunca retorna hash/senha.
+Base API `/api/v1`; todas as falhas não-health usam ProblemDetails. `UsuarioResumo={id,nome,email,perfil,ativo,versao,deveAlterarSenha,funcionarioId:null}` nas consultas administrativas, conforme arquitetura06; nunca retorna hash/senha. Resumo de sessão/login contém somente os campos de autenticação autorizados de seu contrato, sem reutilizar o documento users.
 
 | Método / caminho | Request | Response | Erros principais |
 | --- | --- | --- | --- |
@@ -72,11 +72,11 @@ Senhas não persistem em estado serializado. Login/logout não alteram headers d
 
 ## 11. Erros e concorrência
 
-Lock singleton administrativo antes de usuários/sessões impede zerar Admin por disputa. PUT com versão antiga dá 409 sem sobrescrever. Credencial HTTP deve ser definida por request; nenhum token em DefaultRequestHeaders singleton ou handler pooled. Circuito antigo não autoriza escrita após revogação: a API decide. Falha API não pode virar acesso por cookie isolado.
+Atualizar efetivamente guardVersion do singleton administration_control no início da transação administrativa; ler/revalidar usuários depois, incluindo contagem de Admins e versão esperada. Toda criação/ativação/desativação/troca de perfil de conta usa o mesmo controle: conflito de escrita reinicia a transação com snapshot novo. PUT com versão antiga retorna 409, sem overwrite. Login e revogação escrevem o mesmo documento de usuário/securityStamp, evitando sessão criada com stamp obsoleto. Stores e auditoria compartilham a sessão interna da operação. Chamadas BFF usam credencial por request, sem headers/handlers compartilhados. API indisponível não concede autorização por cookie isolado.
 
 ## 12. Testes unitários e de integração
 
-Unidade: expiração absoluta/inativa com relógio controlado, restrição de returnUrl, política de senha/perfil e isolamento do handler. Integração: Identity/PostgreSQL, bootstrap repetido, login inválido/bloqueado, troca temporária, 401/403, CSRF, revogação, reconexão, dois tickets sem troca de credencial, logout offline, proteção concorrente do último Admin. Inspecionar browser/HTML/storage/logs sem token da API. Fixtures de dois Admins são somente teste.
+Unidade: expiração absoluta/inativa com relógio controlado, restrição de returnUrl, política de senha/perfil e isolamento do handler. Integração: Identity/MongoDB, bootstrap repetido, login inválido/bloqueado, troca temporária, 401/403, CSRF, revogação, reconexão, dois tickets sem troca de credencial, logout offline, proteção concorrente do último Admin. Inspecionar browser/HTML/storage/logs sem token da API. Fixtures de dois Admins são somente teste.
 
 ## 13. Cenários Given/When/Then
 
@@ -90,13 +90,19 @@ Unidade: expiração absoluta/inativa com relógio controlado, restrição de re
 
 ## 14. Checklist de execução
 
-- [ ] Aplicar migrations de Identity/sessões/auditoria/controle e web.tickets do zero e sobre baseline 00.
-- [ ] Revisar segredos/key ring e executar bootstrap somente no banco local apropriado.
-- [ ] Implementar contratos/handlers/policies/SSR e testes sem funcionário futuro.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com PostgreSQL isolado.
-- [ ] Registrar contratos OpenAPI deste bloco, inspeção de cookies, cenários e falhas.
-- [ ] Atualizar estado: RF-03 parcial; POST usuários permanece para 02.
+- [x] Aplicar evoluções de persistência de Identity/sessões/auditoria/controle e gestao_web.tickets do zero e sobre baseline 00.
+- [x] Revisar segredos/key ring e executar bootstrap somente no banco explicitamente configurado.
+- [x] Implementar contratos/handlers/policies/SSR e testes sem funcionário futuro.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
+- [x] Registrar contratos OpenAPI deste bloco, inspeção de cookies, cenários e falhas.
+- [x] Atualizar estado: RF-03 parcial; POST usuários permanece para 02.
 
 ## 15. DoD e próximo bloco
 
 DoD global e M01-CA01–05 aprovados; nenhum token exposto; expiração/revogação/último Admin testados. Desbloquear **02**, que acrescenta vínculo e criação humana. Nenhum gate exige cadastrar funcionário ou dashboard.
+
+## Registro da entrega01
+
+Backend e Web utilizam MongoDB Atlas existente, configuração externa/.env preservada e bancos separados. Entregues Identity/stores mínimos, users e índice de email, sessões opacas, hash oficial, bootstrap CLI, login/logout/me/troca obrigatória, manutenção de perfil/status/redefinição, auditoria atômica e guarda do último Admin. Web usa ITicketStore cifrado, cookie de referência, SSR/antiforgery, proteção de rotas, listas/edição de contas e revalidação do circuito. Nenhum cadastro humano/funcionário ou recurso02 foi acrescentado.
+
+Os contratos com senha/token são exclusivos de transporte interno dos hosts; Contracts contém somente DTOs públicos de sessão/usuários. Inicializadores explícitos aplicam00+01; runtime não altera coleções. Bootstrap de aplicação no desenvolvimento aguarda senha externa escolhida pelo responsável; o executor não reutilizou a senha de banco nem definiu credencial padrão. Inicialização e bootstrap idempotentes foram comprovados em bancos descartáveis. Resultados, arquivos e limitações reais estão em03.

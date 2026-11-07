@@ -1,0 +1,9 @@
+@page "/conta/entrar"
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+<PageTitle>Entrar · Gestão Comercial</PageTitle>
+<FormularioConta ReturnUrl="ReturnUrl" />
+@if (Alterada == "1") { <p role="status">Senha alterada. Entre novamente.</p> }
+@code {
+    [SupplyParameterFromQuery(Name = "ReturnUrl")] public string? ReturnUrl { get; set; }
+    [SupplyParameterFromQuery(Name = "alterada")] public string? Alterada { get; set; }
+}

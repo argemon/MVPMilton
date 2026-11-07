@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7243;https://localhost:8082",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Api__BaseUrl": "https://localhost:7143/",
+        "Api__HealthBaseUrl": "https://localhost:8081/"
+      }
+    }
+  }
+}

@@ -1,19 +1,281 @@
 # 03 — Estado do projeto
 
+## Estado vigente — Bloco01, 06/11/2026 (America/Cuiaba)
+
+**01 AUTENTICACAO concluído e aprovado para avançar no caminho de desenvolvimento .NET10 + MongoDB Atlas.**00 permanece aprovado, com regressões revalidadas.02 FUNCIONARIOS está disponível somente mediante nova autorização e não foi iniciado. Esta aprovação não libera publicação/produção.
+
+RF-01/02 completos; RF-03 parcial conforme incremento aprovado: consulta/manutenção de perfil/status/redefinição. Criação humana e vínculo aguardam02. Nenhum cliente, produto, estoque, venda, dashboard ou relatório foi implementado.
+
+### Entrega e decisões
+
+Lidos AGENTS, arquitetura/requisitos, módulo01, execução03/04 e contratos existentes. Documentos sincronizados antes do código: ADR-30 registra os três perfis solicitados (Administrador, Vendedor, Estoquista), preservando permissões limitadas e BFF/cookie/Identity da arquitetura aprovada. Perfis e referências normativas foram atualizados nos documentos afetados; ADRs/auditorias históricas preservados. Nenhuma credencial foi colocada em Markdown.
+
+- Modelo de acesso independente de MongoDB/Identity em Domain/Application; stores mínimos Identity na Infrastructure, hash oficial versionado com salt, rehash e email normalizado único inclusive inativos.
+- Login sem enumeração por mensagem/status; cinco falhas bloqueiam15min. Limites: Web30/min/IP, API privada300/min/IP e10/min/hash do identificador, memória limitada, sem log de senha/email de tentativa.
+- Sessões API:32 bytes aleatórios Base64URL, somente SHA-256 persistido;8h absolutas/30min inativas. Cada chamada lê sessão/usuário atuais no primary com readConcern linearizable, sessão não causal e maxTime3s. Me/health/revalidação não prolongam inatividade.
+- Cookie __Host-GestaoComercial Secure/HttpOnly/Lax, referência ITicketStore. Tickets/token cifrados por Data Protection no banco Web, key ring persistente. Nada de JWT, token em localStorage, credencial em DefaultRequestHeaders compartilhado ou claims sensíveis.
+- Login/logout/troca por HTTP SSR + antiforgery; returnUrl local; erros401/400/429/503 com formulário seguro. Revalidação de circuito60s, navegação completa ao perder sessão, autorização real na API. Logout com API offline remove ticket/cookie local; Origin cruzado é negado no hub.
+- Bootstrap CLI único via segredo externo, sem signup/criação pública. Troca obrigatória, redefinição administrativa, mudanças de perfil/status revogam sessões transacionalmente. Perfil único e negação por padrão; policies de contas somente Administrador, troca pendente só permite me/logout/senha.
+- PUT versionado, guarda administrativa efetiva antes da contagem de Admins, proteção do último acesso em disputa. Usuários/sessões/auditoria compartilham a mesma sessão snapshot/majority/primary, operações sequenciais. Repetições transitórias limitadas a duas e orçamento5s; commit incerto repete somente commit.
+- Inicialização explícita aplica01 sobre00: users, api_sessions, audit_events, administration_control; Web tickets. Validadores strict/error, índices nome/id, email unique, token/handle unique, usuário/expiração e auditoria/recurso/data. Catálogo version2/checksum; reexecução sem perda nem sobrescrita incompatível. Nenhuma evolução no startup.
+
+### Arquivos criados/modificados no01
+
+| Área | Arquivos |
+| --- | --- |
+| Domain/Application | backend/GestaoComercial.Domain/Acesso/Perfis.cs; backend/GestaoComercial.Application/Acesso/IAutenticacao.cs |
+| Infrastructure | GestaoComercial.Infrastructure.csproj e lockfile; Identity/Documentos.cs, MongoUserStore.cs, MongoAutenticacao.cs, AuthSchema.cs, RegistroAcesso.cs |
+| API | Program.cs; Acesso/AutenticacaoHttp.cs e EndpointsAcesso.cs; lockfile afetado pela referência framework da Infrastructure |
+| Contracts | shared/GestaoComercial.Contracts/Autenticacao.cs (somente DTOs públicos, sem senha/token) |
+| Web | Program.cs, Configuracao.cs, Properties/launchSettings.json; Security/MongoTickets.cs, SessaoCircuito.cs, ContasHttp.cs; ApiClients/AcessoApiClient.cs |
+| Componentes | _Imports.razor, Routes.razor, LayoutPrincipal.razor; FormularioConta.razor, DocumentoConta.razor, RedirecionarAcesso.razor; Pages/Entrar.razor, Senha.razor, AcessoNegado.razor, Usuarios.razor, UsuarioDetalhe.razor, InicioTecnico.razor, PaginaErro.razor, PaginaIndisponivel.razor; wwwroot/app.css |
+| Testes | UnitTests/AuthenticationRulesTests.cs e HostTests.cs; IntegrationTests/AuthenticationTests.cs, AdministrationTests.cs, AuthAtomicityTests.cs, BffTests.cs e FoundationTests.cs; lockfiles afetados |
+| Configuração/documentação | .env.example, deploy/compose.yaml, README.md, AGENTS.md; docs/README.md, arquitetura05/07 e demais referências de perfis, requisitos/matriz e referências de atores, módulos01 e referências normativas de perfis nos demais módulos, execução00/01/02/03/04 |
+
+Arquivos de00 já estavam no workspace antes desta etapa e não constituem novas entregas de01. Sem commit/push ou envio de credenciais. .env foi preservado byte a byte e permanece ignorado. Scripts/evidências auxiliares locais em .local/artifacts não são código de produção nem incluem novas funcionalidades de blocos seguintes.
+
+### Validação executada
+
+| Verificação | Resultado real |
+| --- | --- |
+| dotnet restore GestaoComercial.slnx --locked-mode | Sucesso nos8 projetos, versões fixadas/lockfiles |
+| dotnet build GestaoComercial.slnx -c Release --no-restore | Sucesso,0 avisos/0 erros |
+| dotnet test GestaoComercial.slnx -c Release --no-build --logger trx | **72 aprovados:40 unitários +32 integrações;0 falhas/0 skips**. Inclui regressão00, hosts e BFF com API real e MongoDB Atlas isolado |
+| scripts/verify-architecture.ps1 | Seis projetos de produção, referências corretas; Domain/Application/Contracts sem Driver/BSON/ASP.NET/Identity |
+| Inicialização explícita nos dois hosts Development | Sucesso sobre baseline00 existente em gestao_comercial_dev/gestao_web_dev, sem alteração de credenciais ou criação de usuário. Reexecução/instalação vazia também cobertas por integração |
+| Bootstrap real por CLI | Sucesso e troca obrigatória comprovados apenas em banco E2E descartável, com credenciais sintéticas efêmeras. Bootstrap de desenvolvimento não executado por falta de segredo de aplicação escolhido pelo responsável |
+| API e Web reais, HTTPS local confiado, Edge headless | Login SSR → troca obrigatória → novo login → home → consulta/filtro/edição → último Admin409 → logout → rota protegida. Comunicação pelos hosts7143/7243 e health8081 sem bypass TLS |
+| Circuito após logout em outra aba | Redirecionou para login em **58 segundos**, dentro do intervalo de60s;0 erros JavaScript |
+| Layout/teclado | Capturas360/1280, sem overflow da página; Tab operável. Capturas inspecionadas localmente |
+| Segredos/configuração | SHA-256 do .env idêntico ao anterior; arquivo ignorado/não rastreado; busca dirigida sem URI/senha fornecida em arquivos versionáveis/evidências; HTML/storage/logs do E2E sem credenciais |
+| Auditoria de dependências | dotnet package list --vulnerable --include-transitive --format json, sucesso, nenhum pacote vulnerável reportado em artifacts/vulnerabilities-auth.json |
+| Checagem final dirigida |124 arquivos versionáveis e42 evidências textuais locais verificadas,0 ocorrências dos segredos fornecidos,109 links locais válidos, .env intocado/não rastreado; resultado em artifacts/auth-final-check.json |
+| OpenAPI | Contratos de auth/me/usuários presentes; sem POST usuários nem funcionários; validado em teste de host |
+
+Evidências finais em artifacts/tests/entrega-01-final (TRX por assembly), artifacts/auth-e2e/resultado.json, capturas login/home360/1280 e logs locais. Bancos exclusivos de integração e os dois bancos E2E foram removidos pela própria fixture, limitados aos nomes reservados. Hosts/navegador do ensaio foram encerrados. O teste de falha de auditoria alterou temporariamente somente o validator do seu banco descartável e comprovou rollback de perfil/stamp/sessões.
+
+### Rastreio dos critérios
+
+| Critério | Evidência observada |
+| --- | --- |
+| M01-CA01 / CA-01 | Bootstrap CLI, sessão opaca/cookie de referência, login, troca, novo login e logout reais; senha/hash/store e login inválido/inexistente/inativo automatizados |
+| M01-CA02 / CA-02 | Duas sessões, troca/perfil/inativação/redefinição revogam; expiração30min/8h com relógio controlado; revalidação Web e logout em outra aba58s |
+| M01-CA03 / CA-17 | Dois Admins/sessões independentes e barreira concorrente: uma alteração, outro409 ULTIMO_ADMINISTRADOR, um Admin ativo preservado |
+| M01-CA04 / CA-17 | Logout sem antiforgery400 e sessão continua válida |
+| M01-CA05 / CA-01 | API offline, logout remove ticket/cookie e nova navegação exige login; aviso seguro sem token |
+| Autorização / CA-17 | Anônimo401, Vendedor/Estoquista403 e Admin200, URL administrativa protegida no Web; perfil desconhecido e BSON inválido rejeitados |
+| Integridade | Email único inativo/normalizado, stores CAS, falhas de login concorrentes sem perder contador, lockout/rate429, inicialização idempotente e divergência bloqueada, rollback real por falha de auditoria |
+
+### Problemas resolvidos e limites reais
+
+Falhas intermediárias foram corrigidas e a suíte foi repetida: ordem dos POSTs SSR para não disputar rota de componente; preservação do code customizado em ProblemDetails; inicialização01 exigida no readiness; separação de Api__BaseUrl de Api__HealthBaseUrl (porta privada recusa login por desenho); backoff do retry concorrente ajustado; ticket revogado removido antes de novo login. Correções não antecipam módulos futuros.
+
+- Para usar o ambiente Development, o responsável deve escolher nome/email/senha de aplicação e executar --bootstrap-admin conforme README. Não usar a senha MongoDB como senha do sistema. Nenhuma senha padrão foi inventada; esta é configuração operacional, não funcionalidade ausente.
+- Docker/Compose/Testcontainers/CI não foram executados: Docker não está instalado. Atlas isolado real foi o caminho comprovado conforme ADR-28; não houve substituto em memória.
+- A conta Atlas de desenvolvimento continua compartilhada entre bancos somente conforme ADR-27. Usuários de runtime/evolução separados, RBAC de coleção/sem leitura cruzada, proteção operacional das chaves, domínio/proxy/TLS de produção, backup/restore/Q-02/Q-03 continuam gates de publicação. Não foram criadas contas/roles do cluster.
+- Limitadores em memória pressupõem uma instância; TTL não habilitado (expiração sempre validada no backend). Logout com API indisponível pode deixar token remoto inacessível pelo navegador até expirar, risco já aceito na arquitetura07.
+- Eleição/failover e failpoints de commit incerto não foram induzidos no Atlas compartilhado. O retry segue rótulos do driver; conflitos reais/rollback/transações foram executados. Nenhuma promessa de prontidão de produção ou HA.
+
+**Próximo bloco:02 FUNCIONARIOS**, para vínculo e criação humana autorizada. Não iniciado automaticamente.
+
+---
+
+## Histórico preservado00 e auditorias anteriores
+
+# 03 — Estado do projeto
+
+## Histórico aprovado — implementação00 com Atlas (06/11/2026, America/Cuiaba)
+
+**00 Fundação concluído e aprovado no caminho de desenvolvimento .NET+Atlas autorizado pelas ADR-27–29.** Próximo bloco disponível:01 Autenticação, somente por nova solicitação; não iniciado. A aprovação não é prontidão de produção nem execução de Docker/CI. Base Git 89c3832, branch de trabalho existente, sem commit/push nesta tarefa.
+
+| Bloco/ambiente | Estado real | Evidência / próximo passo |
+| --- | --- | --- |
+|00 — desenvolvimento Atlas | Concluído | Restore/build Release sem avisos,25 testes aprovados e fluxo Web/API/MongoDB em HTTPS |
+|00 — Compose/Testcontainers/CI | Preparados, não executados localmente | Docker ausente; não criar instância para substituir Atlas funcional. Executar perfil opcional no ambiente com Docker |
+|01 | Disponível após solicitação explícita | Reutilizar fundação, implementar somente autenticação/autorizações previstas |
+|02–10 | Não iniciados | Aguardar gates anteriores; produção precisa usuários separados, RBAC, operação/TLS/backup/Q-02/Q-03 |
+|11 | Proposta P2, não liberada | Aguardar00–10, aceite de escopo/Q-04 e privacidade |
+
+### Escopo, documentos e decisões
+
+Lidos AGENTS, arquitetura, requisitos, módulo00, execução e configuração local (somente chaves/classificação, sem imprimir valores). Solicitação atual superou a restrição documental anterior e autorizou converter00. ADR-27 registra Atlas/.env/ambientes/credencial de desenvolvimento; ADR-28 integração real em banco isolado remoto ou perfil Testcontainers; ADR-29 estrutura física conforme pedido e versões. A documentação foi sincronizada antes da adaptação e atualizada no fechamento. Requisitos comerciais/IDs/rotas e ordem de módulos preservados; nenhum login, funcionário, cliente, produto, estoque, venda, dashboard ou relatório implementado.
+
+### Funcionalidades e arquitetura entregues
+
+- Solução .NET10 com6 projetos de produção e2 projetos de testes. backend/Projeto, frontend/Projeto, shared/Contracts e tests/UnitTests/IntegrationTests. Domain sem dependências externas, Application referencia Domain, Infrastructure referencia Domain/Application, Api compõe Infrastructure/Application/Contracts; Web referencia só Contracts e possui armazenamento técnico independente.
+- MongoDB.Driver oficial3.11.2, IMongoClient singleton por host/configuração e sessões curtas. Código EF/Npgsql/factories/SQL/migrations removido da árvore ativa; legado local guardado fora de versionamento para preservar trabalho anterior. Sem entidades fictícias em Domain/Application.
+- Loader .env Development preserva o arquivo, aceita valores literais/aspas/vazio, nunca expande comandos e dá precedência ao ambiente do processo. Staging/Production/hosts Testing não carregam .env. Connection string validada sem ecoar segredo, ambiente/banco/API URL/TLS validados. Arquivo .env ignorado pelo Git e excluído de imagem/publish; .env.example ilustrativo criado.
+- Atlas/SRV fornecido reutilizado com sucesso, sem criar outra instância. Nome do replica set descoberto por hello, sem fixar rs0. Primary/sessões/topologia conferidos; transações multi-documento comprovadas por commit/abort real em duas coleções descartáveis. Versão exata do servidor Atlas não foi consultada/fixada, por ser serviço gerenciado; compatibilidade usada comprovada na execução, sem atribuir versão fictícia ao servidor.
+- Inicialização explícita --initialize-persistence de API/Web cria somente persistence_versions nos bancos gestao_comercial_dev/gestao_web_dev: validator strict/error, índices _id e version unique, ID/schemaVersion/checksum/appliedAt. Reexecução idempotente preserva documento e falha em checksum/definição incompatível; startup normal não muda schema. Em Staging/Production, tarefa exige Evolution__ConnectionString externo.
+- Health mínimo live200/ready200 ou503, readiness somente listener interno e inclui conexão/topologia/baseline. Erros ProblemDetails genéricos com traceId/code, sem stack/URI; logs do driver e handlers HTTP sensíveis desativados. Rotas não liberadas negadas sem autenticação simulada.
+- Blazor Interactive Server pt-BR, home/erro/indisponível, estado real da API e Repetir por HttpClient tipado HTTPS. TLS validado normalmente no ensaio local. CA privada opcional restrita ao cliente HTTP da API, sem substituir raízes do Atlas. Layout/teclado conferidos em360/1280.
+- Compose de desenvolvimento API/Web usa Atlas externo e não contém serviço PostgreSQL/MongoDB substituto. Dockerfiles/pipeline/path checks adaptados. CI configura Testcontainers.MongoDb4.14.0/mongo8.0.17/rs0 isolado sem segredos Atlas. Chaves Web em volume app-owned; este perfil não foi executado aqui.
+
+### Configuração e segurança observadas
+
+O .env existente permaneceu byte a byte idêntico (SHA-256 comparado sem publicar o hash). Password/URI não foram copiados para Markdown nem encontrados nos arquivos versionáveis/evidências TRX escaneados; .env não está no índice Git. Foram examinados97 arquivos ativos e23 evidências TRX, zero ocorrência exata dos segredos fornecidos. Essa checagem dirigida não substitui um scanner completo de segredos; gitleaks permanece no CI e não foi executado localmente (Docker ausente).
+
+Somente a conta Atlas fornecida é reutilizada em Development, explicitamente na ADR-27. Não foi criada/alterada role/conta do cluster nem alegada comprovação de RBAC de produção. Web usa apenas seu banco no código, porém isolamento de privilégio entre contas requer credenciais separadas externas para produção e é pendência operacional antes do10. Dados reais de negócio não foram usados.
+
+### Comandos efetivamente executados e resultados
+
+| Comando/roteiro | Resultado observado |
+| --- | --- |
+| dotnet --version; dotnet dev-certs https --check | SDK10.0.401; certificado local válido encontrado. Roundtrip HTTPS abaixo comprovou confiança sem bypass |
+| dotnet restore --disable-parallel; dotnet restore --locked-mode | Sucesso;8 projetos restaurados, versões transitivas em lockfiles |
+| dotnet build --no-restore -c Release | Sucesso final,0 avisos/0 erros |
+| dotnet format whitespace GestaoComercial.slnx --no-restore --verbosity quiet | Concluído; build e testes repetidos depois |
+| dotnet run --project backend/GestaoComercial.Api -c Release --no-build -- --probe-mongo | Atlas/SRV: conexão e topologia transacional disponíveis; somente resultado seguro, sem URI |
+| dotnet run --project backend/GestaoComercial.Api -c Release --no-build -- --initialize-persistence | Sucesso; catálogo técnico apenas no banco API Development |
+| Comando anterior no frontend/GestaoComercial.Web | Sucesso; catálogo técnico apenas no banco Web Development |
+| Reexecução de --initialize-persistence nos dois hosts após encerrá-los | Sucesso, dados e índice preservados, sem recriar banco ou sobrescrever registro |
+| dotnet test tests/GestaoComercial.UnitTests -c Release --no-build |20 testes passaram inicialmente; caso adicional do limite de banco fez total final21 |
+| dotnet test tests/GestaoComercial.IntegrationTests -c Release --no-restore |4 testes reais passaram após corrigir limite do nome descartável; operação de commit/abort ampliada para duas coleções |
+| dotnet test -c Release --no-build --logger 'trx;LogFilePrefix=entrega-atlas' --results-directory artifacts/tests | **25 aprovados:21 UnitTests (incluem hosts sem DB) +4 IntegrationTests reais Atlas;0 falhas e0 skips** |
+| ./scripts/verify-architecture.ps1 | Seis projetos de produção presentes e referências/pacotes de camada válidos |
+| dotnet package list --vulnerable --include-transitive --format json | Nenhuma vulnerabilidade de pacote reportada em artifacts/vulnerabilities-mongodb.json |
+| Hosts reais dotnet run API e Web em Development/HTTPS | API7143 e ready8081, Web7243 e ready8082 iniciados; processos de validação encerrados ao final |
+| GET HTTPS normal: API live7143, ready8081, Web ready8082 e home7243 | Todos200; HTML da home mostra API disponível e cliente Web chamou API real |
+| Edge headless/CDP em360 e1280, Tab e Repetir | Largura/scrollWidth360/360 e1280/1280; focoBUTTON; estado API disponível. Após parar API local, indisponível com Repetir e sem overflow nas duas larguras |
+| git check-ignore .env; checagem de segredos/hash/links; git diff --check | .env ignorado e preservado, zero vazamento dirigido, links locais válidos e diff sem whitespace inválido |
+
+DOTNET_CLI_HOME foi apontado à pasta .local/dotnet na execução para evitar diretórios externos de templates/cache; não é requisito do produto. Pacotes Microsoft ASP.NET10.0.12, xUnit2.9.3, Test SDK17.14.1 e runner3.1.1 fixados. Docker/Compose não estava disponível; nenhum container foi criado nem imagem baixada. Pipeline não foi enviado/disparado no GitHub.
+
+### Testes e aceites comprovados
+
+- M00-CA01: build/restore, init técnica dos dois bancos, hosts/health e tela com API disponível comprovados no caminho Atlas; Compose não executado, não necessário para o caminho atual autorizado.
+- M00-CA02: unidade de host com driver apontando para conexão indisponível confirmou ready503/live200; UI verificada com API local parada. Cluster Atlas não foi interrompido nem submetido a eleição/falha deliberada; essa falha operacional não foi alegada como executada.
+- M00-CA03: init idempotente preservou registro/appliedAt/índices; nova execução de processo contra o mesmo Atlas continuou pronta. Não há volume local de banco a testar no caminho Atlas; ensaio de volume/container local é não aplicável ao desenvolvimento atual e pendente no perfil opcional.
+- M00-CA04: configuração ausente/inválida impede startup; teste de host e validador não expõe os valores. Production não usa alias de desenvolvimento; validação de banco/TLS/API URL coberta.
+- Integração: fixture reserva banco aleatório vazio gc_m00_[24hex]_test; usa e remove somente seu nome. Commit em duas coleções torna documentos visíveis, abort em duas não produz efeitos; baseline/checksum/índice/validador reais e cliente HTTP tipado com API real em WebApplicationFactory. Teardown final executado sem erro; nenhum banco de produção/development apagado.
+- Interface: screenshots artifacts/screenshots/home-atlas-360.png, home-atlas-1280.png e home-atlas-unavailable-*.png; foco/retry e métricas de viewport observados. Não é auditoria completa de acessibilidade nem teste de autenticação de01.
+
+### Problemas encontrados e resolvidos
+
+1. Estrutura/código anterior eram relacionais e não correspondiam à documentação MongoDB. Projetos movidos, referências/pacotes/infra/tests substituídos, sem reutilizar aprovação antiga.
+2. Build acusou construtor Testcontainers obsoleto com warnings-as-errors. Corrigido para construtor com imagem explícita; build final sem avisos.
+3. Primeira integração falhou em comando Atlas código8000 porque o nome de44 caracteres da fixture excedia o limite de38 bytes do plano compartilhado. Corrigido para36 caracteres/96 bits aleatórios e validador de configuração conservador. Referência oficial vinculada nas ADRs; credencial/URI nunca alteradas nem expostas. Integração final passou.
+4. Parser .env revisado para valor vazio sem indexar string vazia, com teste; defaults/overrides separados por ambiente. Arquivo real preservado.
+5. Certificados locais/CA privada e raízes do Atlas não podem compartilhar um override global de trust. Configurada CA opcional somente no HttpClient interno; sem desabilitar validação de certificado/hostname.
+
+### Pendências reais e avaliação do gate
+
+Não há bloqueio conhecido para iniciar01 no ambiente Development Atlas validado, mediante pedido do usuário. **Não avançar automaticamente.** Docker/Compose/CI/Testcontainers e scanner completo ainda precisam execução no ambiente apropriado; nenhum sucesso desses perfis foi alegado. Publicação continua bloqueada antes de10 por credenciais separadas/RBAC/TLS operacional/backup/restore e Q-02/Q-03; Q-01 e Q-04 mantêm os prazos originais. As operações comerciais/transacionais do05/06 não foram implementadas nem aprovadas por um teste técnico de transação00.
+
+Primeira ação ao retomar: ler este registro e conferir arquivos/ambiente sem remover bancos/volumes nem sobrescrever .env. Para01, reutilizar MongoFoundation, configuração, contratos e cliente existentes; criar somente coleções/policies/stores e fluxos autorizados por seu módulo. Operação de schema permanece explícita. Nenhum método fictício/TODO bloqueante ou endpoint de falha foi adicionado à aplicação.
+
+### Arquivos ativos criados/atualizados de software/configuração
+
+- `.dockerignore`
+- `.editorconfig`
+- `.env.example`
+- `.gitattributes`
+- `.github/workflows/fundacao.yml`
+- `.gitignore`
+- `Directory.Build.props`
+- `Directory.Packages.props`
+- `GestaoComercial.slnx`
+- `backend/GestaoComercial.Api/Configuracao.cs`
+- `backend/GestaoComercial.Api/ErroSeguro.cs`
+- `backend/GestaoComercial.Api/GestaoComercial.Api.csproj`
+- `backend/GestaoComercial.Api/Program.cs`
+- `backend/GestaoComercial.Api/Properties/launchSettings.json`
+- `backend/GestaoComercial.Api/packages.lock.json`
+- `backend/GestaoComercial.Application/GestaoComercial.Application.csproj`
+- `backend/GestaoComercial.Application/packages.lock.json`
+- `backend/GestaoComercial.Domain/GestaoComercial.Domain.csproj`
+- `backend/GestaoComercial.Domain/packages.lock.json`
+- `backend/GestaoComercial.Infrastructure/GestaoComercial.Infrastructure.csproj`
+- `backend/GestaoComercial.Infrastructure/Persistence/MongoConfiguration.cs`
+- `backend/GestaoComercial.Infrastructure/Persistence/MongoFoundation.cs`
+- `backend/GestaoComercial.Infrastructure/packages.lock.json`
+- `build/LocalEnvironment.cs`
+- `deploy/Api.Dockerfile`
+- `deploy/Web.Dockerfile`
+- `deploy/compose.yaml`
+- `frontend/GestaoComercial.Web/ApiClients/EstadoApiClient.cs`
+- `frontend/GestaoComercial.Web/Components/App.razor`
+- `frontend/GestaoComercial.Web/Components/LayoutPrincipal.razor`
+- `frontend/GestaoComercial.Web/Components/Pages/InicioTecnico.razor`
+- `frontend/GestaoComercial.Web/Components/Pages/PaginaErro.razor`
+- `frontend/GestaoComercial.Web/Components/Pages/PaginaIndisponivel.razor`
+- `frontend/GestaoComercial.Web/Components/Routes.razor`
+- `frontend/GestaoComercial.Web/Components/_Imports.razor`
+- `frontend/GestaoComercial.Web/Configuracao.cs`
+- `frontend/GestaoComercial.Web/ErroSeguro.cs`
+- `frontend/GestaoComercial.Web/GestaoComercial.Web.csproj`
+- `frontend/GestaoComercial.Web/Persistence/MongoConfiguration.cs`
+- `frontend/GestaoComercial.Web/Persistence/MongoFoundation.cs`
+- `frontend/GestaoComercial.Web/Program.cs`
+- `frontend/GestaoComercial.Web/Properties/launchSettings.json`
+- `frontend/GestaoComercial.Web/packages.lock.json`
+- `frontend/GestaoComercial.Web/wwwroot/app.css`
+- `global.json`
+- `scripts/verify-architecture.ps1`
+- `shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj`
+- `shared/GestaoComercial.Contracts/HealthResponse.cs`
+- `shared/GestaoComercial.Contracts/packages.lock.json`
+- `tests/GestaoComercial.IntegrationTests/FoundationTests.cs`
+- `tests/GestaoComercial.IntegrationTests/GestaoComercial.IntegrationTests.csproj`
+- `tests/GestaoComercial.IntegrationTests/packages.lock.json`
+- `tests/GestaoComercial.UnitTests/ConfigurationTests.cs`
+- `tests/GestaoComercial.UnitTests/GestaoComercial.UnitTests.csproj`
+- `tests/GestaoComercial.UnitTests/HostTests.cs`
+- `tests/GestaoComercial.UnitTests/packages.lock.json`
+
+README, AGENTS, arquitetura03/05/09/10, escopo/RNF/aceites, módulos (norma transversal), execução00/01/02/03/04/05/06/07 e índice foram sincronizados nos pontos afetados. Auditorias antigas06/08 preservadas com nota histórica. O .env real não faz parte desse inventário porque não foi alterado/versionado; somente .env.example é entregue. Arquivos antigos EF/SQL/tests legados foram retirados da árvore ativa e preservados localmente sob .local ignorado; não são dependência de build/runtime.
+
+## Registros anteriores — histórico, sem prevalência sobre o estado acima
+
+
+## Auditoria documental anterior à implementação00 — registro histórico
+
+**BLOQUEADO**, conforme [06-AUDITORIA-MONGODB.md](06-AUDITORIA-MONGODB.md). Corrigidas inconsistências de campos/índices, tickets/recibo P2, limites do domínio, bootstrap rs0/URI, termos remanescentes e rastreabilidade dos testes; ADR-26. A especificação permite a sequência00–11, mas o item6 não está integralmente atendido pelo artefato existente: deploy/compose.yaml e hosts continuam na stack anterior. Esta auditoria alterou somente Markdown. A futura adaptação autorizada do00 deve converter infraestrutura/hosts e produzir evidências de replica set/conexão/readiness/transações antes de reauditoria.01 permanece bloqueado; nenhuma implementação iniciada.
+
+Fechamento desta auditoria:40 documentos existentes revisados,32 corrigidos e1 relatório novo;41 Markdown atuais,113 links locais válidos,12 módulos/15 seções/62 cenários e IDs originais preservados. Hashes SHA-256 de66 arquivos não-Markdown inalterados, sem novo arquivo não-Markdown visível ao Git; diff de whitespace sem erro. Nenhum restore/build/teste/Compose/MongoDB executado nesta auditoria. Inventários completo e de alterações no relatório06 solicitado.
+
+
+## Histórico — revisão documental MongoDB, 06/11/2026
+
+Solicitação atual: atualizar somente Markdown, sem implementar/adaptar nenhum bloco. Stack alvo .NET10/ASP.NET Core/Blazor Interactive Server/MongoDB/MongoDB.Driver oficial/xUnit/Testcontainers/Compose. ADR-20–25 registram modelagem documental, centavos Int64, transações/concorrência, stores Identity e infraestrutura. Escopo, requisitos, IDs, monorepo e ordem preservados; proposta P2 continua não liberada.
+
+| Item | Estado real vigente | Próxima ação |
+| --- | --- | --- |
+| Documentação MongoDB | Atualizada para revisão; validações documentais no relatório08 | Revisar ADR-20–25 e incompatibilidades, sem confundir especificação com implementação |
+| 00 Fundação | Código preexistente na stack PostgreSQL/EF, incompatível com a nova baseline; gate NÃO aprovado | Futura adaptação explicitamente autorizada para MongoDB.Driver/replica set/Testcontainers, com novas evidências |
+| 01–10 | Não iniciados; ordem administrativa preservada | Aguardar aprovação de00 e predecessores |
+| 11 | P2 proposto, não liberado | Aguardar00–10, Q-03/Q-04 e aceite de escopo |
+
+Nenhum código, pacote, teste executável, script SQL, Compose, Dockerfile ou workflow foi alterado nesta revisão. Hashes SHA-256 dos arquivos não-Markdown existentes foram comparados no fechamento. A evidência antiga (build/17 testes/layout) permanece como histórico da stack antiga, sem valer como teste MongoDB. Não foram executados restore/build/testes de software, inicializador, transações, containers ou backup/restore nesta tarefa documental. O roteiro07 foi convertido para especificação de adaptação futura e não anuncia comandos inexistentes.
+
+Incompatibilidades: pacotes/hosts/contexts/migrations SQL e pipeline existentes, modelo relacional/locks, armazenamento monetário anterior e stores Identity dependentes de persistência precisam futura substituição. Sem conversão/importação de dados feita. MongoDB replica set e versões fixas/validadas de driver/servidor/Testcontainers/Tools são pré-requisitos de implementação; nenhum patch novo é alegado como testado. Docker permanecia ausente na evidência anterior, não reavaliado nem instalado nesta revisão. Próxima ação de software é00, somente quando solicitado;01 continua bloqueado.
+
+Relatório com auditoria, alterações incompatíveis, verificação documental, pendências e inventário completo: [08-REVISAO-MONGODB.md](08-REVISAO-MONGODB.md). Requisitos alterados tecnicamente (representação/persistência) são RN-01/04 e RNF-07/08/09; seus resultados funcionais e limites são preservados e registrados, sem mudança silenciosa. Matrizes RF/RN/CA e cenários locais mantêm os IDs originais.
+
+## Evidência da revisão documental MongoDB
+
+Verificação final:40 Markdown,103 links locais válidos,12 módulos com15 seções e62 cenários locais preservados;24 RF/12 RNF/24 RN/18 CA nos catálogos, sem alteração de IDs/rotas originais. Árvore do monorepo idêntica à planejada originalmente. Hashes de66 arquivos não-Markdown inalterados em comparação ao início desta revisão, incluindo código/infraestrutura já presentes e não rastreados. Sem arquivo não-Markdown novo visível ao Git. Nenhum build/teste de software ou MongoDB executado nesta revisão. Inventário completo dos39 documentos atualizados e relatório novo em08.
+
+Documentação pronta para revisão; primeira ação futura de software é adaptar00 quando autorizado. Nenhum bloco iniciado/avançado nesta revisão.
+
+## Histórico anterior à revisão — não representa a stack vigente
+
+As seções seguintes preservam os registros das entregas anteriores, inclusive nomes de tecnologias, comandos, arquivos e resultados reais. Leitura histórica não autoriza executá-los contra a nova arquitetura nem transferir aprovação de testes para MongoDB. A identificação/quadro/pendências antigos abaixo são históricos e são substituídos pelo estado vigente acima.
+
 ## Identificação
 
 - Projeto: GestaoComercial.
 - Data desta especificação: 06/11/2026, referência America/Cuiaba.
-- Etapa: documentação inicial.
-- Ambiente observado: pasta de trabalho vazia, sem repositório Git no início.
-- Software implementado: nenhum. Não há solução, banco, migrations, testes executáveis nem containers criados.
+- Etapa atual: implementação exclusivamente do bloco 00; validação de integração pendente.
+- Ambiente atual: checkout do GitHub em D:\Projetos\MVPMilton, main, base 89c3832; SDK 10.0.401/runtime 10.0.12. Histórico documental abaixo preservado.
+- Software atual: solução, API, Blazor, contexts, baselines, testes e Compose criados. Containers/banco não executados neste ambiente. O gate 00 não está aprovado.
 
 ## Quadro de blocos
 
 | Bloco | Estado | Evidência atual | Próxima ação |
 | --- | --- | --- | --- |
 | Documentação | Revisada | 37 arquivos Markdown; módulos 00–11 detalhados e matriz consolidada | Validar decisões propostas/hipóteses; software continua pendente |
-| 00 Fundação | Pendente; próximo bloco de implementação | Somente especificação | Iniciar quando a implementação for solicitada |
+| 00 Fundação | Implementado com validação parcial; gate bloqueado | Build sem avisos, 17 testes passam; 2 falham por PostgreSQL ausente | Concluir integração, TLS/Compose e persistência |
 | 01 Autenticação | Pendente | Sem código/testes | Aguardar gate 00 |
 | 02 Funcionários | Pendente | Sem código/testes | Aguardar gate 01 |
 | 03 Clientes | Pendente | Sem código/testes | Aguardar gate 02 |
@@ -36,11 +298,11 @@ Testes de software não são aplicáveis à entrega Markdown e não foram execut
 
 ## Revisão dos módulos — 06/11/2026
 
-Arquitetura01–10, requisitos 01–06 e módulos 00–11 foram lidos integralmente. Os12 módulos foram completados com15 seções cada, incluindo objetivo/valor, pré-requisitos, rastreabilidade/prioridades, escopo, atores, banco, fluxos, regras/validação, contratos, UI/estados, concorrência, testes, Given/When/Then, checklist e DoD/desbloqueio. Total previsto de aceites locais:62 cenários, sem substituir CA-01–18.
+Arquitetura01–10, requisitos 01–06 e módulos 00–11 foram lidos integralmente. Os 12 módulos foram completados com15 seções cada, incluindo objetivo/valor, pré-requisitos, rastreabilidade/prioridades, escopo, atores, banco, fluxos, regras/validação, contratos, UI/estados, concorrência, testes, Given/When/Then, checklist e DoD/desbloqueio. Total previsto de aceites locais:62 cenários, sem substituir CA-01–18.
 
 ADR-01–14 preservadas. ADR-15–18 são propostas identificadas: inativo/saldo/limites/arredondamento; migrations e locks administrativos incrementais; detalhes de contratos/UI; recorte mínimo P2 de catálogo/solicitação. Documentos normativos afetados foram sincronizados e a matriz foi acrescentada como37º Markdown. RF-01–20/RN-01–20 continuam MVP; RF-21–24/RN-21–24 são propostas P2. Q-04 continua aberta.
 
-Validação documental final por leitura/expressões regulares no PowerShell:37 Markdown,12 módulos,15 seções por módulo,62 cenários locais,24 RF (20  MVP+4  P2 propostos),12 RNF,24 RN (20  MVP+4  P2 propostas),18 CA globais e 18 ADR. Zero links locais quebrados, cercas de código sem par, títulos vazios, IDs inexistentes ou arquivos de outra extensão. Todos os módulos contêm requests/responses, testes previstos, checklist, comandos de build/teste e DoD.
+Validação documental final por leitura/expressões regulares no PowerShell:37 Markdown,12 módulos,15 seções por módulo,62 cenários locais,24 RF (20  MVP+4  P2 propostos), 12 RNF, 24 RN (20  MVP+4  P2 propostas),18 CA globais e 18 ADR. Zero links locais quebrados, cercas de código sem par, títulos vazios, IDs inexistentes ou arquivos de outra extensão. Todos os módulos contêm requests/responses, testes previstos, checklist, comandos de build/teste e DoD.
 
 Auditoria dos pré-requisitos extraídos da seção 2 dos módulos:00 não depende de software anterior;01–11 exigem somente a cadeia 00 até o bloco anterior. Zero dependência de bloco futuro. Revisão semântica dos incrementos confirmou bootstrap sem Funcionário, histórico vazio sem Venda, produto+saldo0 antes de movimentações, FKs de venda somente em 06 e ensaio de homologação antes do destino final. A matriz consolidada documenta essas condições e os gates externos Q-02/Q-03/Q-04.
 
@@ -77,3 +339,117 @@ Primeira ação para retomar:
 ```
 
 Nunca substituir “pendente” por “concluído” porque o módulo correspondente está documentado. Interrupção no meio do bloco deve registrar último passo realizado, mudanças locais e validações ainda não executadas.
+
+
+## Implementação 00 — 06/11/2026, America/Cuiaba, 20h30–20h50
+
+Estado: implementação entregue com validação parcial; NÃO APROVADO para avançar. Base Git 89c3832; alterações locais sem commit/push. Autorização explícita do usuário prevaleceu sobre a etapa documental anterior (ADR-19). Lidos AGENTS, índice, arquitetura 01–10, requisitos 01–06, módulo 00 integral e execução 00–04. Não havia implementação/contratos compilados reutilizáveis; HealthResponse foi criado a partir do contrato normativo.
+
+Entregas: 10 projetos na solução; camadas e hosts fisicamente separados; Contracts somente HealthResponse. Domain/Application vazios intencionalmente, sem entidades/serviços fictícios. Contexts comercial/web com factories e migrations independentes, Up cria somente schema, históricos separados, sem Identity. Configuração validada com mensagens sem valores; negação por padrão sem esquema simulado; ProblemDetails seguro e cancelamento propagado; liveness e readiness mínimo, porta privada 8081; readiness verifica conexão e migrations. Blazor Interactive Server pt-BR com home/erro/indisponível e cliente HTTP tipado, estados reais e Repetir. Compose local, roles runtime/migrator distintas, volumes, TLS externo, imagens fixadas e CI preparados. RNF-04/07/08/09/10 e RN-15 incrementais; nenhum RF comercial.
+
+### Comandos e resultados reais
+
+| Verificação | Comando/roteiro executado | Observado |
+| --- | --- | --- |
+| Ambiente | dotnet --info; dotnet --version; docker version | SDK 10.0.401, runtime 10.0.12. --info inicialmente teve acesso negado ao Service Control Manager; --version e build funcionam. docker não encontrado; psql/pg_ctl não encontrados (somente diretório data de instalação antiga). |
+| Restore | dotnet restore --disable-parallel; dotnet restore --locked-mode | Ambos concluídos; pacotes transitivos fixados por lockfiles. DOTNET_CLI_HOME local .local/dotnet para evitar escrita em diretório de templates externo; acesso de rede autorizado na execução. |
+| Build | dotnet build --no-restore -c Release | Última execução: sucesso, 0 avisos/0 erros. Primeiro build revelou conflito Relational 10.0.4/10.0.12; corrigido com referência explícita 10.0.12 e novo restore. |
+| EF CLI | dotnet new tool-manifest; dotnet tool install dotnet-ef --version 10.0.12 | Ferramenta local registrada em dotnet-tools.json. |
+| Migrations | dotnet ef migrations add BaselineComercial --project backend/src/GestaoComercial.Infrastructure --output-dir Persistence/Migrations --configuration Release; equivalente BaselineWeb em frontend/src/GestaoComercial.Web | Geradas, Up revisado com EnsureSchema; nenhuma tabela de negócio. Down não destrói schema. Nome temporal EF usa UTC. |
+| SQL | dotnet ef migrations script --project backend/src/GestaoComercial.Infrastructure --configuration Release --no-build --idempotent --output deploy/baseline-comercial.sql; equivalente Web/baseline-web.sql | SQL gerado e inspecionado: schemas + __EFMigrationsHistory. Não aplicado a banco real. MIGRATION_CONNECTION temporária de design, sem credencial real. |
+| Testes parciais | dotnet test -c Release --no-build --filter 'Category!=PostgreSQL' | API 5 aprovados. Após ajustes finais, dotnet test frontend/tests/GestaoComercial.Web.Tests -c Release --no-build --filter 'Category!=PostgreSQL': 12 aprovados. Nenhum ignorado. |
+| Suíte completa final | dotnet test -c Release --no-build --logger 'trx;LogFilePrefix=entrega' --results-directory artifacts/tests | 19 testes: 17 aprovados, 2 falharam explicitamente por TEST_COMERCIAL_CONNECTION/TEST_WEB_CONNECTION ausentes, 0 skips; exit 1. Domain/Application.Tests sem casos porque não há lógica própria; não contabilizados como aprovação de regras. |
+| Arquitetura | ./scripts/verify-architecture.ps1 | Referências válidas; frontend só Contracts; Domain/Application/Contracts sem pacote externo. |
+| Vulnerabilidades | dotnet package list --vulnerable --include-transitive --format json | Relatório artifacts/vulnerabilities.json sem pacotes vulneráveis reportados. Não substitui scanner de segredos. |
+| UI real | Web em Testing HTTP loopback temporário, Edge headless/CDP, viewport exata 360 e 1280, Tab e Repetir | scrollWidth igual à largura da viewport (360/1280); foco alcançou BUTTON; clique Repetir manteve indisponibilidade real da API; capturas revistas. Corrigido carregamento de static web assets encontrado na primeira inspeção. Host temporário encerrado. |
+
+Evidências locais ignoradas pelo Git: artifacts/tests/entrega*.trx, artifacts/vulnerabilities.json, artifacts/screenshots/home-360.png e home-1280.png. UI testada somente no estado de API indisponível, sem alegar validação TLS/Compose. Configuração ausente testada no host Web (falha de startup) e no validador API. Erro injetado exclusivamente via StartupFilter de testes, sem endpoint de falha na aplicação. Testes verificam 401 em rota não liberada, 404 no readiness público, 503 no readiness sem DB e live 200.
+
+### Aceites e DoD
+
+- M00-CA01: parcial (restore/build/hosts/layout comprovados); falta baseline real + readiness 200 em Compose/TLS.
+- M00-CA02: parcial (readiness 503 com conexão indisponível e live 200 via WebApplicationFactory); falta parar/reiniciar DB real.
+- M00-CA03: pendente, Docker/DB indisponíveis; volume e reaplicação têm roteiro, sem comprovação.
+- M00-CA04: comportamento comprovado por testes de configuração e startup sem conexão, sem valor secreto no erro.
+- DoD arquitetura/escopo: atendida na inspeção. Sem dados, transações, concorrência comercial ou constraints comerciais neste bloco (não aplicáveis).
+- DoD build: atendida. DoD testes integração/migrations do zero/TLS/roles/volumes: pendente. UI 360/1280 e foco básico demonstrados; não alegar auditoria completa de acessibilidade. CI criado, não executado no GitHub. Gitleaks não executado localmente (Docker ausente), etapa preparada em CI.
+
+### Pendências e retomada
+
+Providenciar Docker/Compose e certificados locais SAN api/localhost confiados; executar o roteiro 07 com banco isolado, conferir SQL e aplicar com migrator único. Executar os dois testes reais, validar permissões cruzadas/DDL, readiness 200/503 com parada real e persistência após reiniciar volume sem removê-lo. Validar build das imagens/Compose, certificados e pipeline com scanner. Nenhuma migration foi aplicada a banco disponível neste ambiente; nenhum container foi criado. Imagens declaradas não foram baixadas/testadas localmente. Não há bloqueio de negócio novo.
+
+Próximo bloco: 01 Autenticação, ainda BLOQUEADO pelo gate 00. Não iniciado. Parar neste bloco. Primeira ação de retomada: conferir alterações e ambiente sem remover volumes existentes, então iniciar somente o banco conforme roteiro. Decisão nova ADR-19; requisitos não alterados.
+
+### Inventário de arquivos criados/alterados nesta execução
+
+- `.dockerignore`
+- `.editorconfig`
+- `.gitattributes`
+- `.github/workflows/fundacao.yml`
+- `.gitignore`
+- `Directory.Build.props`
+- `Directory.Packages.props`
+- `GestaoComercial.slnx`
+- `README.md`
+- `backend/src/GestaoComercial.Api/Configuracao.cs`
+- `backend/src/GestaoComercial.Api/ErroSeguro.cs`
+- `backend/src/GestaoComercial.Api/GestaoComercial.Api.csproj`
+- `backend/src/GestaoComercial.Api/Program.cs`
+- `backend/src/GestaoComercial.Api/packages.lock.json`
+- `backend/src/GestaoComercial.Application/GestaoComercial.Application.csproj`
+- `backend/src/GestaoComercial.Application/packages.lock.json`
+- `backend/src/GestaoComercial.Domain/GestaoComercial.Domain.csproj`
+- `backend/src/GestaoComercial.Domain/packages.lock.json`
+- `backend/src/GestaoComercial.Infrastructure/GestaoComercial.Infrastructure.csproj`
+- `backend/src/GestaoComercial.Infrastructure/Persistence/ComercialDbContext.cs`
+- `backend/src/GestaoComercial.Infrastructure/Persistence/ComercialDbContextFactory.cs`
+- `backend/src/GestaoComercial.Infrastructure/Persistence/Migrations/20261107004116_BaselineComercial.Designer.cs`
+- `backend/src/GestaoComercial.Infrastructure/Persistence/Migrations/20261107004116_BaselineComercial.cs`
+- `backend/src/GestaoComercial.Infrastructure/Persistence/Migrations/ComercialDbContextModelSnapshot.cs`
+- `backend/src/GestaoComercial.Infrastructure/packages.lock.json`
+- `backend/tests/GestaoComercial.Api.IntegrationTests/FundacaoTests.cs`
+- `backend/tests/GestaoComercial.Api.IntegrationTests/GestaoComercial.Api.IntegrationTests.csproj`
+- `backend/tests/GestaoComercial.Api.IntegrationTests/packages.lock.json`
+- `backend/tests/GestaoComercial.Application.Tests/GestaoComercial.Application.Tests.csproj`
+- `backend/tests/GestaoComercial.Application.Tests/packages.lock.json`
+- `backend/tests/GestaoComercial.Domain.Tests/GestaoComercial.Domain.Tests.csproj`
+- `backend/tests/GestaoComercial.Domain.Tests/packages.lock.json`
+- `deploy/.env.example`
+- `deploy/Api.Dockerfile`
+- `deploy/Web.Dockerfile`
+- `deploy/baseline-comercial.sql`
+- `deploy/baseline-web.sql`
+- `deploy/compose.yaml`
+- `deploy/init-db.sh`
+- `docs/README.md`
+- `docs/execution/03-ESTADO-PROJETO.md`
+- `docs/execution/04-DECISOES-TECNICAS.md`
+- `docs/execution/07-EXECUCAO-LOCAL-FUNDACAO.md`
+- `dotnet-tools.json`
+- `frontend/src/GestaoComercial.Web/ApiClients/EstadoApiClient.cs`
+- `frontend/src/GestaoComercial.Web/Components/App.razor`
+- `frontend/src/GestaoComercial.Web/Components/LayoutPrincipal.razor`
+- `frontend/src/GestaoComercial.Web/Components/Pages/InicioTecnico.razor`
+- `frontend/src/GestaoComercial.Web/Components/Pages/PaginaErro.razor`
+- `frontend/src/GestaoComercial.Web/Components/Pages/PaginaIndisponivel.razor`
+- `frontend/src/GestaoComercial.Web/Components/Routes.razor`
+- `frontend/src/GestaoComercial.Web/Components/_Imports.razor`
+- `frontend/src/GestaoComercial.Web/Configuracao.cs`
+- `frontend/src/GestaoComercial.Web/ErroSeguro.cs`
+- `frontend/src/GestaoComercial.Web/GestaoComercial.Web.csproj`
+- `frontend/src/GestaoComercial.Web/Persistence/Migrations/20261107004124_BaselineWeb.Designer.cs`
+- `frontend/src/GestaoComercial.Web/Persistence/Migrations/20261107004124_BaselineWeb.cs`
+- `frontend/src/GestaoComercial.Web/Persistence/Migrations/WebDbContextModelSnapshot.cs`
+- `frontend/src/GestaoComercial.Web/Persistence/WebDbContext.cs`
+- `frontend/src/GestaoComercial.Web/Persistence/WebDbContextFactory.cs`
+- `frontend/src/GestaoComercial.Web/Program.cs`
+- `frontend/src/GestaoComercial.Web/packages.lock.json`
+- `frontend/src/GestaoComercial.Web/wwwroot/app.css`
+- `frontend/tests/GestaoComercial.Web.Tests/FundacaoWebTests.cs`
+- `frontend/tests/GestaoComercial.Web.Tests/GestaoComercial.Web.Tests.csproj`
+- `frontend/tests/GestaoComercial.Web.Tests/packages.lock.json`
+- `global.json`
+- `scripts/verify-architecture.ps1`
+- `shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj`
+- `shared/GestaoComercial.Contracts/HealthResponse.cs`
+- `shared/GestaoComercial.Contracts/packages.lock.json`

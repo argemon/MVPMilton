@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/GestaoComercial.Api/GestaoComercial.Api.csproj" />
+    <Project Path="backend/GestaoComercial.Application/GestaoComercial.Application.csproj" />
+    <Project Path="backend/GestaoComercial.Domain/GestaoComercial.Domain.csproj" />
+    <Project Path="backend/GestaoComercial.Infrastructure/GestaoComercial.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/frontend/">
+    <Project Path="frontend/GestaoComercial.Web/GestaoComercial.Web.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GestaoComercial.IntegrationTests/GestaoComercial.IntegrationTests.csproj" />
+    <Project Path="tests/GestaoComercial.UnitTests/GestaoComercial.UnitTests.csproj" />
+  </Folder>
+</Solution>

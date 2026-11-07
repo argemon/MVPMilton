@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–06 aprovados, vendas confirmadas/canceladas e movimentos íntegros. Ler RF-17/18, RN-13/20 e ADR-11. Relatórios do 08 não são necessários; lista completa de estoque já existe no 05.
 
 ## 3. Requisitos e prioridades
@@ -18,11 +20,11 @@ Dentro: período/fuso, quantidades Confirmada/Cancelada, receita líquida, ticke
 
 ## 5. Atores e permissões
 
-Dashboard.Ler: Admin/Gerente. Vendedor/Estoquista recebem 403 no GET e não veem menu; home continua com seus atalhos permitidos. API valida a policy mesmo por URL direta.
+Dashboard.Ler: Administrador. Vendedor/Estoquista recebem 403 no GET e não veem menu; home continua com seus atalhos permitidos. API valida a policy mesmo por URL direta.
 
 ## 6. Entidades e banco
 
-Sem entidade/tabela/migration obrigatória. Projeções em vendas/saldos/produtos existentes; revisar planos de consulta e índices existentes. Se novo índice for demonstravelmente necessário, criar migration própria revisada e testar upgrade; não adicionar tabela de estatística. Snapshot consistente por consulta única ou transação REPEATABLE READ curta somente leitura.
+Sem nova entidade/coleção obrigatória. Agregações em sales e products com projeção e índices; estoque baixo consulta products.saldo.quantidade. Totais/contagens/linhas do mesmo response usam snapshot consistente (uma operação de agregação com snapshot quando suportado, ou transação curta somente leitura com ReadConcern.Snapshot). Índice adicional exige evidência, evolução explícita e upgrade testado; sem coleção de estatísticas.
 
 ## 7. Fluxos principais e alternativos
 
@@ -34,9 +36,7 @@ Sem entidade/tabela/migration obrigatória. Projeções em vendas/saldos/produto
 
 ## 8. Regras e validações
 
-RN-13/20: `[inicio,fim)` civil convertido a UTC; início < fim, máximo 366 dias, informar ambos ou omitir ambos. Mês corrente: primeiro dia até primeiro dia do mês seguinte, fim exclusivo. Universo comercial: vendas confirmadoEm no intervalo, status atual Confirmada/Cancelada. Confirmadas = contagem Confirmada; canceladas = contagem Cancelada; receita = soma das Confirmadas; ticket = receita/confirmadas ou zero. Cancelamento posterior retira contribuição do período original. Rascunho/Descartada não entram.
-
-RN-01: decimal em todo cálculo; ticket arredondado a duas casas por MidpointRounding.AwayFromZero somente na média final. Exemplo: média 1.005 →1.01; entradas com terceira casa de preço continuam rejeitadas. Estoque baixo = produto ativo com saldo <=mínimo, incluindo 0/0. Ordenação determinística por saldo crescente, nome e id (decisão proposta de apresentação).
+RN-13/20 preservadas: intervalo civil [inicio,fim), fuso configurado, início < fim e máximo 366 dias, ambos informados ou omitidos. Universo: confirmadoEm no período e estado atual Confirmada/Cancelada; rascunhos/descartadas excluídos. Receita soma totalCentavos apenas das Confirmadas; canceladas contam separadamente e contribuem zero. Ticket médio em centavos arredonda uma única vez por AwayFromZero, com divisão inteira e resto (101+100)/2 → 101 centavos; denominador zero retorna zero. Usar acumulação exata sem promoção BSON para double e limites da arquitetura 05. Converter para reais somente no DTO/CSV. Estoque baixo ativo com saldo <= mínimo, inclusive 0/0, ordenado saldo/nome/id.
 
 ## 9. Contrato REST
 
@@ -54,11 +54,11 @@ Rota `/dashboard`: FiltroPeriodo, CartoesComerciais, ListaEstoqueBaixo, AvisoPos
 
 ## 11. Erros e concorrência
 
-Contagens/receita/linhas do mesmo response usam snapshot consistente; cancelamento concorrente não pode gerar ticket calculado com contagem de outro instante. Outro GET pode refletir novo estado e geradoEm diferente. Filtros inválidos não executam consulta ilimitada. Sem escrita ou lock comercial neste bloco.
+Contagens/receita/linhas do mesmo response usam snapshot consistente; cancelamento concorrente não pode gerar ticket calculado com contagem de outro instante. Outro GET pode refletir novo estado e geradoEm diferente. Filtros inválidos não executam consulta ilimitada. Sem escrita ou escrita comercial de guarda neste bloco.
 
 ## 12. Testes unitários e integração
 
-Unidade: período/fuso, mês padrão, zero denominador e arredondamento AwayFromZero. Integração PostgreSQL: CA-14/15, rascunhos/descartadas excluídos, cancelamento posterior, bordas locais, produto ativo/inativo/0-0, limite de 20/totalItems e 401/403. Exercitar escrita concorrente versus snapshot e revisar ausência de N+1; não carregar todos os itens em memória.
+Unidade: período/fuso, mês padrão, zero denominador e arredondamento AwayFromZero. Integração MongoDB: CA-14/15, rascunhos/descartadas excluídos, cancelamento posterior, bordas locais, produto ativo/inativo/0-0, limite de 20/totalItems e 401/403. Exercitar escrita concorrente versus snapshot e revisar ausência de N+1; não carregar todos os itens em memória.
 
 ## 13. Given/When/Then
 
@@ -73,9 +73,9 @@ Unidade: período/fuso, mês padrão, zero denominador e arredondamento AwayFrom
 ## 14. Checklist de execução
 
 - [ ] Implementar projeção/snapshot/fórmulas e policy, sem duplicar cálculo no frontend.
-- [ ] Verificar necessidade de migration: registrar “sem alteração de schema” ou testar novo índice do zero/upgrade 06→07.
+- [ ] Verificar necessidade de evolução de persistência: registrar “sem alteração de schema” ou testar novo índice do zero/upgrade 06→07.
 - [ ] Implementar contrato/HTTP/painel e link de estoque existente; atualizar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
 - [ ] Registrar M07-CA01–05, plano das consultas, estados visuais e comandos no estado.
 
 ## 15. DoD e desbloqueio

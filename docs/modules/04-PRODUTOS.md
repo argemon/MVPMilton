@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–03 aprovados; contas/policies/auditoria e armazenamento configurável disponíveis. Ler arquitetura 04–07 e RN-01/08/12/19. Movimentação e venda não existem nem são usadas nos testes deste bloco.
 
 ## 3. Requisitos e prioridades
@@ -18,24 +20,24 @@ Dentro: categoria, marca, produto, preço, estoque mínimo, status, imagem e sal
 
 ## 5. Atores e permissões
 
-Todos os quatro perfis: Produtos.Ler, inclusive categorias/marcas/imagens. Admin/Gerente/Estoquista: Produtos.Gerenciar. Vendedor só consulta. A API valida a permissão em todos os métodos, inclusive upload e DELETE exclusivo de imagem.
+Todos os quatro perfis: Produtos.Ler, inclusive categorias/marcas/imagens. Administrador/Estoquista: Produtos.Gerenciar. Vendedor só consulta. A API valida a permissão em todos os métodos, inclusive upload e DELETE exclusivo de imagem.
 
-## 6. Entidades e migrations
+## 6. Entidades e evoluções de persistência
 
-Criar categorias/marcas (nome normalizado único, ativo, versão), produtos (SKU único, nome, descrição, categoria obrigatória, marca opcional, preço numeric(18,2), mínimo int, ativo, versão), imagens_produto e saldos_estoque. Produto e saldo zero são criados juntos. FKs RESTRICT. Não criar Movimento/Venda antecipadamente. Saldo CHECK >=0 e PK produto_id. Imagens ficam em volume privado fora de webroot; banco guarda metadados/chave, não caminho fornecido pelo usuário.
+Criar `categories`, `brands` e `products`. Produto incorpora saldo {quantidade:0,versao:1} obrigatório e imagem opcional {chave,mime,tamanhoBytes}; sem coleções independentes de saldo/imagem. precoCentavos é Int64 BRL >0 até 999.999.999; mínimo inteiro 0–1.000.000. SKU do produto e nomes de categoria/marca normalizados têm índices únicos próprios; referências categoriaId/marcaId são UUID validados na transação. Versão de cadastro é separada da versão do saldo e do guardVersion técnico. Validadores strict/error exigem saldo inteiro >=0 e tipos/limites; coleções de movimentos/vendas não existem ainda. Arquivos privados fora do webroot, somente metadados incorporados no documento.
 
 ## 7. Fluxos principais e alternativos
 
 1. Criar categoria/marca → criar produto ativo com referências ativas → transação cria produto e saldo 0 → detalhe.
 2. Editar preço/dados/status com versão → validar referências e unicidade → auditar.
-3. Inativar categoria/marca → bloquear referência e verificar produto ativo; se houver, 409 sem efeito.
+3. Inativar categoria/marca → incrementar guarda da referência e verificar produto ativo na mesma transação; se houver, 409 sem efeito.
 4. Inativar produto preserva cadastro/saldo; reativar exige categoria/marca ativas.
 5. Upload → validar/reencodar arquivo temporário → atualizar metadado e versão → após commit remover arquivo anterior. Falha mantém imagem antiga; órfão não referenciado fica para limpeza segura.
 6. Remover imagem → conferir versão e desassociar metadado → limpar arquivo após commit, sem excluir produto.
 
 ## 8. Regras e validações
 
-RN-01/08/12/19. SKU 1–40, trim/uppercase e caracteres permitidos; nome 2–150; descrição até 2000 sem HTML; categoria obrigatória, marca opcional. Preço >0 até 9.999.999,99, decimal com até duas casas: terceira casa é rejeitada, não arredondada. Quantidade não existe no cadastro. Mínimo inteiro 0–1.000.000. Arquivo JPEG/PNG real, até 2 MiB e 4096×4096, sem SVG; validar assinatura/decodificação e remover metadados. Backend repete tudo; não confiar no MIME/extensão enviados.
+RN-01/08/12/19. SKU 1–40, trim/uppercase e caracteres permitidos; nome 2–150; descrição até 2000 sem HTML; categoria obrigatória, marca opcional. Preço HTTP em reais >0 até9.999.999,99, decimal com até duas casas, convertido exatamente para precoCentavos Int64: terceira casa é rejeitada, não arredondada. Quantidade não existe no cadastro. Mínimo inteiro 0–1.000.000. Arquivo JPEG/PNG real, até 2 MiB e 4096×4096, sem SVG; validar assinatura/decodificação e remover metadados. Backend repete tudo; não confiar no MIME/extensão enviados.
 
 ## 9. Endpoints REST
 
@@ -70,17 +72,17 @@ Inputs de preço usam pt-BR e enviam decimal JSON; botões de estoque não exist
 
 ## 11. Erros e concorrência
 
-Locks de cadastro: categorias antigas/novas ordenadas → marcas antigas/novas ordenadas → produto → saldo se necessário. Conferir versão do produto após locks; se vínculo mudou desde leitura preliminar, retornar 409/reler, não adquirir nova referência fora da ordem. Mesmo lock na inativação de referência impede produto ativo sob referência inativa. UNIQUE resolve SKU/nome concorrente. Arquivo falho não deixa referência quebrada; falha DB faz rollback de produto/saldo/auditoria.
+Criação/reativação/troca de referência de produto e inativação de categoria/marca fazem escrita efetiva nas mesmas referências (incremento guardVersion), categorias depois marcas em UUID crescente, depois produto. Ler ativo e verificar produtos vinculados no mesmo snapshot transacional; conflito de escrita aborta/reavalia, impedindo referência inativa sob produto ativo. Edição de cadastro atualiza somente campos permitidos com filtro de versao, nunca substitui o documento inteiro nem zera saldo incorporado. Índices únicos resolvem SKU/nome concorrentes. Arquivo só é limpo após commit; falha mantém imagem anterior, sem chamada de arquivo dentro de transação.
 
 ## 12. Testes unitários e integração
 
-Unidade: escala monetária/limites, normalização SKU, mínimo, referências e arquivo/caminho seguro. Integração PostgreSQL: produto/saldo atômicos, SKU/nome concorrentes, versão, inativação versus vínculo, 401/403, arquivo real/falso/grande, troca concorrente preservando arquivo anterior e leitura privada. Não registrar entrada fictícia para demonstrar produto; saldo fica zero.
+Unidade: escala monetária/limites, normalização SKU, mínimo, referências e arquivo/caminho seguro. Integração MongoDB: produto/saldo atômicos, SKU/nome concorrentes, versão, inativação versus vínculo, 401/403, arquivo real/falso/grande, troca concorrente preservando arquivo anterior e leitura privada. Não registrar entrada fictícia para demonstrar produto; saldo fica zero.
 
 ## 13. Given/When/Then
 
 | ID / rastreio | Given | When | Then |
 | --- | --- | --- | --- |
-| M04-CA01 / CA-05 | Categoria ativa | Criar produto preço 12.50 | 201, saldo 0, uma linha de saldo e nenhum movimento |
+| M04-CA01 / CA-05 | Categoria ativa | Criar produto preço 12.50 | 201, saldo incorporado 0 e nenhum movimento |
 | M04-CA02 / RN-12 | SKU ABC cadastrado | Criar ` abc ` | 409 SKU_DUPLICADO |
 | M04-CA03 / CA-05 | Referência com produto ativo | Inativar referência | 409 REFERENCIA_EM_USO, produto permanece válido |
 | M04-CA04 / CA-17 | Usuário com Produtos.Gerenciar | Enviar SVG disfarçado ou arquivo >2 MiB | 415 ou 413; imagem anterior intacta |
@@ -89,10 +91,10 @@ Unidade: escala monetária/limites, normalização SKU, mínimo, referências e 
 ## 14. Checklist de execução
 
 - [ ] Implementar cadastros/validações/permissões e volume privado; zero endpoint de movimento.
-- [ ] Gerar/revisar migrations, testar do zero/upgrade 03→04 e aplicar explicitamente.
-- [ ] Conferir locks/constraints e atomicidade produto+saldo+auditoria.
+- [ ] Gerar/revisar evoluções de persistência, testar do zero/upgrade 03→04 e aplicar explicitamente.
+- [ ] Conferir escritas de guarda/validadores e filtros condicionais e atomicidade produto+saldo+auditoria.
 - [ ] Implementar DTOs/HTTP/UI/imagens e atualizar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
 - [ ] Registrar cenários, arquivos, limpeza de órfãos e comandos no estado.
 
 ## 15. DoD e desbloqueio

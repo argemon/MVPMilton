@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Acesso · Gestão Comercial</title><link rel="stylesheet" href="/app.css" /></head>
+<body><main><FormularioConta Senha="Senha" Erro="Erro" ReturnUrl="ReturnUrl" /></main></body></html>
+@code {
+    [Parameter] public bool Senha { get; set; }
+    [Parameter] public string? Erro { get; set; }
+    [Parameter] public string? ReturnUrl { get; set; }
+}

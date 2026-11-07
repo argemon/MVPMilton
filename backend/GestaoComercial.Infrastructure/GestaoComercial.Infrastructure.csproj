@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../GestaoComercial.Domain/GestaoComercial.Domain.csproj" /><ProjectReference Include="../GestaoComercial.Application/GestaoComercial.Application.csproj" /><PackageReference Include="MongoDB.Driver" /></ItemGroup></Project>

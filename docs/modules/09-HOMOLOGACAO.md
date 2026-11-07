@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–08 aprovados, todos os RF-01–20 concluídos nos incrementos previstos e ambiente de homologação local equivalente à topologia de produção. Não exigir host/domínio final do 10; usar TLS e volumes de ensaio. Ler todos RN/RNF/CA e arquitetura 09/10.
 
 ## 3. Requisitos e prioridades
@@ -14,28 +16,28 @@ Validar RF-01–20 nas prioridades originais, RNF-01–12 e RN-01–20. CA-01–
 
 ## 4. Escopo e exclusões
 
-Dentro: regressão, matriz de acesso, jornada, contratos, carga, migrações, falhas, conciliação e relatório Markdown de qualidade/defeitos. Fora: novo requisito comercial, publicação definitiva, dados reais, catálogo e contratação de infraestrutura.
+Dentro: regressão, matriz de acesso, jornada, contratos, carga, evoluções de persistência, falhas, conciliação e relatório Markdown de qualidade/defeitos. Fora: novo requisito comercial, publicação definitiva, dados reais, catálogo e contratação de infraestrutura.
 
 ## 5. Atores e permissões
 
-Homologador executa roteiros sintéticos com cada perfil; acesso à infra/testes é técnico, não nova role de negócio. Repetir Admin/Gerente/Vendedor/Estoquista/anônimo pela API. Não usar conta Admin para substituir testes de perfil negado ou propriedade.
+Homologador executa roteiros sintéticos com cada perfil; acesso à infra/testes é técnico, não nova role de negócio. Repetir Admin/Vendedor/Estoquista/anônimo pela API. Não usar conta Admin para substituir testes de perfil negado ou propriedade.
 
 ## 6. Entidades e alterações de banco
 
-Nenhuma nova entidade/tabela planejada. Fixtures incluem ativos/inativos, todos os perfis, saldos0/limite, vendas em todos estados e bordas de período. Banco de teste isolado. Correção descoberta deve ter migration específica e upgrade testado se necessária; nunca editar migration já aplicada para esconder defeito. Reconciliação somente leitura: saldo=soma(deltas), uma baixa/estorno por item conforme estado e nenhuma venda parcialmente confirmada.
+Nenhuma nova coleção comercial planejada. Fixtures isoladas cobrem perfis, ativos/inativos, produtos com saldo 0/limite, sales com itens incorporados e bordas de período. Correções de schema usam evolução incremental nova; não editar versão já aplicada. Reconciliação somente leitura: products.saldo.quantidade = soma dos deltas desde criação zero; uma baixa e, quando cancelada, um estorno por item, nenhuma venda parcial. Testar validadores e permissões do usuário runtime diretamente no MongoDB real.
 
 ## 7. Fluxos principais e alternativos
 
 1. Fixar commit/versões/recursos → instalar do zero → executar build/suítes → executar cada CA e registrar esperado/observado.
 2. Restaurar conjunto sintético banco/imagens/key ring em instalação isolada e testar jornada; medir RPO/RTO no ensaio.
-3. Testar upgrade da versão anterior com dados → verificar histórico e constraints.
+3. Testar upgrade da versão anterior com dados → verificar histórico e validadores e filtros condicionais.
 4. Medir carga: 20 usuários concorrentes, 10 mil produtos/50 mil vendas sintéticas, aquecimento e janela5 min; registrar p95/erros/CPU/RAM.
 5. Testar DB/API indisponíveis, reinício Web, ticket antigo, resposta perdida e concorrência de confirmação/cancelamento.
 6. Defeito encontrado → classificar, corrigir no escopo, acrescentar teste de regressão e repetir o cenário afetado; repetir suíte quando a mudança for transversal.
 
 ## 8. Regras e validações
 
-Todas as RN/RNF. Nenhum ajuste de massa pode escrever saldo isolado; fixture cria saldo/movimentos coerentes, salvo teste explicitamente de corrupção. Não usar InMemory/SQLite para provar PostgreSQL. P0=segurança/integridade; P1=requisito/meta obrigatória ausente; P2=cosmético sem perda funcional. Zero P0/P1 para avançar; metas não são reduzidas silenciosamente para aprovar.
+Todas as RN/RNF. Nenhum ajuste de massa pode escrever saldo isolado; fixture cria saldo/movimentos coerentes, salvo teste explicitamente de corrupção. Não usar simulação em memória nem outro banco para provar transações/validadores MongoDB. P0=segurança/integridade; P1=requisito/meta obrigatória ausente; P2=cosmético sem perda funcional. Zero P0/P1 para avançar; metas não são reduzidas silenciosamente para aprovar.
 
 ## 9. Contratos REST sob validação
 
@@ -57,11 +59,11 @@ Nenhuma página nova obrigatória. Percorrer `/conta/entrar`, `/conta/senha`, `/
 
 ## 11. Erros e concorrência
 
-Testar disputas com conexões/transações independentes e barreiras, não sleep como única sincronização. Repetir falha antes/depois do commit, timeout e revogação. A operação em andamento antes da revogação pode concluir conforme matriz; próxima requisição após commit da revogação não pode escrever. Não desligar paralelismo para esconder falhas.
+Testar disputas com sessões/transações independentes e barreiras, não sleep como única sincronização. Repetir falha antes/depois do commit, timeout e revogação. A operação em andamento antes da revogação pode concluir conforme matriz; próxima requisição após commit da revogação não pode escrever. Não desligar paralelismo para esconder falhas.
 
 ## 12. Testes unitários e integração
 
-Executar todas as suítes xUnit já existentes. Acrescentar teste somente para lacuna/defeito real. Integração PostgreSQL comprova constraints/locks/rollback/idempotência/upgrade/restore; testes BFF comprovam cookie/CSRF/isolamento. Journey de navegador pode ser roteiro manual verificável; segurança/integridade precisam automação. Relatório de carga não é teste unitário de duração de método.
+Executar todas as suítes xUnit já existentes. Acrescentar teste somente para lacuna/defeito real. Integração MongoDB comprova validadores e filtros condicionais/escritas de guarda/rollback/idempotência/upgrade/restore; testes BFF comprovam cookie/CSRF/isolamento. Journey de navegador pode ser roteiro manual verificável; segurança/integridade precisam automação. Relatório de carga não é teste unitário de duração de método.
 
 ## 13. Given/When/Then
 
@@ -76,8 +78,8 @@ Executar todas as suítes xUnit já existentes. Acrescentar teste somente para l
 ## 14. Checklist de execução
 
 - [ ] Fixar commit/imagens/SDK/recursos/massa e identificar bancos descartáveis antes de preparar fixtures.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com PostgreSQL real.
-- [ ] Aplicar todas as migrations do zero e testar upgrade anterior; restaurar backup de ensaio sem tocar produção.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB real.
+- [ ] Aplicar todas as evoluções de persistência do zero e testar upgrade anterior; restaurar backup de ensaio sem tocar produção.
 - [ ] Executar CA-01–18, carga, falhas, matriz e reconciliação; registrar comandos/observações.
 - [ ] Produzir relatório em `docs/execution/evidencias/09-HOMOLOGACAO.md` durante implementação, sem dados reais/segredos.
 - [ ] Corrigir P0/P1 com teste de regressão; registrar P2 e decisão sobre impacto.

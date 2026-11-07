@@ -6,6 +6,8 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
 00–02 aprovados: sessões, policies, auditoria e CRUD seguro já demonstrados. Ler arquitetura 04–06, RN-08/12/17 e ADR-14. Venda não existe neste ponto e não pode ser criada como pré-requisito oculto.
 
 ## 3. Requisitos e prioridades
@@ -18,13 +20,11 @@ Dentro: PF/PJ, nome, documento opcional, email/telefone opcionais, pesquisar, ed
 
 ## 5. Atores e permissões
 
-Admin/Gerente/Vendedor: Clientes.Ler/Gerenciar/Historico. Estoquista: negar 403. Histórico no 06 respeita vendas próprias do vendedor; aqui todos os autorizados recebem vazio por inexistência do módulo, não por ausência comprovada de vendas externas.
+Administrador/Vendedor: Clientes.Ler/Gerenciar/Historico. Estoquista: negar 403. Histórico no 06 respeita vendas próprias do vendedor; aqui todos os autorizados recebem vazio por inexistência do módulo, não por ausência comprovada de vendas externas.
 
 ## 6. Entidades e banco
 
-Criar `clientes`: UUID, nome 2–150, tipo PF/PJ, documento varchar(14) null, contatos opcionais, ativo, timestamps e versão. UNIQUE parcial no documento normalizado não nulo, inclusive inativos. Índices para prefixo de nome e igualdade de documento. FK comercial de venda não existe ainda. Auditar cadastros no mesmo commit.
-
-Adaptador de histórico vazio responde sem consultar tabela futura; response de resumo histórico pode ser definido em Contracts sem criar entidade/tabela Venda. Marcar tarefa de substituição para 06 no estado.
+Criar `customers`: _id UUID, nome 2–150, nomeNormalizado, tipo PF/PJ, documento normalizado string de até 14 dígitos ou null, contatos opcionais, ativo, timestamps UTC, versao Int64 e guardVersion. Índice unique parcial em documento com partialFilterExpression $type string, inclusive inativos; documento ausente é null e string vazia é rejeitada. Índice de nomeNormalizado/_id para prefixo. Cadastro e audit_events no mesmo commit. Histórico vazio tipado no 03 não consulta sales inexistente; substituir apenas no 06. Sem incorporar histórico de vendas no cliente.
 
 ## 7. Fluxos principais e alternativos
 
@@ -65,11 +65,11 @@ Aba histórico mostra “Nenhuma venda registrada”; a limitação incremental 
 
 ## 11. Erros e concorrência
 
-Dois documentos iguais normalizados simultaneamente: índice UNIQUE produz um sucesso e um 409. Duas edições com mesma versão: uma atualiza, outra 409 sem overwrite. Falha de auditoria faz rollback do cadastro. Cliente inexistente dá 404 mesmo no histórico vazio. Não testar inativação versus confirmação ainda: pertence ao 06.
+Índice unique resolve documentos duplicados concorrentes em 409 DOCUMENTO_DUPLICADO. Update com filtro _id+versao e incremento efetivo, resultado sem correspondência distingue 404 de 409 por leitura autorizada. Auditoria falha implica abortar cadastro. Alteração de cliente escreve o mesmo documento usado como guarda pelas vendas futuras; testes de confirmação chegam somente no 06.
 
 ## 12. Testes unitários e integração
 
-Unidade: documentos válidos/inválidos/ausentes, tipo, contatos, normalização e limites. Integração PostgreSQL: CRUD, busca/paginação/inativos, UNIQUE concorrente, versão, auditoria atômica, 401/403 e contrato vazio com 404 para cliente inexistente. Fixtures não criam tabelas futuras. Teste de preenchimento do histórico fica explicitamente em 06.
+Unidade: documentos válidos/inválidos/ausentes, tipo, contatos, normalização e limites. Integração MongoDB: CRUD, busca/paginação/inativos, UNIQUE concorrente, versão, auditoria atômica, 401/403 e contrato vazio com 404 para cliente inexistente. Fixtures não criam coleções futuras. Teste de preenchimento do histórico fica explicitamente em 06.
 
 ## 13. Given/When/Then
 
@@ -77,16 +77,16 @@ Unidade: documentos válidos/inválidos/ausentes, tipo, contatos, normalização
 | --- | --- | --- | --- |
 | M03-CA01 / CA-04 parcial | Cliente sintético PF válido | Buscar documento exato | Uma ficha, versão e contatos esperados |
 | M03-CA02 / RN-12 | Documento já cadastrado, inclusive inativo | POST com mesmo documento | 409 DOCUMENTO_DUPLICADO; uma ficha somente |
-| M03-CA03 / RF-06 parcial | Cliente existente e policy válida, sem módulo Venda | Abrir histórico | 200 página vazia; nenhum acesso a tabela futura |
+| M03-CA03 / RF-06 parcial | Cliente existente e policy válida, sem módulo Venda | Abrir histórico | 200 página vazia; nenhum acesso a coleção futura |
 | M03-CA04 / RN-08 | Cliente ativo | PUT ativo=false e consultar com todos | Registro preservado; ausente do filtro ativo padrão |
 | M03-CA05 / RN-12 | PF com documento preenchido | Trocar para PJ mantendo CPF | 400 e dados anteriores preservados |
 
 ## 14. Checklist de execução
 
 - [ ] Implementar Cliente, validação e auditoria; criar adaptador vazio de histórico identificado para substituição.
-- [ ] Gerar/revisar migration; testar base limpa e upgrade 02→03; aplicar explicitamente no ambiente local.
+- [ ] Gerar/revisar evolução de persistência; testar base limpa e upgrade 02→03; aplicar explicitamente no ambiente local.
 - [ ] Implementar API/DTOs/UI/cliente HTTP e verificar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
 - [ ] Registrar CA-04 parcial/RF-06 parcial, M03-CA01–05 e próximos passos no estado.
 
 ## 15. DoD e desbloqueio

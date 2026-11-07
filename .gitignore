@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+.env
+*.pfx
+*.key
+*.pem
+**/TestResults/
+.local/
+**/.local/
+artifacts/
+**/secrets.json
+**/data-protection-keys/
+*.dump

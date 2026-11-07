@@ -1,0 +1,6 @@
+@inject NavigationManager Navigation
+<p role="status">Validando acesso…</p>
+@code {
+    [Parameter] public string Destino { get; set; } = "/conta/entrar";
+    protected override void OnAfterRender(bool firstRender) { if (firstRender) Navigation.NavigateTo(Destino, forceLoad: true); }
+}

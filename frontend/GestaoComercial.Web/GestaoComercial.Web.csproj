@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk.Web"><ItemGroup><ProjectReference Include="../../shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj" /><PackageReference Include="MongoDB.Driver" /><Compile Include="../../build/LocalEnvironment.cs" Link="Configuration/LocalEnvironment.cs" /></ItemGroup></Project>

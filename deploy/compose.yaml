@@ -1,0 +1,36 @@
+name: gestaocomercial-dev
+# Reutiliza MongoDB Atlas externo. Não cria nem inicializa outro servidor.
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Api.Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:8443;https://+:8081
+      MONGODB_URI: ${MONGODB_URI:?Forneça MONGODB_URI no .env existente}
+      Mongo__Database: gestao_comercial_dev
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /certs/local.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${TLS_PASSWORD:?Forneça TLS_PASSWORD externamente}
+    volumes: ["${CERT_DIR:?Forneça CERT_DIR externamente}:/certs:ro"]
+    ports: ["127.0.0.1:7143:8443"]
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Web.Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: https://+:8443;https://+:8082
+      MONGODB_URI: ${MONGODB_URI}
+      Mongo__Database: gestao_web_dev
+      Api__BaseUrl: https://api:8443/
+      Api__HealthBaseUrl: https://api:8081/
+      Api__CaCertificatePath: /certs/ca.crt
+      DataProtection__KeysPath: /home/app/.aspnet/DataProtection-Keys
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /certs/local.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${TLS_PASSWORD}
+    volumes: ["${CERT_DIR}:/certs:ro", "webkeys:/home/app/.aspnet/DataProtection-Keys"]
+    ports: ["127.0.0.1:7243:8443"]
+    depends_on: [api]
+volumes:
+  webkeys:

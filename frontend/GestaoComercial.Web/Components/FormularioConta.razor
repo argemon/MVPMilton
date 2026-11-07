@@ -1,0 +1,22 @@
+<section class="conta" aria-labelledby="titulo-conta">
+    <h1 id="titulo-conta">@(Senha ? "Alterar senha" : "Entrar")</h1>
+    @if (Senha) { <p>Informe a senha atual e uma nova senha de 12 a 128 caracteres, com maiúscula, minúscula, número e símbolo. Após a alteração, entre novamente.</p> }
+    @if (!string.IsNullOrEmpty(Erro)) { <p id="erro-conta" role="alert">@Erro</p> }
+    <form method="post" action="@(Senha ? "/conta/senha" : "/conta/entrar")" data-enhance="false">
+        <AntiforgeryToken />
+        @if (!Senha) {
+            <label for="email">Email</label><input id="email" name="email" type="email" maxlength="254" required autocomplete="username" aria-describedby="erro-conta" />
+            <label for="senha">Senha</label><input id="senha" name="senha" type="password" maxlength="128" required autocomplete="current-password" aria-describedby="erro-conta" />
+            <input type="hidden" name="returnUrl" value="@GestaoComercial.Web.Security.ContasHttp.RetornoLocal(ReturnUrl)" />
+        } else {
+            <label for="senhaAtual">Senha atual</label><input id="senhaAtual" name="senhaAtual" type="password" maxlength="128" required autocomplete="current-password" aria-describedby="erro-conta" />
+            <label for="novaSenha">Nova senha</label><input id="novaSenha" name="novaSenha" type="password" minlength="12" maxlength="128" required autocomplete="new-password" aria-describedby="erro-conta" />
+        }
+        <button type="submit">@(Senha ? "Alterar senha e sair" : "Entrar")</button>
+    </form>
+</section>
+@code {
+    [Parameter] public bool Senha { get; set; }
+    [Parameter] public string? Erro { get; set; }
+    [Parameter] public string? ReturnUrl { get; set; }
+}

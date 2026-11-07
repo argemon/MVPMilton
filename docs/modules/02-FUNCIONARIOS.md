@@ -6,7 +6,9 @@
 
 ## 2. Pré-requisitos e dependências concluídas
 
-00–01 aprovados: contexts, Identity, bootstrap, sessões, policies, auditoria e testes. Ler arquitetura 04–07, matriz e ADR-14. Não depende de Cliente/Produto/Venda.
+Normas transversais: arquitetura05/09 e ADR-20–29, MongoDB.Driver oficial restrito à infraestrutura, transações sequenciais em topologia compatível e testes MongoDB reais isolados (Atlas ou perfil Testcontainers explícito) conforme ADR-28. Classes/serviços de módulo futuro não são pré-requisitos ocultos.
+
+00–01 aprovados: adaptadores de persistência, Identity, bootstrap, sessões, policies, auditoria e testes. Ler arquitetura 04–07, matriz e ADR-14. Não depende de Cliente/Produto/Venda.
 
 ## 3. Requisitos e prioridades
 
@@ -18,18 +20,18 @@ Dentro: cadastrar, listar, pesquisar, editar, ativar/desativar, criar conta opci
 
 ## 5. Atores e permissões
 
-Admin/Gerente: Funcionarios.Ler/Gerenciar. Só Admin: Usuarios.Gerenciar e criação de conta. Gerente não pode desativar funcionário ligado a usuário Admin; API exige permissão adicional. Vendedor/Estoquista recebem 403 em todas as rotas deste cadastro. Nenhum perfil ignora a regra do último Admin.
+Administrador: Funcionarios.Ler/Gerenciar. Só Admin: Usuarios.Gerenciar e criação de conta. Administrador não pode desativar funcionário ligado a usuário Admin; API exige permissão adicional. Vendedor/Estoquista recebem 403 em todas as rotas deste cadastro. Nenhum perfil ignora a regra do último Admin.
 
 ## 6. Entidades e banco
 
-Criar `funcionarios`: UUID, nome 2–150, email opcional até 254, telefone normalizado opcional 10–15 dígitos, ativo, timestamps, versão bigint. Adicionar FK RESTRICT de usuarios.funcionario_id e UNIQUE parcial não nulo; bootstrap mantém null. Se coluna já foi prevista no 01, acrescentar somente FK/índice. Auditoria existente registra alterações sem senha. Histórico/autoria nunca são excluídos.
+Criar `employees`: _id UUID, nome 2–150, nomeNormalizado, email opcional até 254, telefone normalizado opcional 10–15 dígitos, ativo, createdAt/updatedAt UTC, versao Int64 e guardVersion técnico. Em users, employeeId referencia funcionário existente e ativo, validado na mesma transação; índice unique parcial em employeeId com filtro $type binData (UUID Standard validado no mapeamento/backend) exclui null/ausente e vale inclusive para conta inativa. Bootstrap mantém null. Sem chave estrangeira nem cascade: desativação não apaga autoria. Auditoria no mesmo commit, sem senha.
 
 ## 7. Fluxos principais e alternativos
 
 1. Listar → novo → validar contato → salvar ativo e auditar → detalhe com versão.
 2. Editar → enviar versão → validar → atualizar e incrementar versão. Conflito pede reler; não sobrescrever.
 3. Admin escolhe funcionário ativo sem conta → informa email de login/perfil/senha temporária → cria conta com troca obrigatória → novo usuário troca senha antes de operar.
-4. Desativar funcionário → bloquear controle administrativo/usuário/funcionário conforme protocolo → validar perfil do operador/último Admin → inativar funcionário, conta vinculada e sessões em uma transação.
+4. Desativar funcionário → escrever efetivamente controle administrativo e revalidar usuário/funcionário conforme protocolo → validar perfil do operador/último Admin → inativar funcionário, conta vinculada e sessões em uma transação.
 5. Reativar funcionário → conta permanece inativa; reativação de conta é ação separada do Admin no módulo já existente.
 6. Sem resultados → oferecer cadastro somente a autorizado. Funcionário sem conta → informar “Sem acesso ao sistema”, sem erro.
 
@@ -60,15 +62,15 @@ Base `/api/v1`. `FuncionarioDetalhe={id,nome,email,telefone,ativo,versao,created
 | `/funcionarios/{id}` | DetalheFuncionario, ConfirmacaoInativacao | Não localizado; carregando; alteração confirmada; 409 oferece reler |
 | `/usuarios/novo?funcionarioId=...` | FormularioUsuario, SeletorFuncionario | Sem funcionário elegível; carregando; conta criada; vínculo/email duplicado |
 
-Rotas `/usuarios` e `/usuarios/{id}` do 01 passam a exibir vínculo/nome/email. Sucesso limpa senha temporária da tela; nunca a retorna na resposta. Gerente não vê ação de criar acesso. Foco no primeiro erro e teclado em 360/1280 px.
+Rotas `/usuarios` e `/usuarios/{id}` do 01 passam a exibir vínculo/nome/email. Sucesso limpa senha temporária da tela; nunca a retorna na resposta. Administrador não vê ação de criar acesso. Foco no primeiro erro e teclado em 360/1280 px.
 
 ## 11. Erros e concorrência
 
-Dois POST usuário para mesmo funcionário: UNIQUE garante um 201 e outro 409. Criar conta versus desativar funcionário deve serializar pelo mesmo lock administrativo e funcionário; conta não pode ficar ativa em funcionário inativo. Comandos administrativos usam controle → usuários ordenados → funcionários ordenados → sessões; não adquirir controle depois de funcionário. Versão antiga: 409 sem atualizar. Revogação falha → rollback da inativação inteira, não sucesso parcial.
+Índice único resolve duas contas para o mesmo employeeId; mapear duplicidade para 409 VINCULO_OCUPADO. Criação/ativação de conta e desativação de funcionário atualizam o mesmo administration_control antes de users/employees e revalidam vínculo/ativo no snapshot novo. Guardas efetivas e comparação de versão impedem write skew. Revogação, conta, funcionário e auditoria são atômicos na mesma sessão; qualquer falha aborta tudo. Reativar funcionário não reativa conta.
 
 ## 12. Testes unitários e integração
 
-Unidade: nome/contatos, elegibilidade de vínculo, permissões de gerente, reativação sem acesso automático. Integração xUnit/PostgreSQL: CRUD/paginação, FK/UNIQUE, duas criações concorrentes, inativação versus criação, revogação transacional e rollback, último Admin via funcionário, 401/403, versão obsoleta e login com troca obrigatória da conta criada.
+Unidade: nome/contatos, elegibilidade de vínculo, permissões de administrador, reativação sem acesso automático. Integração xUnit/MongoDB: CRUD/paginação, referências/índices únicos, duas criações concorrentes, inativação versus criação, revogação transacional e rollback, último Admin via funcionário, 401/403, versão obsoleta e login com troca obrigatória da conta criada.
 
 ## 13. Given/When/Then
 
@@ -77,15 +79,15 @@ Unidade: nome/contatos, elegibilidade de vínculo, permissões de gerente, reati
 | M02-CA01 / CA-03 | Funcionário ativo sem conta | Cadastrar contato | Registro ativo com versão e nenhum usuário criado |
 | M02-CA02 / RF-03 | Admin e funcionário ativo | Criar acesso e entrar | Conta vinculada, troca obrigatória; depois da troca exige novo login |
 | M02-CA03 / CA-03 | Conta vinculada com sessão ativa | Desativar funcionário | Conta/sessões inativadas juntas; próxima chamada 401; registro preservado |
-| M02-CA04 / CA-17 | Funcionário ligado a Admin e operador Gerente | Tentar desativar por HTTP direto | 403 e nenhum efeito |
+| M02-CA04 / CA-17 | Funcionário ligado a Admin e operador Administrador | Tentar desativar por HTTP direto | 403 e nenhum efeito |
 | M02-CA05 / RN-18 | Dois requests com mesmo funcionário | Criar contas simultaneamente | Uma conta, um 201 e um 409, sem órfão |
 
 ## 14. Checklist de execução
 
 - [ ] Implementar entidade/casos de uso, vínculo e controles de transação sem antecipar outros cadastros.
-- [ ] Gerar/revisar migration, testar do zero e upgrade 01→02, aplicar no banco local por tarefa explícita.
+- [ ] Gerar/revisar evolução de persistência, testar do zero e upgrade 01→02, aplicar no banco local por tarefa explícita.
 - [ ] Implementar endpoints, DTOs, páginas e clientes HTTP; conferir OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com PostgreSQL isolado.
+- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
 - [ ] Demonstrar M02-CA01–05 e registrar testes/arquivos/comandos reais no estado.
 
 ## 15. DoD e desbloqueio

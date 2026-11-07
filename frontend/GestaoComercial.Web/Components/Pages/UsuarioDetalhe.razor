@@ -1,0 +1,61 @@
+@page "/usuarios/{Id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Usuarios.Gerenciar")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Gerenciar usuário · Gestão Comercial</PageTitle>
+<AuthorizeView Policy="Usuarios.Gerenciar"><Authorized>
+<h1>Gerenciar usuário</h1><a href="/usuarios">Voltar à lista</a>
+@if (_message is not null) { <p role="status">@_message</p> }
+@if (_busy) { <p role="status">Aguarde…</p> }
+@if (_user is { } u) {
+    <p>@u.Nome · @u.Email</p>
+    <form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
+        <label for="perfil">Perfil</label><select id="perfil" @bind="_perfil"><option>Administrador</option><option>Vendedor</option><option>Estoquista</option></select>
+        <label><input type="checkbox" @bind="_ativo" /> Conta ativa</label>
+        <button type="submit" disabled="@_busy">Salvar acesso</button>
+    </form>
+    <h2>Redefinir senha</h2><p>A senha temporária exige nova troca e encerra todas as sessões desta conta.</p>
+    <form @onsubmit="RedefinirAsync" @onsubmit:preventDefault>
+        <label for="temporaria">Senha temporária</label><input id="temporaria" type="password" @bind="_senha" minlength="12" maxlength="128" required autocomplete="new-password" />
+        <button type="submit" disabled="@_busy">Redefinir senha e revogar acessos</button>
+    </form>
+}
+<button @onclick="CarregarAsync" disabled="@_busy">Reler dados</button>
+</Authorized><NotAuthorized><RedirecionarAcesso /></NotAuthorized></AuthorizeView>
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private readonly CancellationTokenSource _cts = new();
+    private UsuarioResponse? _user;
+    private string _perfil = "", _senha = "";
+    private bool _ativo, _busy;
+    private string? _message;
+    protected override Task OnParametersSetAsync() => CarregarAsync();
+    private void Falha(ApiFailure e) {
+        if (e.Status is 401 or 403) Navigation.NavigateTo(e.Status == 401 ? "/conta/entrar" : "/acesso-negado", true);
+        _message = e.Status switch { 409 => "Conflito de versão ou proteção do último administrador. Releia os dados antes de tentar novamente.", 404 => "Usuário não encontrado.", 400 => "Verifique o perfil e a senha: 12 a 128 caracteres, maiúscula, minúscula, número e símbolo.", _ => "Serviço indisponível. Tente novamente." };
+    }
+    private async Task CarregarAsync() {
+        _busy = true; _message = null;
+        try { _user = await Sessao.UsarAsync((a,t,c) => a.ConsultarAsync(t,Id,c), _cts.Token); _perfil = _user.Perfil; _ativo = _user.Ativo; }
+        catch (ApiFailure e) { _user = null; Falha(e); }
+        catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        finally { _busy = false; }
+    }
+    private async Task SalvarAsync() {
+        if (_user is null || _busy) return; _busy = true;
+        try { _user = await Sessao.UsarAsync((a,t,c) => a.AtualizarAsync(t,Id,new AtualizarUsuarioRequest(_perfil,_ativo,_user.Versao),c), _cts.Token); _message = "Acesso atualizado; sessões revogadas quando houve alteração."; await Sessao.MeAsync(_cts.Token); }
+        catch (ApiFailure e) { Falha(e); }
+        catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        finally { _busy = false; }
+    }
+    private async Task RedefinirAsync() {
+        if (_user is null || _busy) return; _busy = true;
+        try { await Sessao.UsarAsync(async (a,t,c) => { await a.RedefinirAsync(t,Id,_senha,_user.Versao,c); return true; }, _cts.Token); _senha = ""; await CarregarAsync(); _message = "Senha redefinida; sessões encerradas."; }
+        catch (ApiFailure e) { Falha(e); }
+        catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        finally { _senha = ""; _busy = false; }
+    }
+    public void Dispose() { _senha = ""; _cts.Cancel(); _cts.Dispose(); }
+}

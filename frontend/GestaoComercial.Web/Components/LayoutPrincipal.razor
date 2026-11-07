@@ -1,0 +1,2 @@
+@inherits LayoutComponentBase
+<a class="atalho" href="#conteudo">Ir para conteúdo</a><header><a href="/">Gestão Comercial</a><AuthorizeView><Authorized><span>@context.User.Identity?.Name · @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span><a href="/conta/senha" data-enhance-nav="false">Alterar senha</a><form method="post" action="/conta/sair" data-enhance="false"><AntiforgeryToken /><button type="submit">Sair</button></form></Authorized></AuthorizeView></header><main id="conteudo" tabindex="-1">@Body</main><footer>Gestão Comercial</footer>

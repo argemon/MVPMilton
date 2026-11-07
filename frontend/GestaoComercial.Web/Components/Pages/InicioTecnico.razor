@@ -1,0 +1,32 @@
+@page "/"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject GestaoComercial.Web.ApiClients.EstadoApiClient Api
+@inject NavigationManager Navigation
+<PageTitle>Início · Gestão Comercial</PageTitle>
+<AuthorizeView><Authorized>
+@if (_carregando) { <p role="status">Consultando sessão…</p> }
+else if (_erro) { <h1>Serviço indisponível</h1><p role="alert">Não foi possível validar o acesso. Tente novamente.</p><button @onclick="ConsultarAsync">Repetir</button> }
+else if (_usuario is not null) {
+    <h1>Olá, @_usuario.Nome</h1><p>Perfil: @_usuario.Perfil</p>
+    @if (_usuario.DeveAlterarSenha) { <p>Conclua a troca de senha para continuar.</p><a href="/conta/senha" data-enhance-nav="false">Alterar senha</a> }
+    else { <AuthorizeView Policy="Usuarios.Gerenciar" Context="admin"><Authorized><a class="botao" href="/usuarios">Gerenciar usuários</a></Authorized></AuthorizeView> }
+    <section><h2>Estado da API</h2><p role="status">@(_disponivel ? "API disponível" : "API indisponível. Tente novamente.")</p><button @onclick="ConsultarAsync">Repetir</button></section>
+}
+</Authorized><NotAuthorized><RedirecionarAcesso /></NotAuthorized></AuthorizeView>
+@code {
+    private UsuarioAutenticado? _usuario;
+    private bool _carregando = true, _erro, _disponivel;
+    private readonly CancellationTokenSource _cts = new();
+    protected override Task OnInitializedAsync() => ConsultarAsync();
+    private async Task ConsultarAsync() {
+        _carregando = true; _erro = false;
+        try { _usuario = (await Sessao.MeAsync(_cts.Token)).Usuario; _disponivel = await Api.ConsultarAsync(_cts.Token); }
+        catch (ApiFailure e) { if (e.Status is 401 or 403) Navigation.NavigateTo("/conta/entrar", true); else _erro = true; }
+        catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
+        finally { _carregando = false; }
+    }
+    public void Dispose() { _cts.Cancel(); _cts.Dispose(); }
+}

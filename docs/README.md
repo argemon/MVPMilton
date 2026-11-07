@@ -4,6 +4,8 @@ Documentação inicial em português do Brasil, preparada em 06/11/2026. A pasta
 
 ## Como usar
 
+Estado atual:00 e01 implementados no caminho .NET+Atlas. Autenticação real BFF/cookie, sessões e políticas conforme ADR-30. Ler [estado atual](execution/03-ESTADO-PROJETO.md); auditorias06/08 são históricas.02 não iniciado.
+
 Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo referencia os contratos e critérios que o executor deve satisfazer. RF identifica requisito funcional; RNF, requisito não funcional; RN, regra de negócio; CA, cenário de aceite; ADR, decisão técnica; H, hipótese; Q, questão aberta.
 
 ## Arquitetura
@@ -52,6 +54,9 @@ Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo refe
 4. [Decisões técnicas, hipóteses e questões](execution/04-DECISOES-TECNICAS.md)
 5. [Prompt do executor](execution/05-PROMPT-EXECUTOR.md)
 6. [Matriz consolidada dos módulos e dependências](execution/06-MATRIZ-MODULOS.md)
+7. [Roteiro alvo da fundação](execution/07-EXECUCAO-LOCAL-FUNDACAO.md)
+8. [Primeira revisão documental MongoDB](execution/08-REVISAO-MONGODB.md)
+9. [Auditoria de arquitetura MongoDB — resultado vigente](execution/06-AUDITORIA-MONGODB.md)
 
 Instrução permanente: [AGENTS.md](../AGENTS.md).
 
