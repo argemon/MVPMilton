@@ -1,10 +1,16 @@
 # 03 — Estado do projeto
 
-## Execução05/06 — 07/11/2026 (America/Cuiaba), EM ANDAMENTO
+## Execução05/06 — 07/11/2026 (America/Cuiaba), CONCLUÍDA; aplicação no banco persistente aguarda autorização
 
 Solicitação anexada autoriza Estoque05 e Vendas06 em sequência, validações, commit/push/PR/CI; sem07/deploy/merge. Base local feature/block-04-products limpa, nova branch codex/stock-sales. Gate04 histórico139 testes/CI aprovado; regressão atual em execução antes do05. Probe Atlas executado com acesso autorizado: conexão/topologia transacional disponíveis; sem alteração no .env. Primeira execução restrita não alcançou o testhost; não constitui regressão aprovada. Uma disputa de último administrador falhou com Mongo112/transiente na regressão autorizada; investigar sem ocultar falha.06 não iniciado.
 
-### Bloco06 — implementado, validação final em andamento
+### Bloco06 — CONCLUÍDO, gate aprovado no caminho Atlas isolado + CI
+
+Commit812126c, push42379407973 e [CI42379411217](https://github.com/argemon/MVPMilton/actions/runs/42379411217) success em todas as etapas, confirmado até finalização/artefatos:102 unitários+97 integrações MongoDB8.0.17 Testcontainers autenticado/replica set =199 aprovados,0 falhas/0 skips; inclui ContainerSecurity/ContainerScale sem filtros. Build Release0 avisos/erros; auditoria sem vulnerabilidades, scanner~1,05MB sem segredos.07-DASHBOARD é o próximo bloco, disponível somente mediante nova solicitação; não iniciado. Nenhum deploy/merge executado pelo agente.
+
+Aplicação persistente em Development: destino resolvido como gestao_comercial_dev, sem override Evolution. Comando `$env:ASPNETCORE_ENVIRONMENT='Development'; dotnet backend/GestaoComercial.Api/bin/Release/net10.0/GestaoComercial.Api.dll --initialize-persistence --Mongo:Database gestao_comercial_dev` foi rejeitado antes da execução pela revisão automática: alteração potencialmente custosa do banco persistente sem autorização explícita para esse destino; alternativa segura são bancos descartáveis. Não contornar a rejeição. Software/CLI/upgrade foram comprovados integralmente em bancos isolados; banco persistente e .env continuam intactos. Pedido de autorização explícita pendente. Esta pendência operacional não é apresentada como migração aplicada ou deploy aprovado.
+
+Commit812126c enviado a origin/codex/stock-sales, PR2 atualizado para estoque/vendas e CI42379411217 em execução. Ao conferir metadata, PR1 consta mesclado externamente às12:57:52UTC de07/11/2026, commit5220d620; branch feature/block-04-products removida e PR2 agora tem base main. ls-remote confirma5220d620. Nenhum comando/ação de merge foi executado nesta sessão; não atribuir o merge externo ao executor. Inventário de56 arquivos do PR preservado; CI testa a base remota atual. Ajustar descrição final após conclusão do CI.
 
 Validação local final concluída: restore locked nos8 projetos, build Release0 avisos/erros e arquitetura/diff válidos. `dotnet test ... --filter 'Category!=ContainerSecurity&Category!=ContainerScale' --logger trx --results-directory artifacts/block06/final`:95 integrações Atlas+102 unitários =197 aprovados,0 falhas/0 ignorados. Perfis de segurança/volume aguardam CI integral sem filtro. Jornada HTTPS final repetida após correções de layout/seletores: entrada10→venda2×12,50→saldo8→cancelamento→saldo10/histórico real,0 JS/5xx,360/1280 sem overflow, teclado na tabela e edição não salva bloqueada. Capturas revisadas, bancos exclusivos removidos. Gitleaks candidato203 arquivos/~1,04MB sem segredos; .env preservado. Código06 pronto para commit/push/CI;07 não iniciado. Relatório10 consolida endpoints, páginas, inventário, comandos, resultados e limites.
 

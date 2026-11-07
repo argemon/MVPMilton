@@ -2,7 +2,7 @@
 
 ## Objetivo e limites
 
-Construir o GestaoComercial, sistema web para gestão interna de uma empresa, usado como TCC de Engenharia de Software. A implementação atual cobre00–06; gates e validações correntes no estado03.05 aprovado e06 em validação final. A modelagem parte das regras presentes e não utiliza diagrama ou banco do TCC antigo.
+Construir o GestaoComercial, sistema web para gestão interna de uma empresa, usado como TCC de Engenharia de Software. A implementação atual cobre00–06; gates e validações correntes no estado03.00–06 aprovados com199 testes no CI final, conforme estado03. A modelagem parte das regras presentes e não utiliza diagrama ou banco do TCC antigo.
 
 O MVP cobre acesso, funcionários, clientes, produtos, estoque, vendas, dashboard e relatórios. Não cobre emissão fiscal, contas a pagar/receber, processamento de pagamento, multiempresa, múltiplos depósitos nem comércio eletrônico. [Escopo e hipóteses](../requirements/01-ESCOPO.md).
 

@@ -5,9 +5,13 @@
 | Bloco | Estado | Evidência |
 | --- | --- | --- |
 |05 Estoque|Concluído e aprovado|Commits2016208/59acdbc; CI42374796524 success,173 testes sem falhas/skips; jornada real e proteções de banco comprovadas|
-|06 Vendas|Implementação e validação local concluídas; CI final pendente|17 integrações específicas iniciais; regressão final95 integrações Atlas+102 unitários =197 aprovados,0 falhas/0 ignorados; navegador completo aprovado|
+|06 Vendas|Concluído e aprovado|Commit812126c; CI42379411217 success,102 unitários+97 integrações =199 aprovados,0 falhas/skips; jornada completa aprovada|
 
-Branch `codex/stock-sales`, [PR2](https://github.com/argemon/MVPMilton/pull/2), base `feature/block-04-products`. PR1 e main preservados, sem merge/deploy.07-DASHBOARD é o próximo bloco e não foi iniciado nem autorizado.
+Branch `codex/stock-sales`, [PR2](https://github.com/argemon/MVPMilton/pull/2), atualmente com base `main`. PR1 foi mesclado externamente em07/11/2026 às08:57:52 (America/Cuiaba;12:57:52UTC) (commit5220d620), e a branch anterior foi removida; conferido por metadata GitHub e ls-remote. Esta execução não realizou merge/deploy nem alterou main.07-DASHBOARD é o próximo bloco e não foi iniciado nem autorizado.
+
+CI de implementação confirmado em todas as etapas: [PR42379411217](https://github.com/argemon/MVPMilton/actions/runs/42379411217) e [push42379407973](https://github.com/argemon/MVPMilton/actions/runs/42379407973), commit812126c. Ubuntu/.NET10, MongoDB8.0.17 autenticado/replica set, ambos perfis especiais executados;102+97=199 aprovados,0 falhas/skips, build0 avisos/erros, auditoria sem vulnerabilidades e scanner~1,05MB sem segredos. Commits05:2016208 e59acdbc;06:812126c.
+
+Aplicação em `gestao_comercial_dev` aguarda autorização explícita: a revisão automática rejeitou a alteração do banco persistente antes de executar o comando, por considerá-la potencialmente custosa e sem autorização explícita para esse destino. O banco persistente/.env permanecem intactos; todas as evoluções foram aplicadas e validadas em bancos isolados. O código/CI estão aprovados; esta pendência não é declarada como migração aplicada ou deploy.
 
 ## Funcionalidades e contratos entregues
 
@@ -21,7 +25,7 @@ Branch `codex/stock-sales`, [PR2](https://github.com/argemon/MVPMilton/pull/2), 
 
 - `dotnet restore GestaoComercial.slnx --locked-mode --disable-parallel -m:1 /nodeReuse:false`: passou nos8 projetos; sem pacote novo.
 - `dotnet build GestaoComercial.slnx -c Release --no-restore -m:1 /nodeReuse:false -p:UseSharedCompilation=false`: passou,0 avisos/0 erros.
-- `dotnet test GestaoComercial.slnx -c Release --no-build -m:1 --filter 'Category!=ContainerSecurity&Category!=ContainerScale' --logger trx --results-directory artifacts/block06/final`:95 integrações reais Atlas+102 unitários =197 aprovados,0 falhas/0 ignorados. Inclui regressões00–05. Perfis ContainerSecurity e ContainerScale ficam explicitamente fora do perfil Atlas e serão executados no CI sem filtros; não contar como aprovados localmente nesta execução.
+- `dotnet test GestaoComercial.slnx -c Release --no-build -m:1 --filter 'Category!=ContainerSecurity&Category!=ContainerScale' --logger trx --results-directory artifacts/block06/final`:95 integrações reais Atlas+102 unitários =197 aprovados,0 falhas/0 ignorados. Inclui regressões00–05. Perfis ContainerSecurity e ContainerScale ficam explicitamente fora do perfil Atlas e foram executados no CI sem filtros; não contar como aprovados localmente nesta execução.
 - `./scripts/verify-architecture.ps1` e `git diff --check`: passaram. Gitleaks8.24.2 no conjunto candidato203 arquivos/~1,04MB:0 segredos. Auditoria de pacotes fixados sem vulnerabilidades reportadas na execução05; CI repete a auditoria.
 - `.local/sales-e2e.cjs`: HTTPS confiado, Edge headless, bancos exclusivos Atlas removidos ao final; entrada10 → rascunho2×12,50=25,00 → confirmação/saldo8 → cancelamento/saldo10 → histórico real do cliente.102/95 testes não incluem esse roteiro. Cookie/HTML/storage/logs sem credenciais,0 erros JS/5xx,360/1280 sem overflow, foco/teclado na tabela, edição pendente bloqueia confirmar. Capturas revisadas em `artifacts/block06/ui`.
 

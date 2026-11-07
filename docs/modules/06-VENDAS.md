@@ -93,18 +93,18 @@ Unidade: total em centavos Int64, limites/duplicidade, transições, produto ina
 
 ## 14. Checklist de execução
 
-- [ ] Confirmar gate 05; implementar entidade/casos/transação sem fiscal/financeiro.
-- [ ] Gerar/revisar evolução de persistência de sales com itens incorporados e referências/índices; testar base limpa e upgrade 05→06, preservando movimentos manuais.
-- [ ] Aplicar evolução de persistência explicitamente; implementar DTOs/API/policies/UI/HTTP/OpenAPI.
-- [ ] Remover adaptador vazio do 03, atualizar seu registro de entrega parcial e demonstrar preenchimento real.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
-- [ ] Reconciliar razão/saldos/baixas/estornos; registrar M06-CA01–07 e todos os CA críticos no estado.
+- [x] Confirmar gate 05; implementar entidade/casos/transação sem fiscal/financeiro.
+- [x] Gerar/revisar evolução de persistência de sales com itens incorporados e referências/índices; testar base limpa e upgrade 05→06, preservando movimentos manuais.
+- [x] Aplicar evolução de persistência explicitamente; implementar DTOs/API/policies/UI/HTTP/OpenAPI.
+- [x] Remover adaptador vazio do 03, atualizar seu registro de entrega parcial e demonstrar preenchimento real.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
+- [x] Reconciliar razão/saldos/baixas/estornos; registrar M06-CA01–07 e todos os CA críticos no estado.
 
 ## 15. DoD e desbloqueio
 
 RF-06/13–16 completos, DoD global e CA-08–13 aprovados, zero falha de integridade/segurança. Desbloquear **07**. Toda comprovação usa endpoints existentes até 06, sem depender de dashboard/relatório.
 
-## Implementação06 —07/11/2026, em validação final
+## Implementação06 —07/11/2026, CONCLUÍDO e aprovado
 
 Implementados rascunho, edição versionada, confirmação, cancelamento, descarte, resumos paginados e histórico real do cliente. `VendaResumo={id,clienteId,clienteNome?,criador,status,total,versao,criadoEm}` é projeção sem itens/documento pessoal; detalhe preserva o contrato acima. Movimentos retornam vendaId/itemId nullable, somente preenchidos em Venda/EstornoVenda. Chave/recibo/transação são coordenados pela mesma implementação comprovada05, e saldos usam a mesma atualização condicional.
 
@@ -112,4 +112,6 @@ Evolução06-sales/version7 explícita e repetível: sales, validação de estad
 
 Interface inclui busca de cliente/produto por nome/documento/SKU, quantidade/remoção, preços/subtotais/total, estados e motivo, filtros com seleção legível, paginação, histórico real e links de cadastros atuais separados de snapshots. Confirmação exige rascunho salvo; intenções pendentes mantêm chave/corpo e oferecem repetir. Após recibo recuperado, GET mostra estado atual. Itens confirmados/cancelados são somente leitura.
 
-Primeira validação:17 integrações de Vendas/upgrade/BFF aprovadas,0 falhas/0 ignorados. Jornada de navegador passou com saldo10→8→10 e histórico cancelado; verificações finais de teclado e regressão completa em andamento. Comandos, inventário, falhas corrigidas e gates serão consolidados no [relatório](../execution/10-ENTREGA-ESTOQUE-VENDAS.md) e no estado03.07 não autorizado.
+Primeira validação:17 integrações de Vendas/upgrade/BFF aprovadas,0 falhas/0 ignorados. Jornada de navegador passou com saldo10→8→10 e histórico cancelado. Comandos, inventário, falhas corrigidas e gates estão consolidados no [relatório](../execution/10-ENTREGA-ESTOQUE-VENDAS.md) e no estado03.07 não autorizado.
+
+Resultado final: regressão Atlas95 integrações+102 unitários =197 aprovados; jornada completa com teclado na tabela e edição pendente validada. Commit812126c/CI42379411217:199 aprovados (102+97),0 falhas/skips, build/auditoria/scanner/artefatos aprovados; ambos perfis especiais executados. Todos os itens da seção14 demonstrados por execução explícita em bancos isolados. Aplicação das evoluções em gestao_comercial_dev aguarda autorização explícita após bloqueio da revisão automática; .env e cadastros preservados. Próximo07 depende de nova solicitação, sem deploy/merge automático.
