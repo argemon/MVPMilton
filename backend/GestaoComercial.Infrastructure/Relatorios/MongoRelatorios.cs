@@ -13,7 +13,7 @@ using MongoDB.Driver;
 using static GestaoComercial.Infrastructure.Dashboard.MongoDashboard;
 namespace GestaoComercial.Infrastructure.Relatorios;
 
-public sealed class MongoRelatorios(OperacoesCadastro operations,IConfiguration config) : IRelatorios
+public sealed class MongoRelatorios(OperacoesCadastro operations,IConfiguration config,GestaoComercial.Infrastructure.Vendas.VendasSchema schema) : IRelatorios
 {
     private string Fuso=>config["APP_TIME_ZONE"]??"America/Cuiaba";
     private static readonly string[] Commercial=["Administrador"],Stock=["Administrador","Estoquista"];
@@ -49,35 +49,39 @@ public sealed class MongoRelatorios(OperacoesCadastro operations,IConfiguration 
         return new(rows.Select(map).ToArray(),f.Exportar?1:f.Page,f.Exportar?10000:f.PageSize,total,meta with{GeradoEm=operations.Now});
     }
     private async Task<ResumoComercial> Totals(IClientSessionHandle s,ConsultaRelatorio f,CancellationToken ct)=>Summary((await Aggregate(operations.Db,s,"sales",[SaleMatch(f),ResumoStage],ct)).SingleOrDefault());
-    public Task<RelatorioVendas> VendasAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
+    public async Task<RelatorioVendas> VendasAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
     {
-        var meta=Validate(f,"vendas");return operations.ExecutarAsync(ator,Commercial,async(s,t)=>
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        var meta=Validate(f,"vendas");return await operations.ExecutarAsync(ator,Commercial,async(s,t)=>
         {
             var total=await Totals(s,f,t);var direction=meta.Ordenacao=="dataAsc"?1:-1;
             var rows=await Page(s,"sales",[SaleMatch(f),new BsonDocument("$sort",new BsonDocument{{"confirmadoEm",direction},{"_id",direction}}),VendaProjection],f,meta,Recent,t);
             return new RelatorioVendas(rows,total);
         },ct);
     }
-    public Task<RelatorioOperadores> OperadoresAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
+    public async Task<RelatorioOperadores> OperadoresAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
     {
-        var meta=Validate(f,"operadores");return operations.ExecutarAsync(ator,Commercial,async(s,t)=>
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        var meta=Validate(f,"operadores");return await operations.ExecutarAsync(ator,Commercial,async(s,t)=>
         {
             var total=await Totals(s,f,t);var group=ResumoStage.DeepClone().AsBsonDocument;group["$group"]["_id"]="$criadorId";group["$group"]["nome"]=new BsonDocument("$first","$criadorNomeSnapshot");
             var sort=meta.Ordenacao=="nomeAsc"?D("{$sort:{nome:1,_id:1}}"):D("{$sort:{receita:-1,_id:1}}");
             var rows=await Page(s,"sales",[SaleMatch(f),D("{$sort:{confirmadoEm:-1,_id:-1}}"),group,sort],f,meta,d=>new OperadorRelatorio(d["_id"].AsGuid,d["nome"].AsString,Summary(d)),t);return new RelatorioOperadores(rows,total);
         },ct);
     }
-    public Task<RelatorioProdutos> ProdutosAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
+    public async Task<RelatorioProdutos> ProdutosAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
     {
-        var meta=Validate(f,"produtos");return operations.ExecutarAsync(ator,Commercial,async(s,t)=>
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        var meta=Validate(f,"produtos");return await operations.ExecutarAsync(ator,Commercial,async(s,t)=>
         {
             var total=await Totals(s,f,t);var sort=meta.Ordenacao switch{"nomeAsc"=>D("{$sort:{nome:1,_id:1}}"),"receitaDesc"=>D("{$sort:{receita:-1,_id:1}}"),_=>D("{$sort:{quantidade:-1,receita:-1,_id:1}}")};
             var rows=await Page(s,"sales",new[]{SaleMatch(f)}.Concat(RankingStages.SkipLast(1)).Append(sort),f,meta,Product,t);return new RelatorioProdutos(rows,total);
         },ct);
     }
-    public Task<RelatorioEstoque> EstoqueAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
+    public async Task<RelatorioEstoque> EstoqueAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
     {
-        var meta=Validate(f,"estoque");return operations.ExecutarAsync(ator,Stock,async(s,t)=>
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        var meta=Validate(f,"estoque");return await operations.ExecutarAsync(ator,Stock,async(s,t)=>
         {
             var filter=new BsonDocument();if(f.Ativo is {} active)filter["ativo"]=active;
             if(!string.IsNullOrWhiteSpace(f.Search)){var search=f.Search.Trim().ToUpperInvariant();filter["$or"]=new BsonArray{new BsonDocument("nomeNormalizado",new BsonRegularExpression("^"+Regex.Escape(search))),new BsonDocument("skuNormalizado",search)};}
@@ -88,9 +92,10 @@ public sealed class MongoRelatorios(OperacoesCadastro operations,IConfiguration 
             return new RelatorioEstoque(rows,new(totals is null?0:Exact(totals["saldo"]),totals is null?0:Exact(totals["baixos"])));
         },ct);
     }
-    public Task<RelatorioMovimentos> MovimentosAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
+    public async Task<RelatorioMovimentos> MovimentosAsync(SessaoAtual ator,ConsultaRelatorio f,CancellationToken ct)
     {
-        var meta=Validate(f,"movimentos");return operations.ExecutarAsync(ator,Stock,async(s,t)=>
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        var meta=Validate(f,"movimentos");return await operations.ExecutarAsync(ator,Stock,async(s,t)=>
         {
             var period=Indicadores.Periodo(f.Inicio,f.Fim,Fuso,operations.Now,false);var filter=new BsonDocument("ocorridoEm",new BsonDocument{{"$gte",period.InicioUtc},{"$lt",period.FimUtc}});
             if(f.ProdutoId is {} id)filter["produtoId"]=MongoEstoque.Uuid(id);if(f.Tipo is {} type)filter["tipo"]=type;var match=new BsonDocument("$match",filter);

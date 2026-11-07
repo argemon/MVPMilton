@@ -88,6 +88,8 @@ Perfil de volume: StockQueryTests é marcado ContainerScale. O lote10mil conclui
 
 ## ADR-36 — Execução07–08, leituras comerciais (07/11/2026)
 
+Complemento de revisão antes da correção: consultas07/08 exigem catálogo06 válido antes de agregar. Uma instalação parcial não deve apresentar zeros/CSV vazio como resultado comercial válido. Reutilizar VendasSchema.IsReadyAsync, sem executar evolução ou DDL no startup/consulta; ausência/divergência dá503 PERSISTENCIA_NAO_INICIALIZADA com JSON, sem attachment. Mesma pré-condição de readiness da aplicação, inclusive relatórios de estoque do08. Testar catálogo incompatível em banco isolado e restaurá-lo, sem alterar o banco persistente.
+
 A nova solicitação anexada libera07 e08 sequencialmente, Git/PR/CI, sem aprovação intermediária, sem09/deploy/merge. Substitui os limites anteriores de autorização.08 só começa após gate07 demonstrado.
 
 07 amplia o contrato mínimo com produtos cadastrados/ativos, evolução diária local, dez vendas recentes e ranking de dez produtos. Somente Confirmadas contribuem para receita, quantidade válida, evolução e ranking; Canceladas são contadas e aparecem no histórico recente, com contribuição zero. Ranking agrupa por produtoId, desempata quantidade/receita/id; identificação vem do snapshot da confirmação mais recente (data/id determinísticos), preservando vendas antigas. Evolução inclui dias sem vendas com zero. Cada resposta usa transação curta somente leitura snapshot/majority/primary, operações sequenciais, sem escritas comerciais. Endpoint único /dashboard entrega todas as seções no mesmo snapshot. Fuso da instalação, [inicio,fim), máximo366 dias; padrão mês corrente.

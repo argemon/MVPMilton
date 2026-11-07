@@ -51,6 +51,8 @@ CSV inclui metadados como colunas (`inicio`, `fim`, `fuso`, `geradoEm`) e cabeç
 
 Response concreto concentra metadados em `filtros:{inicio,fim,fuso,geradoEm,ordenacao,operadorId,produtoId,tipo,search,ativo}`; totais e paginação permanecem na raiz. Essa estrutura substitui os campos de metadados soltos do contrato mínimo abaixo. Neutralização cobre também variantes Unicode largas e espaços antes do prefixo. Referência consultada: [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection). A garantia se aplica ao arquivo gerado; regravação por planilhas externas não é controlada pelo sistema. Acumuladores transitórios seguem07/ADR-36, sem dinheiro Decimal128 persistido.
 
+Catálogo06 válido é pré-condição das cinco consultas/exportações; ausência/divergência dá503 PERSISTENCIA_NAO_INICIALIZADA (JSON sem attachment), nunca arquivo vazio ou totais zero como sucesso de uma instalação parcial. Sem DDL na consulta.
+
 Base `/api/v1/relatorios`. Respostas JSON incluem filtros aplicados, fuso, geradoEm, paginação e totais; campos abaixo são o mínimo.
 
 | Método / rota | Request | Response | Policy |

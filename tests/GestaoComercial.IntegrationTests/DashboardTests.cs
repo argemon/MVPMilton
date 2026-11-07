@@ -32,7 +32,7 @@ public sealed class DashboardTests(SalesFixture fixture) : IClassFixture<SalesFi
             sales.UpdateOne(id,new BsonDocument("$set",new BsonDocument{{"status","Cancelada"},{"canceladoEm",date.AddDays(1)},{"cancelamento",new BsonDocument{{"atorId",new BsonBinaryData(actor.Usuario.Id,GuidRepresentation.Standard)},{"nomeSnapshot",actor.Usuario.Nome},{"motivo","Cancelamento sintético"}}}}));
         });
         using var instrumented=new MongoClient(settings);var config=new ConfigurationBuilder().Build();
-        var service=new MongoDashboard(new OperacoesCadastro(instrumented,new MongoConfiguration(F.Mongo.Connection,F.Mongo.Name,"Testing"),F.Clock,new HttpContextAccessor()),config);
+        var service=new MongoDashboard(new OperacoesCadastro(instrumented,new MongoConfiguration(F.Mongo.Connection,F.Mongo.Name,"Testing"),F.Clock,new HttpContextAccessor()),config,scope.ServiceProvider.GetRequiredService<GestaoComercial.Infrastructure.Vendas.VendasSchema>());
         var old=await service.ConsultarAsync(actor,new(2030,1,1),new(2030,1,2),default);
         Assert.Equal(1,intercepted);Assert.Equal(1,old.Resumo.QuantidadeConfirmada);Assert.Equal("Confirmada",Assert.Single(old.Recentes).Status);Assert.Equal(1250,Assert.Single(old.MaisVendidos).ReceitaCentavos);
         var current=(await c.GetFromJsonAsync<DashboardResponse>("/api/v1/dashboard?inicio=2030-01-01&fim=2030-01-02"))!;Assert.Equal(1,current.Resumo.QuantidadeCancelada);Assert.Equal(0,current.Resumo.ReceitaLiquida);Assert.Empty(current.MaisVendidos);

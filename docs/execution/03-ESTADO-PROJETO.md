@@ -2,6 +2,12 @@
 
 ## Execução07–08 — 07/11/2026 America/Cuiaba, EM ANDAMENTO
 
+### Git/CI e correção final de prontidão — 14h37
+
+Branch codex/dashboard-reports publicada, commits a51438d (Dashboard) e e60e900 (Relatórios), [PR3](https://github.com/argemon/MVPMilton/pull/3) aberto contra main. [CI PR42401350272](https://github.com/argemon/MVPMilton/actions/runs/42401350272) e [push42401320201](https://github.com/argemon/MVPMilton/actions/runs/42401320201) concluídos com sucesso em todos os passos. Logs PR confirmam125 unitários+110 integrações Testcontainers Mongo8.0.17 autenticado/replica set =235 aprovados,0 falhas/0 skips; build0 avisos/erros, auditoria/scanner aprovados, artefato13585711518 presente. Nenhuma alteração do CI para esconder falhas.
+
+Revisão adicional encontrou leitura200 com catálogo06 incompatível em instalação parcial. Novo AnalyticsReadinessTests reproduziu1 falha real antes da correção (artifacts/block08/readiness-before). Complemento ADR-36 registrado antes de alterar: Dashboard e cinco relatórios agora exigem VendasSchema.IsReadyAsync, sem executar DDL/evolução. Validação posterior12 integrações (prontidão+Dashboard+Relatórios/snapshots),0 falhas/skips; todos os11 GETs retornam503 JSON sem attachment enquanto o catálogo está incompatível, e200 após restaurá-lo. Somente catálogo técnico do banco descartável foi alterado/restaurado; banco persistente intacto. Build Release de todos os projetos aprovado0 avisos/erros e125 unitários finais aprovados,0 skips; arquitetura/diff/documentação/scanner válidos (230 arquivos sem segredos). Correção será enviada e CI integral revalidado antes da conclusão.
+
 Nova solicitação anexada autoriza07 Dashboard e08 Relatórios sequencialmente, commit/push/PR/acompanhamento CI; sem09/deploy/merge. Autorizações antigas abaixo ficam históricas. Base812126c, checkout limpo em codex/stock-sales; branch criada codex/dashboard-reports.00–06 têm gate anterior199 testes, sem transferir aprovação para código novo. ADR-36 registrada antes da implementação;07 aprovado/commit a51438d;08 em validação. .env e banco persistente preservados; somente bancos exclusivos descartáveis nos testes.
 
 ### Gate07 — APROVADO localmente, 14h02

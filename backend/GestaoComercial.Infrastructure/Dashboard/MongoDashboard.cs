@@ -9,7 +9,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 namespace GestaoComercial.Infrastructure.Dashboard;
 
-public sealed class MongoDashboard(OperacoesCadastro operations,IConfiguration config) : IDashboard
+public sealed class MongoDashboard(OperacoesCadastro operations,IConfiguration config,GestaoComercial.Infrastructure.Vendas.VendasSchema schema) : IDashboard
 {
     private string Fuso=>config["APP_TIME_ZONE"]??"America/Cuiaba";
     internal static BsonDocument D(string json)=>BsonDocument.Parse(json);
@@ -36,6 +36,7 @@ public sealed class MongoDashboard(OperacoesCadastro operations,IConfiguration c
         =>await db.GetCollection<BsonDocument>(collection).Aggregate<BsonDocument>(s,pipeline.ToArray(),new AggregateOptions{MaxTime=TimeSpan.FromSeconds(8),AllowDiskUse=true}).ToListAsync(ct);
     public async Task<Painel> ConsultarAsync(SessaoAtual ator,DateOnly? inicio,DateOnly? fim,CancellationToken ct)
     {
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
         var period=Indicadores.Periodo(inicio,fim,Fuso,operations.Now);
         return await operations.ExecutarAsync(ator,["Administrador"],async(s,token)=>
         {

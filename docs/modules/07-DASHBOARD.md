@@ -42,6 +42,8 @@ RN-13/20 preservadas: intervalo civil [inicio,fim), fuso configurado, início < 
 
 Incremento autorizado ADR-36: GET único mantém período/fuso/geradoEm e retorna `resumo:{quantidadeConfirmada,quantidadeCancelada,receitaLiquida,ticketMedio}`, `produtosCadastrados`, `produtosAtivos`, `estoqueBaixo` paginado20, `recentes` até10 (vendaId,confirmadoEm,clienteNome,operadorNome,status,totalOriginal,contribuicaoLiquida), `evolucao` diária preenchida com zeros (dia,quantidade,receitaLiquida) e `maisVendidos` até10 (produtoId,sku,nome,quantidade,receitaLiquida). Esta estrutura substitui os quatro totais soltos do contrato mínimo abaixo. Recentes inclui Confirmada/Cancelada no filtro; evolução/ranking somente Confirmada. Identificação do ranking pelo snapshot mais recente; ordenação quantidade/receita/id. Financeiro HTTP em reais. /dashboard entrega todas as seções do mesmo snapshot sem endpoints separados inconsistentes. Sem evolução de schema/índice neste incremento; medir plano do índice06 existente.
 
+Pré-condição de execução: catálogo06 válido; ausência/divergência dá503 PERSISTENCIA_NAO_INICIALIZADA em vez de zeros que aparentem uma instalação válida. Nenhuma evolução é aplicada pela consulta; teste real corrompe/restaura somente o catálogo técnico do banco descartável.
+
 Base `/api/v1`.
 
 | Método / rota | Request | Response | Erros |

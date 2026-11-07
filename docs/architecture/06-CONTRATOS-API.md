@@ -147,4 +147,6 @@ GET /api/v1/dashboard?inicio&fim, policy Dashboard.Ler, somente Administrador. D
 
 ## Incremento08 — ADR-36
 
+Pré-condição de07/08: catálogo06 válido; instalação parcial/incompatível retorna503 PERSISTENCIA_NAO_INICIALIZADA, inclusive em exportação (JSON, sem attachment), nunca indicadores zero/CSV vazio como sucesso aparente. A consulta não aplica evolução.
+
 GET /api/v1/relatorios/{vendas|operadores|produtos|estoque|movimentos} e cada /exportacao; páginas /relatorios/{tipo}; handler /downloads/relatorios/{tipo}. Vendas/operadores/produtos somente Administrador; estoque/movimentos Administrador/Estoquista. Período obrigatório exceto estoque atual; filtros/ordenações e DTOs mínimos detalhados em M08. Nome histórico do criador identifica funcionário/operador, sem inferir employeeId do cadastro atual. Contagens/totais/linhas no mesmo snapshot, sem coleção duplicada. CSV UTF-8 BOM delimitado por ponto e vírgula, até10.000 linhas sem paginação;400 EXPORTACAO_EXCEDE_LIMITE antes de qualquer arquivo. Cancelada preserva totalOriginal e contribuição zero. Estoque não aceita data histórica. Sem PDF. Request inválido400;401/403;503 persistência;500 seguro. Nenhuma alteração de schema prevista.
