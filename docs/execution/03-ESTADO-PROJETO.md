@@ -1,5 +1,21 @@
 # 03 — Estado do projeto
 
+## Execução09 — APROVADO LOCALMENTE, CI integral pendente — 07/11/2026 America/Cuiaba
+
+Somente09 autorizado/implementado (ADR-37);10-Homologação não iniciado. Branch codex/demo-data atualizada por fast-forward à documentação oficial ada96fd, preservando requisitos/plano remotos e as instruções explícitas mais recentes do usuário. PR3/706b61f foi mesclado externamente; nenhum merge de PR/deploy executado pelo agente.
+
+Banco único gestao_comercial_dev no Atlas existente, inclusive tickets Web; .env inalterado. Inicialização explícita00–06 aprovada no banco persistente pela autorização atual, resolvendo pendência histórica. Catálogo tickets2→8 atualizado explicitamente para compartilhar o catálogo com autenticação2, sem recriar tickets/banco. Não remover o banco Web antigo. Sem instância/ambiente Demo, URI ou credencial MongoDB adicional.
+
+Página Administração > Dados de Demonstração com banco/última conclusão, gerar/retomar e restaurar confirmado. API GET/POSTs administrativos, revalidação real de sessão, auditoria transacional de proveniência e etapas idempotentes; serviços existentes de cadastro/Identity/estoque/venda. Restauração recusa dependências/alterações manuais e usa transação/guardas para excluir apenas UUIDs demonstrativos comprovados. Auditoria preservada; sem DropDatabase/limpeza de coleção no gerador.
+
+Cenário final restaurado e repetido pela página no mesmo banco:12 funcionários/contas (9 ativos/3 inativos;3 perfis),40 clientes (5 sem compras),100 produtos (5 inativos/10 zerados),5 categorias/5 marcas;250 vendas de2 itens,225 confirmadas/25 canceladas;850 movimentos (300 manuais+500 baixas+50 estornos).0 divergências produto×soma dos deltas; receita líquida18401569 centavos. Users total13 inclui administrador bootstrap normal fora da carga. Senhas aleatórias não retornadas. Acesso inicial apenas em .local/demo-access.json ignorado; não versionar/exibir. .env preservado por hash.
+
+Comandos/resultados reais: restore8 projetos e builds Release0 avisos/erros. Regressão Atlas anterior ao complemento da massa:126 unitários+113 integrações,0 falhas/skips (artifacts/block09/final); cobre interrupção/retomada, duas cargas concorrentes, rollback de restauração e dependência manual. Código após complemento:126 unitários (unit-final)+4 integrações de contratos/autorizações/BFF/banco único (current-contracts),0 falhas/skips. Cenário final de2 itens/inativos/última conclusão também conferido nos hosts HTTPS reais, gerando/restaurando/repetindo:360/1280 sem overflow,0 JS, Dashboard/cinco relatórios; resumo antes/depois da repetição idêntico. O teste integral atual da massa ampliada ainda será comprovado no CI; não foi declarado executado localmente.
+
+Auditoria NuGet0 vulneráveis; scanner239 arquivos sem segredos e busca por credenciais reais0 ocorrências; referências válidas,44 Markdown/137 links locais sem quebra; diff --check limpo. Comandos completos, inventário exato dos arquivos, diagnósticos iniciais e rastreio RF/RN/CA no [relatório12](12-ENTREGA-CARGA-DEMONSTRACAO.md). Evidências locais em artifacts/block09/{focused,final,unit-final,current-contracts,ui,ui-final,ui-repeat,persistent-check.json}; processos temporários encerrados após jornadas, sem publicação.
+
+DoD09 funcional demonstrada localmente. Pendentes somente revisão Git final, commit/push/PR e CI integral atual Testcontainers sem filtros; se falhar, corrigir/repetir. Não iniciar10, deploy ou merge automático. Primeira retomada: consultar CI do commit publicado e atualizar este estado com resultado real. A carga já existe no banco persistente; não repetir restauração sem necessidade/confirmar proteção das dependências.
+
 ## Plano oficial revisado — 07/11/2026
 
 **Apenas documentação atualizada nesta revisão.** Blocos 00–08 concluídos conforme os registros de execução abaixo; **09 Carga de Dados** e **10 Homologação/Acabamento Visual** pendentes até validação própria. A aplicação do TCC será exibida localmente com o único banco MongoDB Atlas existente. Foram retirados do escopo deploy/publicação e catálogo/pedidos. Textos históricos abaixo não autorizam módulos excluídos. Nenhum teste novo executado nesta revisão documental.

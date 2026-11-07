@@ -52,7 +52,7 @@ flowchart LR
 
 Inicializar Git no bloco 00. Commits pequenos por bloco e propósito, incluindo documentação e testes. Versionar manifests, evoluções de persistência e exemplos sem valores reais. Ignorar `.env`, segredos, chaves Data Protection, imagens de usuários, dumps, `bin`, `obj` e resultados locais.
 
-Fixar SDK 10.0 e versões compatíveis de ASP.NET/MongoDB.Driver após verificar o restore. Não usar versões flutuantes em CI ou imagens `latest`. O armazenamento técnico do frontend tem evoluções de persistência próprias, sem referências a Infrastructure do backend; usuários MongoDB distintos limitam os bancos lógicos gestao_comercial e gestao_web.
+Fixar SDK 10.0 e versões compatíveis de ASP.NET/MongoDB.Driver após verificar o restore. Não usar versões flutuantes em CI ou imagens `latest`. O armazenamento técnico do frontend tem evoluções de persistência próprias, sem referências a Infrastructure do backend; o banco único gestao_comercial_dev é compartilhado apenas no armazenamento; o frontend não consulta coleções comerciais (ADR-37).
 
 ## Critério verificável
 

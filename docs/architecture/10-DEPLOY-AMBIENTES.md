@@ -1,5 +1,7 @@
 # 10 — Deploy e ambientes
 
+> Referência arquitetural histórica de publicação; o escopo acadêmico vigente não inclui deploy. O Bloco10 atual é homologação, não autorizado nesta solicitação. Fonte vigente: plano00 e ADR-37.
+
 > Atualização vigente00 — ADR-27–29: implementação autorizada com Atlas já configurado em .env, sem sobrescrever segredos. Development reutiliza MONGODB_URI; Production/Staging exigem configuração externa específica. Integração pode executar transações reais em bancos efêmeros exclusivos no mesmo cluster ou perfil Testcontainers explícito; não criar outro MongoDB quando Atlas atende. rs0 é nome apenas do perfil local, não do Atlas. As exigências universais de Docker/rs0, somente Markdown e adaptação ainda não autorizada nas seções históricas anteriores ficam superadas nesses pontos.
 
 
@@ -10,8 +12,8 @@ flowchart LR
     B[Navegador] -->|HTTPS / WebSocket| P[Proxy TLS]
     P --> W[Web Blazor / BFF]
     W -->|TLS interno| A[API privada]
-    W --> WS[(MongoDB banco gestao_web)]
-    A --> DB[(MongoDB banco gestao_comercial)]
+    W -->|Somente tickets| DB
+    A --> DB[(MongoDB Atlas / banco único gestao_comercial_dev)]
     A --> IMG[Volume privado imagens]
 ```
 
@@ -30,7 +32,7 @@ Fuso comercial proposto `America/Cuiaba`; locale pt-BR. Configurar `APP_TIME_ZON
 
 ## Segredos e configuração
 
-Nomes previstos (não implementados nesta revisão): Mongo__ConnectionString, Mongo__Database (API gestao_comercial; Web gestao_web), Mongo__ReplicaSet=rs0, Mongo__ExpectedPersistenceVersion; Evolution__ConnectionString somente na tarefa operacional; Api__BaseUrl HTTPS e configurações TLS/key ring/fuso. Credenciais por secrets ou variáveis externas, nunca valores válidos no exemplo. Em URI, escapar usuário/senha com regras URI, sem concatenar segredo cru; authSource explícito, replicaSet=rs0, readPreference=primary, writeConcern majority e TLS em produção. Não logar URI, cabeçalho ou comandos com credenciais.
+Nomes previstos (não implementados nesta revisão): Mongo__ConnectionString, Mongo__Database (API e Web gestao_comercial_dev, ADR-37), Mongo__ReplicaSet=rs0, Mongo__ExpectedPersistenceVersion; Evolution__ConnectionString somente na tarefa operacional; Api__BaseUrl HTTPS e configurações TLS/key ring/fuso. Credenciais por secrets ou variáveis externas, nunca valores válidos no exemplo. Em URI, escapar usuário/senha com regras URI, sem concatenar segredo cru; authSource explícito, replicaSet=rs0, readPreference=primary, writeConcern majority e TLS em produção. Não logar URI, cabeçalho ou comandos com credenciais.
 
 Contas separadas: administrador do cluster para instalação/rotação; operador de evolução com createCollection/createIndex/collMod apenas nos bancos necessários; API runtime com ações por coleção, sem update/remove em stock_movements/audit_events; Web runtime somente tickets e leitura do catálogo técnico próprio. Privilégios de backup/restore em contas operacionais próprias. Nenhuma role root/readWrite ampla para runtime por conveniência. keyfile de autenticação interna e certificados montados como secrets com owner/permissões exigidas pelo mongod; arquivos não entram em Git/imagem. Docker secrets não eliminam necessidade de proteger host e backups.
 
@@ -67,7 +69,7 @@ Fontes: [autenticação interna keyfile](https://www.mongodb.com/docs/manual/cor
 
 ## Gate de publicação
 
-CA-16 a CA-18, RNF-01/04/05/06 e [módulo 10](../modules/10-PUBLICACAO.md). Sem backup restaurável, TLS, Q-02/Q-03 resolvidas e credenciais de bootstrap removidas, publicação com dados reais permanece bloqueada. Ambiente de demonstração sintético pode ser publicado após Q-02 e gates técnicos.
+CA-16 a CA-18, RNF-01/04/05/06 e [módulo 10](../modules/10-HOMOLOGACAO.md). Sem backup restaurável, TLS, Q-02/Q-03 resolvidas e credenciais de bootstrap removidas, publicação com dados reais permanece bloqueada. Ambiente de demonstração sintético pode ser publicado após Q-02 e gates técnicos.
 
 ## Ordem verificável de inicialização e conexão (ADR-26)
 
@@ -75,7 +77,7 @@ Em volume novo: (1) iniciar mongod com rs0, keyfile de owner/permissão corretos
 
 Em volume existente: autenticar e conferir rs.conf/hello, usuários e versões; divergência de rs0/membro/roles interrompe com diagnóstico seguro. Não reiniciar configuração, abrir bypass ou trocar senha como efeito de reinício. Bootstrap não depende do readiness da API nem de coleções futuras, evitando ciclo de inicialização.
 
-Formato alvo de URI na rede Compose, sem credencial válida: `mongodb://USUARIO:SENHA_ESCAPADA@mongo:27017/gestao_comercial?authSource=gestao_comercial&replicaSet=rs0&readPreference=primary&w=majority&tls=true`. Conta API criada em gestao_comercial; Web usa conta criada em gestao_web com banco/authSource próprios e mesmo rs0/membro. Instalação pode ter authSource=admin; não reutilizar essa conta nos hosts. api/web resolvem mongo; certificado do banco contém SAN mongo e CA confiada. tlsCAFile/certificados são externos. Não usar hostname db/porta5432 do Compose anterior como MongoDB. Sem directConnection=true nos hosts normais; fixture de um nó com porta dinâmica tem exceção explícita na arquitetura09.
+Formato alvo de URI na rede Compose, sem credencial válida: `mongodb://USUARIO:SENHA_ESCAPADA@mongo:27017/gestao_comercial?authSource=gestao_comercial&replicaSet=rs0&readPreference=primary&w=majority&tls=true`. Conta API criada em gestao_comercial; Web acessa somente tickets no mesmo banco conforme ADR-37; o projeto acadêmico reutiliza a conexão Atlas existente. Instalação pode ter authSource=admin; não reutilizar essa conta nos hosts. api/web resolvem mongo; certificado do banco contém SAN mongo e CA confiada. tlsCAFile/certificados são externos. Não usar hostname db/porta5432 do Compose anterior como MongoDB. Sem directConnection=true nos hosts normais; fixture de um nó com porta dinâmica tem exceção explícita na arquitetura09.
 
 Aceite do futuro00: inicialização vazia/reinício sem reconfigurar, hello autenticado rs0/primary, conexão API/Web com credenciais próprias, commit/abort técnico em fixture e ready200; perda de primary/conexão dá503 sem segredo e live200; versão técnica incompatível ou standalone dá503. Runtime não escreve no catálogo nem lê o outro banco. O deploy/compose.yaml atual implementa o caminho Atlas externo autorizado, sem criar replica set local. O procedimento de bootstrap local acima é somente alternativa futura explícita; não deve substituir a conexão existente. Docker não estava disponível para executar esse artefato nesta implementação.
 

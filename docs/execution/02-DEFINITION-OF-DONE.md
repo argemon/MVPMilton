@@ -29,3 +29,7 @@ A definição de pronto prioriza **funcionamento real e aparência adequada à b
 - [ ] CI verificado, se disponível, com resultado real registrado.
 
 **Fora da DoD:** publicar na internet, outros ambientes/bancos, testes de carga empresariais, alta disponibilidade, catálogo e pedidos online.
+
+## Escopo09 vigente — ADR-37
+
+Carga acadêmica usa exclusivamente banco Atlas e conexão existentes no .env, sem banco Demo/instância/URI/ambiente adicional. Gate09: [carga](../modules/09-CARGA-DEMONSTRACAO.md), com quantidades, conciliação, reexecução, restauração confirmada, dependências manuais protegidas, autorização e resultados reais de restore/build/test/CI. Não exige nova infraestrutura nem libera10. Homologação/backup e metas comerciais antigas não são o escopo desta carga. Testes técnicos existentes mantêm ADR-28.

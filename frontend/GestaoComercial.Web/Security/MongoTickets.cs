@@ -68,7 +68,7 @@ public sealed class MongoTickets(IMongoClient client, MongoConfiguration configu
     public Task RemoveAsync(string key) => Collection.DeleteOneAsync(Filter(key));
     public async Task<bool> IsReadyAsync(CancellationToken ct)
     {
-        try { var r = await Db.GetCollection<BsonDocument>("persistence_versions").Find(new BsonDocument("_id", "01-web-tickets")).SingleOrDefaultAsync(ct); return r is not null && r.GetValue("version", 0) == 2 && r.GetValue("checksum", "") == Checksum; }
+        try { var r = await Db.GetCollection<BsonDocument>("persistence_versions").Find(new BsonDocument("_id", "01-web-tickets")).SingleOrDefaultAsync(ct); return r is not null && r.GetValue("version", 0) == 8 && r.GetValue("checksum", "") == Checksum; }
         catch (Exception) when (!ct.IsCancellationRequested) { return false; }
     }
     public async Task InitializeAsync(CancellationToken ct)
@@ -84,7 +84,8 @@ public sealed class MongoTickets(IMongoClient client, MongoConfiguration configu
         if (options.GetValue("validator", new BsonDocument()) != validator || options.GetValue("validationLevel", "") != "strict" || options.GetValue("validationAction", "") != "error") throw new InvalidOperationException("Schema de tickets incompatível.");
         await Collection.Indexes.CreateOneAsync(new CreateIndexModel<BsonDocument>(new BsonDocument("handleHash", 1), new CreateIndexOptions { Name = "ux_tickets_handle", Unique = true }), cancellationToken: ct);
         await Collection.Indexes.CreateOneAsync(new CreateIndexModel<BsonDocument>(new BsonDocument("expiraEm", 1), new CreateIndexOptions { Name = "ix_tickets_expira" }), cancellationToken: ct);
-        try { await Db.GetCollection<BsonDocument>("persistence_versions").InsertOneAsync(new BsonDocument { { "_id", "01-web-tickets" }, { "schemaVersion", 1 }, { "version", 2 }, { "checksum", Checksum }, { "appliedAt", DateTime.UtcNow } }, cancellationToken: ct); }
+        await Db.GetCollection<BsonDocument>("persistence_versions").UpdateOneAsync(new BsonDocument{{"_id","01-web-tickets"},{"version",2},{"checksum",Checksum}},new BsonDocument("$set",new BsonDocument("version",8)),cancellationToken:ct);
+        try { await Db.GetCollection<BsonDocument>("persistence_versions").InsertOneAsync(new BsonDocument { { "_id", "01-web-tickets" }, { "schemaVersion", 1 }, { "version", 8 }, { "checksum", Checksum }, { "appliedAt", DateTime.UtcNow } }, cancellationToken: ct); }
         catch (MongoWriteException e) when (e.WriteError.Category == ServerErrorCategory.DuplicateKey) { }
         if (!await IsReadyAsync(ct)) throw new InvalidOperationException("Evolução de tickets incompatível.");
     }

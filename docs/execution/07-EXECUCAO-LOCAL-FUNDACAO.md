@@ -22,7 +22,7 @@ Reiniciar hosts e repetir init/health sem apagar banco comprova persistência do
 
 ## Configurações dos hosts sem Compose
 
-Development: MONGODB_URI já fornecido; defaults gestao_comercial_dev (API), gestao_web_dev (Web). Opcional Mongo__Database por processo. Api__BaseUrl=https://localhost:8081/ no perfil Web; Health__InternalPort pode ser configurado por host. DataProtection__KeysPath privado/persistente. Api__CaCertificatePath permite CA privada do canal API sem substituir as raízes públicas usadas no Atlas.
+Development: MONGODB_URI já fornecido; default único gestao_comercial_dev (API e Web), conforme ADR-37. Opcional Mongo__Database por processo. Api__BaseUrl=https://localhost:8081/ no perfil Web; Health__InternalPort pode ser configurado por host. DataProtection__KeysPath privado/persistente. Api__CaCertificatePath permite CA privada do canal API sem substituir as raízes públicas usadas no Atlas.
 
 Production/Staging: Mongo__ConnectionString e Mongo__Database obrigatórios de cada host, sem ler .env/fallback; operador usa Evolution__ConnectionString na tarefa explícita. Bancos/usuários distintos e privilégio mínimo são requisitos de publicação, não comprovados pela conta compartilhada fornecida para Development. Não copiar credenciais para README, argumento CLI, imagem ou log. CERT_DIR/TLS_PASSWORD para Compose são fornecidos externamente; comandos completos e limitações estão no README.
 

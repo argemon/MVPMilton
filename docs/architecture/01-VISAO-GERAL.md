@@ -24,7 +24,7 @@ flowchart LR
     W -->|HTTPS e sessão por usuário| A[ASP.NET Core Web API]
     A -->|MongoDB.Driver / transações| D[(MongoDB replica set)]
     A --> F[Volume privado de imagens]
-    W --> S[(Banco gestao_web / tickets)]
+    W -->|Somente coleção técnica tickets| D
 ```
 
 BFF significa o servidor web que intermedeia chamadas da interface à API. Navegador não recebe o token da API. O frontend acessa apenas seu armazenamento técnico de sessões, nunca coleções de negócio.

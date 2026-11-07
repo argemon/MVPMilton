@@ -50,7 +50,7 @@ builder.Services.AddHttpClient<EstadoApiClient>(c => { c.BaseAddress = new Uri(b
     }
     return handler;
 });
-builder.Services.AddHttpClient<AcessoApiClient>(c => { c.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]!); c.Timeout = TimeSpan.FromSeconds(10); }).ConfigurePrimaryHttpMessageHandler(() =>
+builder.Services.AddHttpClient<AcessoApiClient>(c => { c.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]!); c.Timeout = TimeSpan.FromMinutes(15); }).ConfigurePrimaryHttpMessageHandler(() =>
 {
     var handler = new SocketsHttpHandler { UseCookies = false };
     var ca = builder.Configuration["Api:CaCertificatePath"];

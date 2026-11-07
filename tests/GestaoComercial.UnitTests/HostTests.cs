@@ -95,6 +95,8 @@ public sealed class HostTests
             Assert.True(paths.GetProperty("/api/v1/relatorios/"+type).TryGetProperty("get",out _));
             Assert.True(paths.GetProperty("/api/v1/relatorios/"+type+"/exportacao").TryGetProperty("get",out _));
         }
+        Assert.True(paths.GetProperty("/api/v1/administracao/dados-demonstracao/gerar").TryGetProperty("post",out _));
+        Assert.True(paths.GetProperty("/api/v1/administracao/dados-demonstracao/restaurar").TryGetProperty("post",out _));
         Assert.False(paths.TryGetProperty("/api/v1/catalogo",out _));
     }
     [Fact]

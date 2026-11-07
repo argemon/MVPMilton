@@ -15,7 +15,7 @@
 | 06 | [VENDAS](modules/06-VENDAS.md) | Concluído |
 | 07 | [DASHBOARD](modules/07-DASHBOARD.md) | Concluído |
 | 08 | [RELATORIOS](modules/08-RELATORIOS.md) | Concluído |
-| 09 | [Carga de demonstração](modules/09-CARGA-DEMONSTRACAO.md) | Pendente |
+| 09 | [Carga de demonstração](modules/09-CARGA-DEMONSTRACAO.md) | Implementado; CI pendente |
 | 10 | [Homologação e UX](modules/10-HOMOLOGACAO.md) | Pendente |
 
 ## Referências
@@ -34,3 +34,5 @@
 - [Instruções dos agentes](../AGENTS.md)
 
 Registros antigos nos relatórios de execução e ADRs são **históricos**, não representam módulos ainda existentes. Priorizar este índice e o plano vigente.
+
+[Entrega09 — carga e evidências](execution/12-ENTREGA-CARGA-DEMONSTRACAO.md).

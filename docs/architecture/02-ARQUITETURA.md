@@ -45,7 +45,7 @@ sequenceDiagram
 
 Application define portas de persistência específicas aos casos reais e entradas/saídas sem BSON. Infrastructure implementa MongoDB.Driver oficial e coordena a sessão transacional por comando, com operações sequenciais e CancellationToken. Não criar IRepository<T>, Unit of Work artificial, barramento nem interface por entidade vazia. Um serviço comercial pode coordenar várias coleções na mesma sessão para preservar atomicidade.
 
-IMongoClient é singleton por credencial/configuração, thread-safe e reutiliza conexões; sessão nunca é singleton nem compartilhada por requisições. API usa banco gestao_comercial, Web usa somente gestao_web via adaptador técnico próprio. Frontend referencia apenas Contracts, sem backend. Stores de Identity são infraestrutura, não domínio. Filtros condicionais, validadores e versões pertencem ao adaptador; regras funcionais permanecem em Domain/Application. Confirmação/cancelamento e comandos administrativos seguem arquitetura 05, sem operações paralelas na transação.
+IMongoClient é singleton por credencial/configuração, thread-safe e reutiliza conexões; sessão nunca é singleton nem compartilhada por requisições. API e Web usam o único banco gestao_comercial_dev; Web acessa somente tickets via adaptador técnico próprio (ADR-37). Frontend referencia apenas Contracts, sem backend. Stores de Identity são infraestrutura, não domínio. Filtros condicionais, validadores e versões pertencem ao adaptador; regras funcionais permanecem em Domain/Application. Confirmação/cancelamento e comandos administrativos seguem arquitetura 05, sem operações paralelas na transação.
 
 products incorpora saldo/imagem e sales incorpora itens/snapshots limitados; movimentos, auditoria e sessões não crescem dentro dos agregados. Consultas projetam campos necessários e paginam no servidor. Detalhes de filtro/índice não trafegam no contrato HTTP.
 
@@ -59,4 +59,4 @@ products incorpora saldo/imagem e sales incorpora itens/snapshots limitados; mov
 
 ## Justificativa
 
-A separação permite testar invariantes sem infraestrutura e integridade no MongoDB real. Um único cluster (bancos lógicos isolados) e uma API reduzem custo operacional e permitem atomicidade local. Não há justificativa atual para serviços distribuídos. Veja [ADR-01/02/20–25](../execution/04-DECISOES-TECNICAS.md).
+A separação permite testar invariantes sem infraestrutura e integridade no MongoDB real. Um único banco no cluster Atlas existente e uma API reduzem custo operacional e permitem atomicidade local. Não há justificativa atual para serviços distribuídos. Veja [ADR-01/02/20–25](../execution/04-DECISOES-TECNICAS.md).
