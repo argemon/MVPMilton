@@ -10,13 +10,14 @@ namespace GestaoComercial.Infrastructure.Persistence;
 public sealed class OperacoesCadastro(IMongoClient client, MongoConfiguration configuration, TimeProvider clock, IHttpContextAccessor request)
 {
     internal IMongoDatabase Db => client.GetDatabase(configuration.DatabaseName);
-    internal DateTime Now => clock.GetUtcNow().UtcDateTime;
+    internal DateTime? DemonstrationInstant { get; set; }
+    internal DateTime Now => DemonstrationInstant ?? clock.GetUtcNow().UtcDateTime;
     internal async Task ExigirAsync(SessaoAtual actor, string[] roles, CancellationToken ct, IClientSessionHandle? session = null)
     {
         var users = Db.GetCollection<UsuarioIdentity>("users"); var sessions = Db.GetCollection<SessaoDocumento>("api_sessions");
         var u = session is null ? await users.Find(x => x.Id == actor.Usuario.Id).SingleOrDefaultAsync(ct) : await users.Find(session, x => x.Id == actor.Usuario.Id).SingleOrDefaultAsync(ct);
         var s = session is null ? await sessions.Find(x => x.Id == actor.Id).SingleOrDefaultAsync(ct) : await sessions.Find(session, x => x.Id == actor.Id).SingleOrDefaultAsync(ct);
-        if (u is null || s is null || !u.Ativo || u.SecurityStamp != actor.Stamp || s.Stamp != u.SecurityStamp || !MongoAutenticacao.SessaoValida(s, Now)) throw new AcessoException(FalhaAcesso.Credenciais);
+        if (u is null || s is null || !u.Ativo || u.SecurityStamp != actor.Stamp || s.Stamp != u.SecurityStamp || !MongoAutenticacao.SessaoValida(s, clock.GetUtcNow().UtcDateTime)) throw new AcessoException(FalhaAcesso.Credenciais);
         if (u.DeveAlterarSenha || !roles.Contains(u.Perfil)) throw new AcessoException(FalhaAcesso.Proibido);
     }
     internal async Task<T> ExecutarAsync<T>(SessaoAtual actor, string[] roles, Func<IClientSessionHandle, CancellationToken, Task<T>> body, CancellationToken ct)

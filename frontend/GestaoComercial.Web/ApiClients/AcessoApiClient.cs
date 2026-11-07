@@ -11,13 +11,15 @@ public sealed partial class AcessoApiClient(HttpClient http)
 {
     private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? token, object? body, CancellationToken ct, Guid? chave = null)
     {
+        using var budget = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        budget.CancelAfter(path.StartsWith("api/v1/administracao/dados-demonstracao/",StringComparison.Ordinal)?TimeSpan.FromMinutes(15):TimeSpan.FromSeconds(10));
         using var request = new HttpRequestMessage(method, path);
         if (token is not null) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null) request.Content = JsonContent.Create(body);
         if (chave is { } key) request.Headers.Add("Idempotency-Key", key.ToString());
         try
         {
-            var response = await http.SendAsync(request, ct);
+            var response = await http.SendAsync(request, budget.Token);
             if (!response.IsSuccessStatusCode) {
                 var status = (int)response.StatusCode; string? code=null;
                 try { using var doc=System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct)); if(doc.RootElement.TryGetProperty("code",out var value)) code=value.GetString(); } catch(System.Text.Json.JsonException) { }

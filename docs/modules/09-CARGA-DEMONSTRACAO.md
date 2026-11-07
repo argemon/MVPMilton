@@ -41,12 +41,16 @@ Usar dados evidentemente fictícios, e-mails de exemplo e imagens ilustrativas p
 
 ## Testes e aceite
 
-- [ ] Gerar carga no banco existente pela interface administrativa.
-- [ ] Verificar contagens, dados e coerência das referências.
-- [ ] Repetir sem criar duplicatas.
-- [ ] Restaurar com confirmação sem remover dados manuais.
-- [ ] Verificar saldo, vendas, estorno, Dashboard e Relatórios antes e depois.
-- [ ] Negar execução por usuário sem permissão.
-- [ ] Executar build/testes aplicáveis e registrar resultados reais.
+- [x] Gerar carga no banco existente pela interface administrativa.
+- [x] Verificar contagens, dados e coerência das referências.
+- [x] Repetir sem criar duplicatas.
+- [x] Restaurar com confirmação sem remover dados manuais.
+- [x] Verificar saldo, vendas, estorno, Dashboard e Relatórios antes e depois.
+- [x] Negar execução por usuário sem permissão.
+- [x] Executar build/testes aplicáveis e registrar resultados reais.
 
 **Entrega:** carga e restauração funcionais e documentadas; não antecipar homologação do Bloco 10.
+
+## Contrato da implementação (ADR-37)
+
+Página /administracao/dados-demonstracao. POST /api/v1/administracao/dados-demonstracao/gerar e /restaurar (confirmar=true). Policy administrativa também na API;409 para dependência/alteração manual e400 sem confirmação. Identificação pela auditoria transacional existente, sem coleção de controle adicional. Conciliação, reexecução, recuperação e rollback obrigatórios. Não iniciar10 nesta solicitação. Evidências no relatório12.

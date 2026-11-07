@@ -1,0 +1,29 @@
+@page "/administracao/dados-demonstracao"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Funcionarios.Gerenciar")]
+@rendermode InteractiveServer
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Dados de Demonstração · Gestão Comercial</PageTitle>
+<p>Administração</p><h1>Dados de Demonstração</h1>
+@if(_state is {} state){<p>Banco atual: @state.Banco · Última carga concluída: @(state.UltimaExecucao?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")??"nenhuma registrada")</p>}
+<p>Cria 12 funcionários e usuários, 40 clientes, 100 produtos e 250 vendas fictícias no banco atual. A geração pode levar alguns minutos. Repetir retoma a mesma carga sem duplicações.</p>
+@if(_busy){<p role="status">Processando a carga. Aguarde…</p>}
+@if(_message is not null){<p role="@(_success?"status":"alert")" tabindex="-1" @ref="_alert">@_message</p>}
+<button disabled="@_busy" @onclick="()=>Executar(false)">Gerar carga</button>
+<p>A restauração substitui somente a carga anterior. Se houver alterações ou referências manuais, a restauração será recusada, preservando os dados.</p>
+<label><input type="checkbox" @bind="_confirm" disabled="@_busy" /> Confirmo remover a carga anterior e gerar novamente.</label>
+<button disabled="@(_busy||!_confirm)" @onclick="()=>Executar(true)">Restaurar carga</button>
+@code{
+    private EstadoCargaResponse? _state;
+    protected override async Task OnInitializedAsync(){try{_state=await Sessao.UsarAsync((a,t,c)=>a.EstadoCargaAsync(t,c),CancellationToken.None);}catch(ApiFailure){_message="Não foi possível consultar a última execução. Tente novamente.";}}
+    private bool _busy,_confirm,_focus,_success;private string? _message;private ElementReference _alert;
+    protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
+    private async Task Executar(bool restaurar)
+    {
+        if(_busy||(restaurar&&!_confirm))return;
+        _busy=true;_message=null;_success=false;
+        try{var r=await Sessao.UsarAsync((a,t,c)=>a.CargaAsync(t,restaurar,_confirm,c),CancellationToken.None);_state=await Sessao.UsarAsync((a,t,c)=>a.EstadoCargaAsync(t,c),CancellationToken.None);_success=true;_message=$"Carga concluída: {r.Funcionarios} funcionários, {r.Usuarios} usuários, {r.Clientes} clientes, {r.Produtos} produtos, {r.Vendas} vendas ({r.Canceladas} canceladas).";}
+        catch(ApiFailure e){if(e.Status is 401 or 403){Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);return;}_message=e.Code switch{"CARGA_DEPENDENCIA_MANUAL"=>"Restauração recusada: registros da carga possuem uso ou alterações manuais. Nenhum registro foi removido.","CARGA_EM_ANDAMENTO"=>"Já existe uma carga em andamento. Aguarde antes de repetir.",_=>"Não foi possível concluir. A geração pode ser repetida para retomar. A restauração só remove dados após verificar as dependências."};}
+        finally{_busy=false;_confirm=false;_focus=true;}
+    }
+}

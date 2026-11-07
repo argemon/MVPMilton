@@ -15,7 +15,7 @@ Atualizado em 07/11/2026. Este é um **projeto acadêmico para demonstração lo
 | 06 | Vendas | Concluído |
 | 07 | Dashboard | Concluído |
 | 08 | Relatórios e CSV | Concluído |
-| 09 | Carga e restauração de dados fictícios | Pendente de execução/validação |
+| 09 | Carga e restauração de dados fictícios | Concluído |
 | 10 | Homologação, correções e acabamento visual | Pendente, depende de 09 |
 
 ## Sequência
@@ -34,3 +34,7 @@ Atualizado em 07/11/2026. Este é um **projeto acadêmico para demonstração lo
 - Ao concluir cada bloco, atualizar estado e documentação, sem marcar o próximo como concluído.
 
 Documentos normativos: [dependências](01-DEPENDENCIAS.md), [Definition of Done](02-DEFINITION-OF-DONE.md), [carga](../modules/09-CARGA-DEMONSTRACAO.md) e [homologação](../modules/10-HOMOLOGACAO.md).
+
+## Escopo09 vigente — ADR-37
+
+Carga acadêmica usa exclusivamente banco Atlas e conexão existentes no .env, sem banco Demo/instância/URI/ambiente adicional. Gate09: [carga](../modules/09-CARGA-DEMONSTRACAO.md), com quantidades, conciliação, reexecução, restauração confirmada, dependências manuais protegidas, autorização e resultados reais de restore/build/test/CI. Não exige nova infraestrutura nem libera10. Homologação/backup e metas comerciais antigas não são o escopo desta carga. Testes técnicos existentes mantêm ADR-28.

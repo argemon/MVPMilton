@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–08 aprovados,236 testes no CI integral (125 unitários+111 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Dashboard com evolução/ranking/recentes e cinco relatórios paginados com exportação CSV segura. Estoque e vendas transacionais preservados. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
+> **Estágio atual:** blocos00–09 aprovados,242 testes no CI integral (126 unitários+116 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Carga administrativa gerada, restaurada e repetida no único Atlas existente, sem duplicações ou divergências de saldo. Evidências no [estado](docs/execution/03-ESTADO-PROJETO.md). Bloco10 não iniciado.
 
 ## Objetivo
 
@@ -85,3 +85,9 @@ Blocos 00–08 implementados conforme [evidências](docs/execution/03-ESTADO-PRO
 - [Homologação final](docs/modules/10-HOMOLOGACAO.md)
 
 A demonstração será feita na máquina do apresentador; acesso ao Atlas requer conexão à internet. Não versionar `.env` ou credenciais.
+
+## Demonstração acadêmica — Bloco09
+
+Aplicação e sessões Web usam o único banco `gestao_comercial_dev` no Atlas e a conexão do `.env` existente. Inicializar explicitamente API e Web após build (sem executar migração no startup). O registro de tickets Web é compatibilizado pelo inicializador para catálogo compartilhado (ADR-37); nenhum banco antigo é apagado.
+
+Entre como Administrador e abra **Administração > Dados de Demonstração**. **Gerar carga** cria/retoma o cenário; **Restaurar carga** exige confirmação e recusa alterações/referências manuais antes de excluir. Senhas dos usuários sintéticos são aleatórias e não publicadas; redefina pelo fluxo administrativo existente se precisar apresentar login com outro perfil. Cenário-base fixo07/11/2026: para visualizar todo o histórico, filtre01/08/2026–08/11/2026. Não utilizar dados pessoais reais.

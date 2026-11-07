@@ -24,3 +24,7 @@ flowchart TD
 | 10 | 00–09 aprovados | Auditar funcionamento, corrigir bugs, revisar layout responsivo e preparar apresentação presencial |
 
 **Dependência crítica:** o Bloco 10 só pode ser aprovado depois que carga e restauração do Bloco 09 forem verificadas. O processo de homologação não adiciona uma segunda instância ou banco.
+
+## Escopo09 vigente — ADR-37
+
+Carga acadêmica usa exclusivamente banco Atlas e conexão existentes no .env, sem banco Demo/instância/URI/ambiente adicional. Gate09: [carga](../modules/09-CARGA-DEMONSTRACAO.md), com quantidades, conciliação, reexecução, restauração confirmada, dependências manuais protegidas, autorização e resultados reais de restore/build/test/CI. Não exige nova infraestrutura nem libera10. Homologação/backup e metas comerciais antigas não são o escopo desta carga. Testes técnicos existentes mantêm ADR-28.

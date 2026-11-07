@@ -18,7 +18,7 @@ sequenceDiagram
     W->>A: POST /api/v1/auth/login por TLS
     A->>D: Validar Identity; salvar hash da sessão
     A-->>W: Token opaco uma única vez
-    W->>D: Ticket e token protegidos no banco gestao_web
+    W->>D: Ticket e token protegidos no banco único gestao_comercial_dev
     W-->>N: Set-Cookie de referência + redirect local
     N->>W: Abrir circuito autenticado
     W->>A: Chamada de negócio com token do usuário
@@ -33,7 +33,7 @@ Login/logout e troca de senha devem usar endpoints HTTP do host Web e navegaçã
 
 - Token API: 32 bytes aleatórios criptograficamente seguros, Base64URL; banco API guarda somente SHA-256, usuário, timestamps e revogação. Comparação e consulta pelo hash; nunca usar hash simples de senha.
 - Cookie `__Host-GestaoComercial`: Secure, HttpOnly, SameSite=Lax, Path=/, sem Domain; referência aleatória a ticket persistido via `ITicketStore`. Ticket não contém token em claro.
-- Banco gestao_web guarda ticket e token protegidos por ASP.NET Core Data Protection. Persistir key ring em volume privado, proteger acesso e cópia de backup; perder chaves invalida sessões. Sem key ring persistente, publicação não está pronta.
+- Banco único gestao_comercial_dev guarda ticket e token protegidos por ASP.NET Core Data Protection. Persistir key ring em volume privado, proteger acesso e cópia de backup; perder chaves invalida sessões. Sem key ring persistente, publicação não está pronta.
 - API: 8 h absolutas e 30 min de inatividade. Chamadas comerciais autorizadas atualizam último uso de modo atômico; `/auth/me`, health e revalidação não estendem inatividade. Expiração não é prorrogada além de 8 h. Sem refresh token no MVP.
 - Web: ticket expira em no máximo a expiração absoluta API. Revalidar a sessão API a cada 60 s sem estender inatividade; 401/403 por revogação encerra uso e redireciona para novo login com navegação completa. Durante indisponibilidade, não autorizar operações com base apenas no cookie.
 - Claims do circuito servem à apresentação. A API consulta usuário/perfil atuais em toda requisição. Mudança de perfil, senha ou inativação revoga todas as sessões em transação.

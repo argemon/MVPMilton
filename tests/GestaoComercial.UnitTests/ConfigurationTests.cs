@@ -67,3 +67,13 @@ public sealed class ConfigurationTests
         finally { Environment.SetEnvironmentVariable(key, null); Directory.Delete(dir, true); }
     }
 }
+
+public sealed class DemonstrationConfigurationTests
+{
+    [Xunit.Fact]
+    public void DevelopmentHostsShareTheExistingDatabase()
+    {
+        var config=new Microsoft.Extensions.Configuration.ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string,string?>{{"MONGODB_URI","mongodb://localhost"},{"Api:BaseUrl","https://localhost/"}}).Build();
+        Xunit.Assert.Equal(ApiHost::GestaoComercial.Api.Configuracao.Mongo(config,"Development").DatabaseName,WebHost::GestaoComercial.Web.Configuracao.Mongo(config,"Development").DatabaseName);
+    }
+}
