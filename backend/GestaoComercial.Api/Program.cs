@@ -29,6 +29,7 @@ builder.Services.AddSingleton<MongoFoundation>();
 builder.Services.AddAcesso();
 builder.Services.AddAutenticacaoHttp();
 builder.Services.AddScoped<OperacoesCadastro>();
+builder.Services.AddScoped<GestaoComercial.Application.Relatorios.IRelatorios,GestaoComercial.Infrastructure.Relatorios.MongoRelatorios>();
 builder.Services.AddScoped<GestaoComercial.Application.Dashboard.IDashboard,GestaoComercial.Infrastructure.Dashboard.MongoDashboard>();
 builder.Services.AddScoped<GestaoComercial.Application.Clientes.IClientes, GestaoComercial.Infrastructure.Clientes.MongoClientes>();
 builder.Services.AddSingleton<GestaoComercial.Infrastructure.Clientes.ClientesSchema>();
@@ -99,7 +100,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 app.Use(async (context, next) =>
 {
-    if (context.Items.ContainsKey(typeof(SessaoAtual)) && (context.Request.Path.StartsWithSegments("/api/v1/usuarios") || context.Request.Path.StartsWithSegments("/api/v1/funcionarios") || context.Request.Path.StartsWithSegments("/api/v1/clientes") || context.Request.Path.StartsWithSegments("/api/v1/produtos") || context.Request.Path.StartsWithSegments("/api/v1/categorias") || context.Request.Path.StartsWithSegments("/api/v1/marcas") || context.Request.Path.StartsWithSegments("/api/v1/estoque") || context.Request.Path.StartsWithSegments("/api/v1/vendas") || context.Request.Path.StartsWithSegments("/api/v1/dashboard")))
+    if (context.Items.ContainsKey(typeof(SessaoAtual)) && (context.Request.Path.StartsWithSegments("/api/v1/usuarios") || context.Request.Path.StartsWithSegments("/api/v1/funcionarios") || context.Request.Path.StartsWithSegments("/api/v1/clientes") || context.Request.Path.StartsWithSegments("/api/v1/produtos") || context.Request.Path.StartsWithSegments("/api/v1/categorias") || context.Request.Path.StartsWithSegments("/api/v1/marcas") || context.Request.Path.StartsWithSegments("/api/v1/estoque") || context.Request.Path.StartsWithSegments("/api/v1/vendas") || context.Request.Path.StartsWithSegments("/api/v1/dashboard") || context.Request.Path.StartsWithSegments("/api/v1/relatorios")))
     {
         var auth = context.RequestServices.GetRequiredService<IAutenticacao>();
         if (await auth.ValidarAsync(context.Request.Headers.Authorization.ToString()[7..], true, context.RequestAborted) is not { } session) { context.Response.StatusCode = 401; return; }
@@ -114,6 +115,7 @@ app.MapProdutos();
 app.MapEstoque();
 app.MapVendas();
 app.MapDashboard();
+app.MapRelatorios();
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse("ok"))).AllowAnonymous();
 app.MapGet("/health/ready", async (MongoFoundation mongo, AuthSchema auth, GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema employees, GestaoComercial.Infrastructure.Clientes.ClientesSchema customers, GestaoComercial.Infrastructure.Produtos.ProdutosSchema products, GestaoComercial.Infrastructure.Estoque.EstoqueSchema stock, GestaoComercial.Infrastructure.Vendas.VendasSchema sales, CancellationToken ct) =>
 {

@@ -1,0 +1,126 @@
+@page "/relatorios/{Tipo}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Relatorios.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+@inject Microsoft.JSInterop.IJSRuntime Js
+<PageTitle>Relatórios · Gestão Comercial</PageTitle>
+<h1>Relatórios</h1>
+@if(_invalid){<p role="alert">Relatório não encontrado.</p>}
+else{
+<label for="relatorio">Selecionar relatório</label><select id="relatorio" value="@Tipo" @onchange="Trocar">
+@if(_admin){<option value="vendas">Vendas por período</option><option value="operadores">Vendas por funcionário / operador</option><option value="produtos">Produtos mais vendidos</option>}
+<option value="estoque">Posição atual do estoque</option><option value="movimentos">Movimentações de estoque</option></select>
+<h2>@Titulo</h2>
+<form @onsubmit="AplicarAsync" @onsubmit:preventDefault>
+@if(Tipo!="estoque"){
+<label for="inicio">Desde (inclusive)</label><input type="date" id="inicio" @bind="_inicio" required />
+<label for="fim">Até (exclusive)</label><input type="date" id="fim" @bind="_fim" required />
+<p>Período máximo: 366 dias. @(Tipo=="movimentos"?"Os movimentos usam a data de ocorrência.":"As vendas usam a data de confirmação.")</p>
+}
+@if(Tipo is "vendas" or "operadores" or "produtos"){
+<label for="buscaOperador">Localizar funcionário / operador pelo início do nome</label><input id="buscaOperador" @bind="_buscaOperador" maxlength="150" />
+<button type="button" disabled="@(_loading||_exporting)" @onclick="BuscarOperadoresAsync">Localizar operadores</button>
+<label for="operador">Operador que criou a venda</label><select id="operador" @bind="_operador"><option value="">Todos (inclui contas inativas e administrador inicial)</option>@foreach(var u in _operadores){<option value="@u.Id">@u.Nome · @u.Perfil</option>}</select>
+<p>O agrupamento e os nomes das linhas usam a autoria histórica da venda. A seleção exibe contas atuais; refine a busca para localizar outras contas.</p>
+}
+@if(Tipo=="estoque"){
+<label for="busca">Início do nome ou SKU exato</label><input id="busca" @bind="_search" maxlength="150" />
+<label for="ativo">Situação</label><select id="ativo" @bind="_ativo"><option value="true">Ativos</option><option value="false">Inativos</option><option value="todos">Todos</option></select>
+<p>Posição atual. Não representa saldo de uma data passada.</p>
+}
+@if(Tipo=="movimentos"){
+<label for="produtoBusca">Localizar produto pelo início do nome ou SKU</label><input id="produtoBusca" @bind="_buscaProduto" maxlength="150" />
+<button type="button" disabled="@(_loading||_exporting)" @onclick="BuscarProdutosAsync">Localizar produtos</button>
+<label for="produto">Produto</label><select id="produto" @bind="_produto"><option value="">Todos</option>@foreach(var p in _produtos){<option value="@p.Id">@p.Sku · @p.Nome</option>}</select>
+<label for="tipo">Tipo de movimento</label><select id="tipo" @bind="_tipoMovimento"><option value="">Todos</option><option>Entrada</option><option>SaidaManual</option><option>Ajuste</option><option>Venda</option><option>EstornoVenda</option></select>
+}
+<label for="ordenacao">Ordenação</label><select id="ordenacao" @bind="_sort">
+@if(Tipo is "vendas" or "movimentos"){<option value="dataDesc">Mais recentes</option><option value="dataAsc">Mais antigos</option>}
+else if(Tipo=="estoque"){<option value="nomeAsc">Nome A–Z</option><option value="nomeDesc">Nome Z–A</option><option value="saldoAsc">Menor saldo</option><option value="saldoDesc">Maior saldo</option>}
+else if(Tipo=="operadores"){<option value="receitaDesc">Maior receita</option><option value="nomeAsc">Nome A–Z</option>}
+else{<option value="quantidadeDesc">Maior quantidade</option><option value="receitaDesc">Maior receita</option><option value="nomeAsc">Nome A–Z</option>}
+</select><label for="tamanho">Linhas por página</label><select id="tamanho" @bind="_pageSize"><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>
+<button disabled="@(_loading||_exporting)">Aplicar filtros</button></form>
+@if(_loading){<p role="status">Carregando relatório…</p>}
+else if(_error){<p role="alert">Não foi possível consultar o relatório. Confira os filtros e tente novamente.</p><button @onclick="AplicarAsync">Repetir</button>}
+else if(_meta is {} meta){
+<p>Gerado em @Local(meta.GeradoEm) · @meta.Fuso @if(meta.Inicio is {} start){<span>· @start.ToString("dd/MM/yyyy") a @meta.Fim?.ToString("dd/MM/yyyy") (fim exclusivo)</span>}</p>
+@if(_totais is {} totals){<p><strong>Totais de todo o filtro:</strong> @totals.QuantidadeConfirmada confirmadas, @totals.QuantidadeCancelada canceladas · Receita líquida @totals.ReceitaLiquida.ToString("C",Pt) · Ticket médio @totals.TicketMedio.ToString("C",Pt).</p>}
+@if(_estoque is {} stock){<p>Total de unidades: @stock.Totais.Saldo · Produtos ativos com estoque baixo: @stock.Totais.Baixos.</p>}
+@if(_movimentos is {} movements){<p>Entradas: @movements.Totais.Entradas · Saídas: @movements.Totais.Saidas · Delta líquido: @movements.Totais.Delta.</p>}
+<p>A exportação inclui todo o filtro aplicado, até 10.000 linhas. Tela e arquivo são consultas em instantes diferentes e podem refletir mudanças. Aplique os filtros antes de exportar.</p>
+<button disabled="@(_loading||_exporting)" @onclick="ExportarAsync">Exportar CSV</button>
+@if(_exporting){<p role="status">Preparando download…</p>}
+@if(_downloadMessage is not null){<p role="status">@_downloadMessage</p>}
+@if(_exportError is not null){<p role="alert">@_exportError</p>}
+@if(_rowsCount==0){<p>Nenhum resultado para os filtros aplicados.</p>}
+else{<div class="tabela dashboard-table" tabindex="0"><table><caption>@Titulo — @_total linhas no filtro completo</caption><thead><tr>
+@if(_vendas is not null){<th>Confirmação</th><th>Cliente</th><th>Operador</th><th>Estado</th><th>Total original</th><th>Contribuição líquida</th>}
+else if(_porOperador is not null){<th>Operador histórico</th><th>Confirmadas</th><th>Canceladas</th><th>Receita líquida</th><th>Ticket médio</th>}
+else if(_maisVendidos is not null){<th>SKU histórico</th><th>Produto na venda</th><th>Quantidade</th><th>Receita líquida</th>}
+else if(_estoque is not null){<th>SKU</th><th>Produto</th><th>Saldo</th><th>Mínimo</th><th>Situação</th>}
+else{<th>Data</th><th>Produto</th><th>Tipo</th><th>Delta</th><th>Saldo antes</th><th>Saldo depois</th><th>Operador</th><th>Motivo</th>}
+</tr></thead><tbody>
+@if(_vendas is {} v){@foreach(var x in v.Items){<tr><td><a href="@($"/vendas/{x.VendaId}")">@Local(x.ConfirmadoEm)</a></td><td>@x.ClienteNome</td><td>@x.OperadorNome</td><td>@x.Status</td><td>@x.TotalOriginal.ToString("C",Pt)</td><td>@x.ContribuicaoLiquida.ToString("C",Pt)</td></tr>}}
+else if(_porOperador is {} o){@foreach(var x in o.Items){<tr><td>@x.Nome<br /><small>@x.OperadorId</small></td><td>@x.QuantidadeConfirmada</td><td>@x.QuantidadeCancelada</td><td>@x.ReceitaLiquida.ToString("C",Pt)</td><td>@x.TicketMedio.ToString("C",Pt)</td></tr>}}
+else if(_maisVendidos is {} p){@foreach(var x in p.Items){<tr><td>@x.Sku</td><td>@x.Nome</td><td>@x.Quantidade</td><td>@x.ReceitaLiquida.ToString("C",Pt)</td></tr>}}
+else if(_estoque is {} e){@foreach(var x in e.Items){<tr><td>@x.Sku</td><td>@x.Nome</td><td>@x.Saldo</td><td>@x.Minimo</td><td>@(x.Ativo?"Ativo":"Inativo")</td></tr>}}
+else if(_movimentos is {} m){@foreach(var x in m.Items){<tr><td>@Local(x.OcorridoEm)</td><td><a href="@($"/produtos/{x.ProdutoId}")">@x.ProdutoId</a></td><td>@x.Tipo</td><td>@x.Delta</td><td>@x.SaldoAntes</td><td>@x.SaldoDepois</td><td>@x.Ator.Nome</td><td>@x.Motivo</td></tr>}}
+</tbody></table></div>}
+<nav aria-label="Paginação"><button disabled="@(_page<=1||_loading||_exporting)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page · Total @_total</span><button disabled="@((long)_page*_appliedPageSize>=_total||_loading||_exporting)" @onclick="ProximaAsync">Próxima</button></nav>
+}
+}
+@code{
+    [Parameter]public string Tipo{get;set;}="";
+    private static readonly System.Globalization.CultureInfo Pt=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    private readonly CancellationTokenSource _cts=new();private DateTime _inicio,_fim;private string _sort="",_search="",_ativo="true",_operador="",_produto="",_tipoMovimento="",_query="",_buscaOperador="",_buscaProduto="";private bool _admin,_invalid,_loading,_error,_exporting;private int _page=1,_pageSize=20,_appliedPageSize=20,_rowsCount;private long _total;private string? _exportError,_downloadMessage;
+    private IReadOnlyList<UsuarioResponse> _operadores=[];private IReadOnlyList<ProdutoResponse> _produtos=[];
+    private RelatorioVendasResponse? _vendas;private RelatorioOperadoresResponse? _porOperador;private RelatorioProdutosResponse? _maisVendidos;private RelatorioEstoqueResponse? _estoque;private RelatorioMovimentosResponse? _movimentos;private ResumoComercialResponse? _totais;private FiltrosRelatorioResponse? _meta;
+    private string Titulo=>Tipo switch{"vendas"=>"Vendas por período","operadores"=>"Vendas por funcionário / operador criador","produtos"=>"Produtos mais vendidos","estoque"=>"Posição atual do estoque",_=>"Movimentações de estoque"};
+    private string Local(DateTimeOffset date)=>TimeZoneInfo.ConvertTime(date,TimeZoneInfo.FindSystemTimeZoneById(_meta?.Fuso??Configuration["APP_TIME_ZONE"]??"America/Cuiaba")).ToString("dd/MM/yyyy HH:mm");
+    protected override async Task OnParametersSetAsync()
+    {
+        _invalid=Tipo is not("vendas" or "operadores" or "produtos" or "estoque" or "movimentos");if(_invalid)return;
+        try{_admin=(await Sessao.MeAsync(_cts.Token)).Usuario.Perfil=="Administrador";}catch(ApiFailure e){Falha(e);return;}
+        if(!_admin&&Tipo is not("estoque" or "movimentos")){Navigation.NavigateTo("/acesso-negado",true);return;}
+        var now=TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow,TimeZoneInfo.FindSystemTimeZoneById(Configuration["APP_TIME_ZONE"]??"America/Cuiaba"));_inicio=new(now.Year,now.Month,1);_fim=_inicio.AddMonths(1);_operador="";_produto="";_tipoMovimento="";_search="";_ativo="true";_sort=Tipo switch{"estoque"=>"nomeAsc","operadores"=>"receitaDesc","produtos"=>"quantidadeDesc",_=>"dataDesc"};
+        if(Tipo is "vendas" or "operadores" or "produtos")await BuscarOperadoresAsync();if(Tipo=="movimentos")await BuscarProdutosAsync();await AplicarAsync();
+    }
+    private void Trocar(ChangeEventArgs e)=>Navigation.NavigateTo("/relatorios/"+e.Value,true);
+    private void Falha(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}
+    private async Task BuscarOperadoresAsync(){try{_operadores=(await Sessao.UsarAsync((a,t,c)=>a.ListarAsync(t,1,_buscaOperador,null,c),_cts.Token)).Items;}catch(ApiFailure e){Falha(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private async Task BuscarProdutosAsync(){try{_produtos=(await Sessao.UsarAsync((a,t,c)=>a.ProdutosAsync(t,1,_buscaProduto,null,null,"todos",c),_cts.Token)).Items;}catch(ApiFailure e){Falha(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private Task AplicarAsync()
+    {
+        var fields=new Dictionary<string,string>{{"ordenacao",_sort}};
+        if(Tipo=="estoque"){fields["search"]=_search;fields["ativo"]=_ativo;}else{fields["inicio"]=_inicio.ToString("yyyy-MM-dd");fields["fim"]=_fim.ToString("yyyy-MM-dd");}
+        if(Tipo=="movimentos"){if(_produto!="")fields["produtoId"]=_produto;if(_tipoMovimento!="")fields["tipo"]=_tipoMovimento;}else if(Tipo!="estoque"&&_operador!="")fields["operadorId"]=_operador;
+        _query="?"+string.Join("&",fields.Select(x=>Uri.EscapeDataString(x.Key)+"="+Uri.EscapeDataString(x.Value)));_page=1;_appliedPageSize=_pageSize;return CarregarAsync();
+    }
+    private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync()
+    {
+        _loading=true;_error=false;_exportError=null;_downloadMessage=null;_meta=null;_totais=null;_vendas=null;_porOperador=null;_maisVendidos=null;_estoque=null;_movimentos=null;
+        var query=_query+$"&page={_page}&pageSize={_appliedPageSize}";
+        try{
+            switch(Tipo){
+            case "vendas":_vendas=await Sessao.UsarAsync((a,t,c)=>a.RelatorioVendasAsync(t,query,c),_cts.Token);_meta=_vendas.Filtros;_totais=_vendas.Totais;_total=_vendas.TotalItems;_rowsCount=_vendas.Items.Count;break;
+            case "operadores":_porOperador=await Sessao.UsarAsync((a,t,c)=>a.RelatorioOperadoresAsync(t,query,c),_cts.Token);_meta=_porOperador.Filtros;_totais=_porOperador.Totais;_total=_porOperador.TotalItems;_rowsCount=_porOperador.Items.Count;break;
+            case "produtos":_maisVendidos=await Sessao.UsarAsync((a,t,c)=>a.RelatorioProdutosAsync(t,query,c),_cts.Token);_meta=_maisVendidos.Filtros;_totais=_maisVendidos.Totais;_total=_maisVendidos.TotalItems;_rowsCount=_maisVendidos.Items.Count;break;
+            case "estoque":_estoque=await Sessao.UsarAsync((a,t,c)=>a.RelatorioEstoqueAsync(t,query,c),_cts.Token);_meta=_estoque.Filtros;_total=_estoque.TotalItems;_rowsCount=_estoque.Items.Count;break;
+            default:_movimentos=await Sessao.UsarAsync((a,t,c)=>a.RelatorioMovimentosAsync(t,query,c),_cts.Token);_meta=_movimentos.Filtros;_total=_movimentos.TotalItems;_rowsCount=_movimentos.Items.Count;break;}
+        }catch(ApiFailure e){Falha(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}
+    }
+    private sealed record DownloadResult(int Status,string Code);
+    private async Task ExportarAsync()
+    {
+        _exporting=true;_exportError=null;_downloadMessage=null;
+        try{var result=await Microsoft.JSInterop.JSRuntimeExtensions.InvokeAsync<DownloadResult>(Js,"relatorios.baixar",_cts.Token,["/downloads/relatorios/"+Tipo+_query]);
+            if(result.Status is 401 or 403)Navigation.NavigateTo(result.Status==401?"/conta/entrar":"/acesso-negado",true);else if(result.Status==200)_downloadMessage="Download preparado com os filtros aplicados.";else _exportError=result.Code=="EXPORTACAO_EXCEDE_LIMITE"?"O relatório excede 10.000 linhas. Reduza os filtros.":"Não foi possível exportar. Tente novamente.";
+        }catch(Microsoft.JSInterop.JSException){_exportError="Não foi possível iniciar o download. Tente novamente.";}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_exporting=false;}
+    }
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

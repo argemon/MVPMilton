@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–06 aprovados,199 testes no CI final,0 falhas/skips. Estoque auditável e vendas transacionais com snapshots, baixa/estorno, idempotência e histórico real do cliente. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
+> **Estágio atual:** blocos00–08 aprovados localmente; CI integral em acompanhamento. Dashboard com evolução/ranking/recentes e cinco relatórios paginados com exportação CSV segura. Estoque e vendas transacionais preservados. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
 
 ## Objetivo
 
@@ -20,8 +20,8 @@ O projeto prioriza uma solução adequada ao TCC, com separação de responsabil
 | Produtos | Cadastro, edição, categorias, marcas, preço, imagem, estoque mínimo e status |
 | Estoque | Entradas, saídas manuais, ajustes justificados, consulta de saldo e histórico auditável |
 | Vendas | Rascunho com cliente e itens, totalização, confirmação, baixa de estoque, consulta, descarte e cancelamento com estorno integral |
-| Dashboard | Indicadores comerciais por período, ticket médio, vendas canceladas e produtos com estoque baixo |
-| Relatórios | Vendas por período, posição atual do estoque e movimentações, com paginação e exportação CSV |
+| Dashboard | Indicadores por período, ticket médio, canceladas, produtos cadastrados/ativos/estoque baixo, evolução, ranking e vendas recentes |
+| Relatórios | Vendas por período e funcionário/operador, produtos mais vendidos, posição atual do estoque e movimentações; filtros, ordenação, paginação e CSV até 10.000 linhas |
 | Qualidade e entrega | Testes, homologação, publicação, backup e restauração demonstrada |
 
 Os requisitos estão identificados como **RF-01 a RF-20**. As prioridades P0 e P1 fazem parte da entrega completa do MVP.
@@ -217,3 +217,5 @@ Para remover órfãos, interrompa todas as escritas/API e faça backup de banco+
 Entrega de Estoque/Vendas: [evidências e pendências](docs/execution/10-ENTREGA-ESTOQUE-VENDAS.md). Para o perfil Atlas, execute testes com `--filter "Category!=ContainerSecurity&Category!=ContainerScale"`; o CI executa a suíte integral com MongoDB autenticado isolado, incluindo restrições de coleção. Não usar a conta Atlas de desenvolvimento no CI.
 
 As evoluções05/06 foram validadas em bancos isolados; a aplicação em `gestao_comercial_dev` aguarda autorização explícita após bloqueio da revisão automática. O `.env` e o banco persistente permanecem preservados.
+
+Dashboard e relatórios: [contratos, validação e limites](docs/execution/11-ENTREGA-DASHBOARD-RELATORIOS.md). PDF fora do escopo aprovado. Próximo bloco09-HOMOLOGACAO exige nova solicitação; sem deploy ou merge automático.

@@ -45,6 +45,12 @@ CSV delimitador `;`, aspas escapadas, quebras tratadas, datas ISO e decimal com 
 
 ## 9. Endpoints REST
 
+Incremento ADR-36 autorizado antes da implementação: acrescentar GET `/operadores` e `/produtos` e respectivos `/exportacao`, todos Relatorios.Vendas. Operadores agrupam usuário criadorId com nome histórico mais recente; cliente/funcionário atuais não sobrescrevem snapshots. Produtos reutiliza ranking07 agrupado por produtoId e snapshot mais recente. Filtro `operadorId` UUID é usuário criador, não employeeId atual, disponível em vendas/operadores/produtos; sem filtro inclui bootstrap. ProdutoId filtra movimentos. Todas as consultas recebem `ordenacao`: vendas/movimentos `dataDesc` padrão ou `dataAsc`; estoque `nomeAsc` padrão, `nomeDesc`, `saldoAsc`, `saldoDesc`; operadores `receitaDesc` padrão ou `nomeAsc`; produtos `quantidadeDesc` padrão ou `receitaDesc`/`nomeAsc`. Desempate por UUID, totais sempre do filtro inteiro. Page padrão1/pageSize20, limite100; exportação rejeita page/pageSize mesmo vazios e retorna todos os filtros até10.000 linhas. OperadoresResponse inclui resumo geral e linhas operadorId/nome/quantidadeConfirmada/quantidadeCancelada/receitaLiquida/ticketMedio; ProdutosResponse inclui linhas ProdutoVendidoResponse e resumo geral. EstoqueResponse inclui totalSaldo e totalBaixos; movimentos inclui entradas/saidas/delta. Todos incluem filtros aplicados, ordenação, fuso e geradoEm; período null somente estoque atual. Reutilizar MovimentoResponse/SaldoProdutoResponse e projeções07. Nenhuma evolução de schema prevista, sujeito à medição.
+
+CSV inclui metadados como colunas (`inicio`, `fim`, `fuso`, `geradoEm`) e cabeçalho mesmo vazio; totais completos permanecem nos responses JSON. Datas ISO UTC nos eventos, período civil explícito nas colunas. Textos são sempre quoted, aspas duplicadas, CR/LF convertidos em espaços e prefixo apóstrofo quando o texto, inclusive após espaços, começa por `=,+,-,@,tab,CR,LF`. Números originados de tipos numéricos são invariantes, dinheiro em reais com duas casas. Download Web também confere allowlist de query e Content-Type de sucesso; nunca retorna JSON como CSV. Botão da UI prepara download pelo circuito e mostra progresso; entrega do arquivo pelo handler HTTP autenticado, com cache no-store, sem token em URL.
+
+Response concreto concentra metadados em `filtros:{inicio,fim,fuso,geradoEm,ordenacao,operadorId,produtoId,tipo,search,ativo}`; totais e paginação permanecem na raiz. Essa estrutura substitui os campos de metadados soltos do contrato mínimo abaixo. Neutralização cobre também variantes Unicode largas e espaços antes do prefixo. Referência consultada: [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection). A garantia se aplica ao arquivo gerado; regravação por planilhas externas não é controlada pelo sistema. Acumuladores transitórios seguem07/ADR-36, sem dinheiro Decimal128 persistido.
+
 Base `/api/v1/relatorios`. Respostas JSON incluem filtros aplicados, fuso, geradoEm, paginação e totais; campos abaixo são o mínimo.
 
 | Método / rota | Request | Response | Policy |
@@ -88,12 +94,14 @@ Unidade: datas/fuso, escaping/neutralização CSV, centavos Int64 e conversão d
 
 ## 14. Checklist de execução
 
-- [ ] Implementar consultas/totais/snapshot e políticas, sem schema comercial duplicado.
-- [ ] Registrar ausência de evolução de persistência ou revisar/testar índice novo do zero/upgrade 07→08.
-- [ ] Implementar CSV/handler BFF/UI/contratos e OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
-- [ ] Comparar dashboard/relatório sobre fixture estável; registrar M08-CA01–05 e resultados no estado.
+- [x] Implementar consultas/totais/snapshot e políticas, sem schema comercial duplicado.
+- [x] Registrar ausência de evolução de persistência ou revisar/testar índice novo do zero/upgrade 07→08.
+- [x] Implementar CSV/handler BFF/UI/contratos e OpenAPI.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
+- [x] Comparar dashboard/relatório sobre fixture estável; registrar M08-CA01–05 e resultados no estado.
 
 ## 15. DoD e desbloqueio
 
 DoD global, RF-19/20, filtros/segurança CSV e limites comprovados. Desbloquear **09**. Nenhuma dependência de publicação, PDF ou serviço financeiro futuro.
+
+Gate08 local aprovado em07/11/2026:125 unitários+107 integrações Atlas e teste de escala isolado10.000/10.001,0 falhas/skips. Jornada real dos cinco relatórios e oito downloads CSV concluída, capturas360/1280 revistas. Sem evolução de schema/índice, sem PDF. CI integral pendente neste candidato; evidências/DoD/inventário no relatório11/estado03. Próximo09 somente mediante nova solicitação.

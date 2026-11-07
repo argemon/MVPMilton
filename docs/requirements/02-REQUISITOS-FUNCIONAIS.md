@@ -61,4 +61,4 @@ RF-01–20 mantêm o comportamento e RF-21–24 continuam propostas P2. Implemen
 
 ## Incremento autorizado07–08 — ADR-36
 
-RF-17 inclui produtos cadastrados/ativos, evolução diária, vendas recentes e ranking por quantidade confirmada. RF-19 será ampliado no08 com visão por operador criador e ranking paginado/CSV, além de vendas por período. Identificação histórica vem dos snapshots; funcionário/operador é o usuário criador, inclusive bootstrap sem vínculo, nunca vínculo atual inferido. Permissões e fórmulas permanecem iguais. Sem PDF.
+RF-17 inclui produtos cadastrados/ativos, evolução diária, vendas recentes e ranking por quantidade confirmada. RF-19 é ampliado no08 com visão por operador criador e ranking paginado/CSV, além de vendas por período. Identificação histórica vem dos snapshots; funcionário/operador é o usuário criador, inclusive bootstrap sem vínculo, nunca vínculo atual inferido. Permissões e fórmulas permanecem iguais. Sem PDF.

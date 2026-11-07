@@ -102,6 +102,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
 app.MapContas();
+app.MapDownloadsRelatorios();
 app.UseStaticFiles();
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse("ok"))).AllowAnonymous();
 app.MapGet("/health/ready", async (MongoFoundation mongo, MongoTickets tickets, CancellationToken ct) =>

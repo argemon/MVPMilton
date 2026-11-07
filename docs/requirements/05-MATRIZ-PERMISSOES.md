@@ -30,6 +30,8 @@ Legenda: Sim = todo recurso permitido; Próprias = apenas vendas cujo criador é
 
 ## Aplicação
 
+Incremento07–08/ADR-36: Relatorios.Vendas também protege consultas/exportações de operadores e produtos mais vendidos. Relatorios.Ler no Web permite abrir o seletor a Administrador/Estoquista; escolher um comercial ainda exige Relatorios.Vendas na página e no backend. Estoquista vê somente estoque/movimentos; Vendedor não vê menu nem acessa páginas/downloads. Todos os dez endpoints API e os cinco downloads BFF têm testes de policy.
+
 Policy de rota protege operação e caso de uso aplica propriedade de venda. Listagens são filtradas no banco antes de paginação/contagem; vendedor nunca recebe totais de vendas de outros. Histórico do cliente também filtra por criador. Não confiar em usuário/perfil/ator enviados pelo BFF no corpo.
 
 Mudanças no perfil fixo revogam sessões. Não há editor de permissões arbitrárias, múltiplos perfis por conta ou herança configurável. Administrador tem acesso completo às operações existentes, mas não ignora estados, validadores e filtros condicionais, saldo, versões nem proteção do último administrador.

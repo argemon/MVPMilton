@@ -2,7 +2,7 @@
 
 ## Execução07–08 — 07/11/2026 America/Cuiaba, EM ANDAMENTO
 
-Nova solicitação anexada autoriza07 Dashboard e08 Relatórios sequencialmente, commit/push/PR/acompanhamento CI; sem09/deploy/merge. Autorizações antigas abaixo ficam históricas. Base812126c, checkout limpo em codex/stock-sales; branch criada codex/dashboard-reports.00–06 têm gate anterior199 testes, sem transferir aprovação para código novo. ADR-36 registrada antes da implementação;07 em implementação,08 não iniciado. .env e banco persistente preservados; somente bancos exclusivos descartáveis nos testes.
+Nova solicitação anexada autoriza07 Dashboard e08 Relatórios sequencialmente, commit/push/PR/acompanhamento CI; sem09/deploy/merge. Autorizações antigas abaixo ficam históricas. Base812126c, checkout limpo em codex/stock-sales; branch criada codex/dashboard-reports.00–06 têm gate anterior199 testes, sem transferir aprovação para código novo. ADR-36 registrada antes da implementação;07 aprovado/commit a51438d;08 em validação. .env e banco persistente preservados; somente bancos exclusivos descartáveis nos testes.
 
 ### Gate07 — APROVADO localmente, 14h02
 
@@ -11,6 +11,14 @@ Restore locked8 projetos e build Release0 avisos/erros. Regressão final:110 uni
 M07-CA01–05: receita/canceladas/ticket/fuso/bordas/ranking/recentes/baixo estoque, limite20/totalItems, precisão acima2^53/limiteInt64, autorização e snapshot com commit concorrente comprovados. Duas jornadas HTTPS com API real e bancos Atlas exclusivos: confirmaçãoR$25/saldo8 → cancelamento/receita0/saldo10, filtros vazio/inválido/recuperação,0 JS/5xx. Capturas360/1280 revistas; tabelas têm rolagem horizontal/foco e filtro acessível. Limpeza dos bancos concluída. Gitleaks inicial213 arquivos sem segredos; auditoriaNuGet sem vulnerabilidades; arquitetura válida; .env hash inalterado. Sem schema/índice novo, explain do índice06 compatível. Comandos, arquivos, evidências e DoD no [relatório11](11-ENTREGA-DASHBOARD-RELATORIOS.md).
 
 08 liberado e iniciado somente após esse gate. CI integral e publicação Git dos dois blocos ainda pendentes.09 não autorizado. Banco persistente continua intacto; pendência operacional antiga de inicialização não foi contornada.
+
+### Bloco08 — APROVADO localmente, CI pendente, iniciado após gate07
+
+Cinco relatórios (vendas/operadores/produtos/estoque/movimentos), cinco exportações CSV e handler BFF, sem PDF. Contratos/ordenações/filtros documentados antes de implementar; nomes/snapshots e centavos reusam07/06. Sem schema/índice/coleção adicional. Restore/build Release aprovados0 avisos/erros. Testes direcionados:11 unitários (CSV/OpenAPI)+6 integrações (cinco consultas, paginação21, consistência07, snapshot concorrente, policies10 endpoints e BFF),0 falhas/skips. Teste de escala novo executado sozinho em Atlas descartável:10.000 linhas CSV completo e10.001 rejeitadas400 sem attachment,1/1 aprovado,0 skips.
+
+Regressão final00–08 em artifacts/block08/final:125 unitários+107 integrações reais =232 aprovados,0 falhas/0 ignorados. Com o teste de escala isolado,233 casos distintos aprovados localmente. Perfil completo sem filtros é obrigatório no CI (inclui2 cenários adicionais anteriores de container); não declarar CI aprovado antes de consultar GitHub. Jornada08 HTTPS real concluída:cinco telas360/1280, oito CSVs com eventos completed/arquivos conferidos, filtro/totais/cancelamento/estoque conciliados, vazio/erro/recuperação,0 JS/5xx. Capturas revistas; bancos removidos. Diagnóstico da primeira tentativa de download e correção do controlador de testes constam no relatório11; nenhuma proteção da aplicação foi desabilitada.
+
+Gitleaks candidato229 arquivos/~1,17MB sem segredos; auditoriaNuGet sem vulnerabilidades. Revisão44 Markdown/179 links válidos,0 credenciais reais, .env hash preservado e0 artefatos locais rastreados. Arquitetura/diff válidos. Workflow existente .NET10 compila/testa os8 projetos e usa Testcontainers autenticado/replica set Mongo8.0.17, sem Atlas/sem filtros/sem continue-on-error. Próximo:commit08/push/PR/CI.09-HOMOLOGACAO continua aguardando nova solicitação; nenhum deploy/merge.
 
 ## Execução05/06 — 07/11/2026 (America/Cuiaba), CONCLUÍDA; aplicação no banco persistente aguarda autorização
 
