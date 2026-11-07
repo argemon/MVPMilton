@@ -179,7 +179,7 @@ docker compose --env-file .env -f deploy/compose.yaml run --rm web --initialize-
 docker compose --env-file .env -f deploy/compose.yaml up -d
 ```
 
-Compose/containers e pipeline não foram executados nesta máquina (Docker ausente); o caminho validado é dotnet+Atlas existente. CI prevê perfil Testcontainers sem receber credenciais Atlas. Produção permanece no bloco10 e exige usuários de banco separados, permissões mínimas, certificados/backup e Q-02/Q-03; a credencial única de desenvolvimento não comprova isolamento de privilégios de produção.
+Compose não foi executado nesta máquina (Docker ausente); o caminho local validado é dotnet+Atlas existente. A [CI no GitHub passou](https://github.com/argemon/MVPMilton/actions/runs/42330792233), com build Release,72 testes incluindo MongoDB real em replica set via Testcontainers, auditoria de dependências e Gitleaks sobre os arquivos do commit. Nenhuma credencial Atlas é fornecida ao Actions. Produção permanece no bloco10 e exige usuários de banco separados, permissões mínimas, certificados/backup e Q-02/Q-03; a credencial única de desenvolvimento não comprova isolamento de privilégios de produção.
 
 ## Primeiro administrador e acesso
 
