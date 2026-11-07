@@ -6,3 +6,5 @@ nav{flex-wrap:wrap}textarea{font:inherit;max-width:100%;width:32rem;padding:.7re
 fieldset{min-inline-size:0;width:100%;max-width:34rem;display:flex;flex-direction:column;align-items:flex-start;gap:.65rem}fieldset label{max-width:100%}
 .item-venda{width:100%;min-width:0;max-width:100%}.venda-itens table{min-width:34rem}.venda-itens td:not(:first-child){white-space:nowrap}
 .tabela:focus-visible{outline:3px solid #d28b00;outline-offset:3px}
+.indicadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1rem;margin:1rem 0}.indicadores article{background:white;border:1px solid #bdcdd5;border-radius:.6rem;padding:1rem}.indicadores h2{font-size:1rem}.indicadores strong{font-size:1.7rem}.evolucao{max-height:22rem;overflow:auto;background:white;padding:1rem}.dia-venda label{display:flex;gap:1rem;align-items:center}.dia-venda meter{width:100%;height:1.4rem}.dia-venda{padding:.2rem 0}
+.dashboard-table table{min-width:42rem}.dashboard-table th,.dashboard-table td{overflow-wrap:normal}

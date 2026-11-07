@@ -7,7 +7,7 @@ namespace GestaoComercial.Api.Acesso;
 public static class EndpointsEstoque
 {
     private static SessaoAtual Actor(HttpContext c) => (SessaoAtual)c.Items[typeof(SessaoAtual)]!;
-    private static MovimentoResponse Public(Movimento m) => new(m.Id,m.ProdutoId,m.Tipo,m.Delta,m.SaldoAntes,m.SaldoDepois,m.Motivo,new(m.AtorId,m.AtorNome),m.OcorridoEm,m.VendaId,m.ItemId);
+    internal static MovimentoResponse Public(Movimento m) => new(m.Id,m.ProdutoId,m.Tipo,m.Delta,m.SaldoAntes,m.SaldoDepois,m.Motivo,new(m.AtorId,m.AtorNome),m.OcorridoEm,m.VendaId,m.ItemId);
     internal static Guid Key(HttpContext c) => c.Request.Headers["Idempotency-Key"] is var header && header.Count==1 && Guid.TryParse(header[0],out var key) && key!=Guid.Empty ? key : throw new CadastroException("VALIDACAO");
     public static void MapEstoque(this WebApplication app)
     {

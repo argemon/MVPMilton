@@ -140,3 +140,13 @@ RF-09–12 implementados conforme contratos acima, sem sales. Evolução explíc
 ## Incremento06
 
 GET /vendas retorna página de `VendaResumo={id,clienteId,clienteNome?,criador,status,total,versao,criadoEm}`, projetada no servidor sem itens/documento do cliente. GET /vendas/{id} e respostas de comandos retornam VendaDetalhe conforme M06. GET /clientes/{id}/vendas passa a usar resumos reais filtrados pelo criador para Vendedor. Campos monetários seguem reais na borda e centavos long internamente. POST criar/confirmar/cancelar/descartar exigem Idempotency-Key UUID e devolvem recibo original; PUT usa versão. Movimentos acrescentam vendaId/itemId UUID nullable. Códigos503 incluem PERSISTENCIA_NAO_INICIALIZADA e RESULTADO_DESCONHECIDO. Nenhuma rota07/08 foi acrescentada.
+
+## Incremento07 — ADR-36
+
+GET /api/v1/dashboard?inicio&fim, policy Dashboard.Ler, somente Administrador. Datas opcionais juntas, padrão mês local, [inicio,fim), máximo366 dias. DashboardResponse contém resumo comercial, contagem de produtos cadastrados/ativos, estoqueBaixo página1/20/totalItems, recentes10, evolução diária e maisVendidos10. Campos completos em M07 e contrato compilado Dashboard.cs. Snapshot único; valores HTTP em reais, Cancelada contribui zero. Sem dados retorna200 com zeros/listas vazias (dias preenchidos). 400 VALIDACAO/LIMITE_MONETARIO_EXCEDIDO;401/403;503 persistência;500 seguro. Nenhuma informação de documento pessoal/token/driver.
+
+## Incremento08 — ADR-36
+
+Pré-condição de07/08: catálogo06 válido; instalação parcial/incompatível retorna503 PERSISTENCIA_NAO_INICIALIZADA, inclusive em exportação (JSON, sem attachment), nunca indicadores zero/CSV vazio como sucesso aparente. A consulta não aplica evolução.
+
+GET /api/v1/relatorios/{vendas|operadores|produtos|estoque|movimentos} e cada /exportacao; páginas /relatorios/{tipo}; handler /downloads/relatorios/{tipo}. Vendas/operadores/produtos somente Administrador; estoque/movimentos Administrador/Estoquista. Período obrigatório exceto estoque atual; filtros/ordenações e DTOs mínimos detalhados em M08. Nome histórico do criador identifica funcionário/operador, sem inferir employeeId do cadastro atual. Contagens/totais/linhas no mesmo snapshot, sem coleção duplicada. CSV UTF-8 BOM delimitado por ponto e vírgula, até10.000 linhas sem paginação;400 EXPORTACAO_EXCEDE_LIMITE antes de qualquer arquivo. Cancelada preserva totalOriginal e contribuição zero. Estoque não aceita data histórica. Sem PDF. Request inválido400;401/403;503 persistência;500 seguro. Nenhuma alteração de schema prevista.

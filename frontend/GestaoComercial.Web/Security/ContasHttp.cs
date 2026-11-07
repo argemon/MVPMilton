@@ -65,6 +65,9 @@ public static class ContasHttp
             o.AddPolicy("Estoque.Movimentar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Estoquista").RequireClaim("troca", "nao"));
             o.AddPolicy("Estoque.Ajustar", p => p.RequireAuthenticatedUser().RequireRole("Administrador").RequireClaim("troca", "nao"));
             foreach(var policy in new[]{"Vendas.Ler","Vendas.Criar","Vendas.Editar","Vendas.Confirmar"})o.AddPolicy(policy,p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador","Vendedor"));
+            o.AddPolicy("Relatorios.Vendas",p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador"));
+            foreach(var policy in new[]{"Relatorios.Ler","Relatorios.Estoque","Relatorios.Movimentos"})o.AddPolicy(policy,p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador","Estoquista"));
+            o.AddPolicy("Dashboard.Ler",p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador"));
             o.AddPolicy("Vendas.Cancelar",p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador"));
         });
         services.AddCascadingAuthenticationState();

@@ -22,7 +22,8 @@ else{<div class="tabela"><table><caption>Saldos — total @data.TotalItems</capt
 <nav aria-label="Paginação"><button disabled="@(_page<=1)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems)" @onclick="ProximaAsync">Próxima</button></nav>}
 @code{
     private readonly CancellationTokenSource _cts=new();private SaldosResponse? _data;private string _search="",_ativo="true";private int _page=1;private bool _abaixo,_loading,_error;
-    protected override Task OnInitializedAsync()=>CarregarAsync();
+    [SupplyParameterFromQuery(Name="abaixoMinimo")] public bool AbaixoMinimo {get;set;}
+    protected override Task OnParametersSetAsync(){_abaixo=AbaixoMinimo;return CarregarAsync();}
     private async Task PesquisarAsync(){_page=1;await CarregarAsync();}private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
     private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.SaldosAsync(t,_page,_search,_ativo,_abaixo,c),_cts.Token);}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
     public void Dispose(){_cts.Cancel();_cts.Dispose();}

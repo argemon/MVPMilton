@@ -4,7 +4,7 @@ Documentação inicial em português do Brasil, preparada em 06/11/2026. A pasta
 
 ## Como usar
 
-Estado atual:00–06 aprovados,199 testes no CI final;07 não autorizado. Estoque e vendas têm contratos no código; evidências correntes, CI e histórico de falhas estão no [estado](execution/03-ESTADO-PROJETO.md) e no [relatório05–06](execution/10-ENTREGA-ESTOQUE-VENDAS.md). Auditorias06/08 são históricas.
+Estado atual:00–08 aprovados,236 testes no CI integral do código07c8065,0 falhas/skips, conforme ADR-36. Estoque e vendas têm contratos no código; evidências correntes, CI e histórico de falhas estão no [estado](execution/03-ESTADO-PROJETO.md) e no [relatório05–06](execution/10-ENTREGA-ESTOQUE-VENDAS.md). Auditorias06/08 são históricas.
 
 Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo referencia os contratos e critérios que o executor deve satisfazer. RF identifica requisito funcional; RNF, requisito não funcional; RN, regra de negócio; CA, cenário de aceite; ADR, decisão técnica; H, hipótese; Q, questão aberta.
 
@@ -68,3 +68,5 @@ Revisão dos módulos em 06/11/2026: todos os blocos00–11 contêm contrato de 
 A solicitação do usuário prevalece. Dentro desta especificação, decisões técnicas definem escolhas; requisitos definem comportamento; documentos de banco, API e segurança detalham mecanismos; módulos definem a entrega. Divergência entre documentos bloqueia a implementação daquele ponto: corrigir a especificação e registrar a decisão, sem escolher silenciosamente uma versão.
 
 [Entrega05–06 e evidências correntes](execution/10-ENTREGA-ESTOQUE-VENDAS.md).
+
+[Entrega07–08, contratos e evidências](execution/11-ENTREGA-DASHBOARD-RELATORIOS.md).

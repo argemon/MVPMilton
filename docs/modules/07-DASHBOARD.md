@@ -40,6 +40,10 @@ RN-13/20 preservadas: intervalo civil [inicio,fim), fuso configurado, início < 
 
 ## 9. Contrato REST
 
+Incremento autorizado ADR-36: GET único mantém período/fuso/geradoEm e retorna `resumo:{quantidadeConfirmada,quantidadeCancelada,receitaLiquida,ticketMedio}`, `produtosCadastrados`, `produtosAtivos`, `estoqueBaixo` paginado20, `recentes` até10 (vendaId,confirmadoEm,clienteNome,operadorNome,status,totalOriginal,contribuicaoLiquida), `evolucao` diária preenchida com zeros (dia,quantidade,receitaLiquida) e `maisVendidos` até10 (produtoId,sku,nome,quantidade,receitaLiquida). Esta estrutura substitui os quatro totais soltos do contrato mínimo abaixo. Recentes inclui Confirmada/Cancelada no filtro; evolução/ranking somente Confirmada. Identificação do ranking pelo snapshot mais recente; ordenação quantidade/receita/id. Financeiro HTTP em reais. /dashboard entrega todas as seções do mesmo snapshot sem endpoints separados inconsistentes. Sem evolução de schema/índice neste incremento; medir plano do índice06 existente.
+
+Pré-condição de execução: catálogo06 válido; ausência/divergência dá503 PERSISTENCIA_NAO_INICIALIZADA em vez de zeros que aparentem uma instalação válida. Nenhuma evolução é aplicada pela consulta; teste real corrompe/restaura somente o catálogo técnico do banco descartável.
+
 Base `/api/v1`.
 
 | Método / rota | Request | Response | Erros |
@@ -72,12 +76,16 @@ Unidade: período/fuso, mês padrão, zero denominador e arredondamento AwayFrom
 
 ## 14. Checklist de execução
 
-- [ ] Implementar projeção/snapshot/fórmulas e policy, sem duplicar cálculo no frontend.
-- [ ] Verificar necessidade de evolução de persistência: registrar “sem alteração de schema” ou testar novo índice do zero/upgrade 06→07.
-- [ ] Implementar contrato/HTTP/painel e link de estoque existente; atualizar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
-- [ ] Registrar M07-CA01–05, plano das consultas, estados visuais e comandos no estado.
+- [x] Implementar projeção/snapshot/fórmulas e policy, sem duplicar cálculo no frontend.
+- [x] Verificar necessidade de evolução de persistência: registrar “sem alteração de schema” ou testar novo índice do zero/upgrade 06→07.
+- [x] Implementar contrato/HTTP/painel e link de estoque existente; atualizar OpenAPI.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
+- [x] Registrar M07-CA01–05, plano das consultas, estados visuais e comandos no estado.
 
 ## 15. DoD e desbloqueio
 
 DoD global, RF-17/18 e fórmulas/segurança demonstradas; zeros distinguíveis de falha. Desbloquear **08**. Nenhum teste ou link depende da implementação futura de relatórios.
+
+Gate07 aprovado localmente em07/11/2026:115 unitários+101 integrações Atlas,0 falhas/skips; perfis ContainerSecurity/ContainerScale serão executados integralmente no CI final. Duas jornadas HTTPS concluídas, incluindo revisão visual360/1280 e correção de legibilidade das tabelas. Sem alteração de schema; evidências, falhas corrigidas e inventário no relatório11/estado03.08 liberado pela solicitação atual, sem09.
+
+Validação final do código07c8065: CI236/236,0 falhas/skips; pré-condição de persistência, snapshot e jornada HTTPS/teclado/downloads aprovados. Estado03/relatório11 contêm os links e evidências.09 aguarda nova solicitação.
