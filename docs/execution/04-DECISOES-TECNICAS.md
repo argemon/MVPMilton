@@ -86,6 +86,16 @@ Comandos de estoque/venda conferem o catálogo explícito do módulo antes de es
 
 Perfil de volume: StockQueryTests é marcado ContainerScale. O lote10mil concluiu às08:55:13 na execução Atlas com uma fixture; o primeiro cenário da fixture seguinte falhou por timeout a partir de08:55:31. A correlação sugere pressão no cluster compartilhado, sem afirmar causa raiz. A regressão Atlas usual exclui explicitamente ContainerScale e ContainerSecurity; ambos continuam obrigatórios e sem filtro no CI autenticado isolado. A consulta10mil já teve prova Atlas (302ms total/49ms servidor), e não será repetida junto às demais validações locais. Não mudar assert, orçamento ou workflow para obter aprovação.
 
+## ADR-36 — Execução07–08, leituras comerciais (07/11/2026)
+
+A nova solicitação anexada libera07 e08 sequencialmente, Git/PR/CI, sem aprovação intermediária, sem09/deploy/merge. Substitui os limites anteriores de autorização.08 só começa após gate07 demonstrado.
+
+07 amplia o contrato mínimo com produtos cadastrados/ativos, evolução diária local, dez vendas recentes e ranking de dez produtos. Somente Confirmadas contribuem para receita, quantidade válida, evolução e ranking; Canceladas são contadas e aparecem no histórico recente, com contribuição zero. Ranking agrupa por produtoId, desempata quantidade/receita/id; identificação vem do snapshot da confirmação mais recente (data/id determinísticos), preservando vendas antigas. Evolução inclui dias sem vendas com zero. Cada resposta usa transação curta somente leitura snapshot/majority/primary, operações sequenciais, sem escritas comerciais. Endpoint único /dashboard entrega todas as seções no mesmo snapshot. Fuso da instalação, [inicio,fim), máximo366 dias; padrão mês corrente.
+
+Dinheiro persistido continua BSON Int64. Apenas acumuladores transitórios de agregação usam $toDecimal/$sum (Decimal128), evitando promoção Int64→double. Contagem Int64 e total máximo por venda de14 dígitos limitam soma a33 dígitos exatos; sem dinheiro Decimal128 persistido. Mapeamento valida integralidade e limite Int64 em centavos antes de sair da infraestrutura; exceder retorna400 LIMITE_MONETARIO_EXCEDIDO. Ticket divide quociente/resto checked, AwayFromZero uma vez. Application/Domain continuam long; HTTP converte para decimal reais. [Conversão oficial](https://www.mongodb.com/docs/manual/reference/operator/aggregation/todecimal/) e [sessões/transações](https://www.mongodb.com/docs/drivers/csharp/current/crud/transactions/) consultadas.
+
+08 acrescentará relatório por operador criador (usuário que criou a venda, nome histórico; não confundir com quem confirma), filtro operadorId e ranking paginado/CSV. Não há employeeId congelado na venda06: não inferir vínculo atual como autoria histórica. Título na UI explicita funcionário/operador e permite bootstrap sem funcionário. Estoque/movimentos reutilizam representações existentes. CSV até10.000 linhas, sem paginação na exportação, UTF-8 BOM, delimitador ponto e vírgula, números invariantes e textos neutralizados inclusive após espaços iniciais. PDF permanece fora do escopo aprovado do módulo08. Contratos detalhados nos módulos/arquitetura06 antes de implementar cada bloco. Sem coleção de estatísticas nem índice novo sem evidência.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

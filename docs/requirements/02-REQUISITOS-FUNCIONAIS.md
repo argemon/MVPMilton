@@ -58,3 +58,7 @@ RF-03 no bloco 01 entrega manutenção de perfil/status/senha do administrador b
 ## Persistência e unidade monetária — revisão técnica
 
 RF-01–20 mantêm o comportamento e RF-21–24 continuam propostas P2. Implementação alvo usa MongoDB.Driver e transações MongoDB para efeitos multi-documento. RF-08/13/14/16/17/19 preservam preços/totais/snapshots em centavos Int64 internos, com mesma apresentação em reais e arredondamento final da média. RF-09–12 usam saldo incorporado em products e movimentos separados; RF-03 mantém vínculo único e revogação atômica. Fórmulas, filtros, endpoints e limites acima continuam válidos.
+
+## Incremento autorizado07–08 — ADR-36
+
+RF-17 inclui produtos cadastrados/ativos, evolução diária, vendas recentes e ranking por quantidade confirmada. RF-19 será ampliado no08 com visão por operador criador e ranking paginado/CSV, além de vendas por período. Identificação histórica vem dos snapshots; funcionário/operador é o usuário criador, inclusive bootstrap sem vínculo, nunca vínculo atual inferido. Permissões e fórmulas permanecem iguais. Sem PDF.

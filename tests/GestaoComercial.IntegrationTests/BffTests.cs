@@ -15,6 +15,7 @@ public sealed class BffFixture : IAsyncLifetime
     public AuthFixture Backend { get; } = new();
     public MongoFixture Mongo { get; } = new();
     public bool Offline { get; set; }
+    public string? OfflinePath { get; set; }
     public WebApplicationFactory<WebHost::Program> Web { get; private set; } = null!;
     public async Task InitializeAsync()
     {
@@ -23,17 +24,17 @@ public sealed class BffFixture : IAsyncLifetime
         {
             b.UseEnvironment("Testing"); b.UseSetting("Mongo:ConnectionString", Mongo.Connection); b.UseSetting("Mongo:Database", Mongo.Name); b.UseSetting("Api:BaseUrl", "https://api.test/");
             b.UseSetting("DataProtection:KeysPath", Path.Combine(Path.GetTempPath(), "gc_auth_keys_" + Mongo.Name));
-            b.ConfigureServices(s => s.AddHttpClient<ApiClient>().ConfigurePrimaryHttpMessageHandler(() => new BridgeHandler(Backend.Api.Server.CreateHandler(), () => Offline)));
+            b.ConfigureServices(s => s.AddHttpClient<ApiClient>().ConfigurePrimaryHttpMessageHandler(() => new BridgeHandler(Backend.Api.Server.CreateHandler(), r => Offline || r.RequestUri?.AbsolutePath == OfflinePath)));
         });
         await Web.Services.GetRequiredService<WebHost::GestaoComercial.Web.Persistence.MongoFoundation>().InitializeAsync(default);
         await Web.Services.GetRequiredService<Tickets>().InitializeAsync(default);
     }
     public async Task DisposeAsync() { await Web.DisposeAsync(); await Mongo.DisposeAsync(); await Backend.DisposeAsync(); }
     public HttpClient Client() => Web.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://web.test/"), AllowAutoRedirect = false, HandleCookies = true });
-    private sealed class BridgeHandler(HttpMessageHandler inner, Func<bool> offline) : DelegatingHandler(inner)
+    private sealed class BridgeHandler(HttpMessageHandler inner, Func<HttpRequestMessage,bool> offline) : DelegatingHandler(inner)
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-        { if (offline()) throw new HttpRequestException("Conexão indisponível."); return base.SendAsync(request, ct); }
+        { if (offline(request)) throw new HttpRequestException("Conexão indisponível."); return base.SendAsync(request, ct); }
     }
     public static string Csrf(string html)
     {

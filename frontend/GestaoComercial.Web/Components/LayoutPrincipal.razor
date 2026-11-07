@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+<AuthorizeView Policy="Dashboard.Ler"><Authorized><nav aria-label="Painel"><a href="/dashboard">Dashboard</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Produtos.Ler"><Authorized><nav aria-label="Produtos"><a href="/produtos">Produtos</a><a href="/categorias">Categorias</a><a href="/marcas">Marcas</a><a href="/estoque">Estoque</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Clientes.Gerenciar"><Authorized><nav aria-label="Clientes"><a href="/clientes">Clientes</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Funcionarios.Gerenciar"><Authorized><nav aria-label="Cadastros"><a href="/funcionarios">Funcionários</a> <a href="/usuarios">Usuários</a></nav></Authorized></AuthorizeView>

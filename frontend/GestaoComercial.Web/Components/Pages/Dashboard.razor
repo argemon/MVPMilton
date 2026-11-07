@@ -1,0 +1,48 @@
+@page "/dashboard"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Dashboard.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+<PageTitle>Dashboard · Gestão Comercial</PageTitle>
+<h1>Dashboard comercial</h1>
+<form @onsubmit="CarregarAsync" @onsubmit:preventDefault>
+<label for="inicio">Confirmação desde (inclusive)</label><input type="date" id="inicio" @bind="_inicio" required />
+<label for="fim">Até (exclusive)</label><input type="date" id="fim" @bind="_fim" required />
+<p>Período máximo: 366 dias. Cancelamentos atualizam a contribuição do período original.</p><button disabled="@_loading">Aplicar período</button></form>
+@if(_loading){<p role="status">Carregando indicadores…</p>}
+else if(_error){<p role="alert">Não foi possível consultar os indicadores. Confira o período e tente novamente.</p><button @onclick="CarregarAsync">Repetir</button>}
+else if(_data is {} d){
+<p>@d.Inicio.ToString("dd/MM/yyyy") a @d.Fim.ToString("dd/MM/yyyy") (fim exclusivo) · @d.Fuso · Gerado em @Local(d.GeradoEm,d.Fuso)</p>
+<div class="indicadores">
+<article><h2>Faturamento líquido</h2><strong>@d.Resumo.ReceitaLiquida.ToString("C",Pt)</strong></article>
+<article><h2>Vendas confirmadas</h2><strong>@d.Resumo.QuantidadeConfirmada</strong></article>
+<article><h2>Ticket médio</h2><strong>@d.Resumo.TicketMedio.ToString("C",Pt)</strong></article>
+<article><h2>Vendas canceladas</h2><strong>@d.Resumo.QuantidadeCancelada</strong></article>
+<article><h2>Produtos cadastrados</h2><strong>@d.ProdutosCadastrados</strong></article>
+<article><h2>Produtos ativos</h2><strong>@d.ProdutosAtivos</strong></article>
+<article><h2>Estoque baixo</h2><strong>@d.EstoqueBaixo.TotalItems</strong></article></div>
+<p>Ticket médio = receita líquida ÷ vendas confirmadas, arredondado ao centavo. Estoque mostra a posição atual, independente do período.</p>
+@if(d.Resumo.QuantidadeConfirmada==0){<p>Sem vendas confirmadas no período.</p>}
+<h2>Evolução diária de vendas</h2><p>Receita líquida por dia no fuso informado. Dias sem vendas têm valor zero.</p>
+<div class="evolucao" role="img" aria-label="Gráfico diário de receita líquida; os valores estão na tabela a seguir">
+@foreach(var dia in d.Evolucao){<div class="dia-venda"><label>@dia.Dia.ToString("dd/MM")<meter min="0" max="@Maximo(d)" value="@dia.ReceitaLiquida" title="@($"{dia.Dia:dd/MM}: {dia.ReceitaLiquida.ToString("C",Pt)}")">@dia.ReceitaLiquida.ToString("C",Pt)</meter></label></div>}
+</div>
+<details><summary>Ver valores diários em tabela</summary><div class="tabela dashboard-table" tabindex="0"><table><caption>Receita por dia</caption><thead><tr><th>Dia</th><th>Vendas</th><th>Receita líquida</th></tr></thead><tbody>@foreach(var dia in d.Evolucao){<tr><td>@dia.Dia.ToString("dd/MM/yyyy")</td><td>@dia.Quantidade</td><td>@dia.ReceitaLiquida.ToString("C",Pt)</td></tr>}</tbody></table></div></details>
+<h2>Produtos mais vendidos</h2>
+@if(d.MaisVendidos.Count==0){<p>Nenhum produto vendido no período.</p>}else{<div class="tabela dashboard-table" tabindex="0"><table><caption>Até dez produtos por quantidade confirmada</caption><thead><tr><th>SKU</th><th>Produto na venda</th><th>Quantidade</th><th>Receita líquida</th></tr></thead><tbody>@foreach(var p in d.MaisVendidos){<tr><td>@p.Sku</td><td>@p.Nome</td><td>@p.Quantidade</td><td>@p.ReceitaLiquida.ToString("C",Pt)</td></tr>}</tbody></table></div>}
+<h2>Vendas recentes</h2>
+@if(d.Recentes.Count==0){<p>Nenhuma venda no período.</p>}else{<div class="tabela dashboard-table" tabindex="0"><table><caption>Até dez confirmações mais recentes no período</caption><thead><tr><th>Confirmação</th><th>Cliente</th><th>Operador</th><th>Estado</th><th>Total original</th><th>Contribuição líquida</th></tr></thead><tbody>@foreach(var v in d.Recentes){<tr><td><a href="@($"/vendas/{v.VendaId}")">@Local(v.ConfirmadoEm,d.Fuso)</a></td><td>@v.ClienteNome</td><td>@v.OperadorNome</td><td>@v.Status</td><td>@v.TotalOriginal.ToString("C",Pt)</td><td>@v.ContribuicaoLiquida.ToString("C",Pt)</td></tr>}</tbody></table></div>}
+<h2>Produtos com estoque baixo</h2><a href="/estoque?abaixoMinimo=true">Ver todos no estoque</a>
+@if(d.EstoqueBaixo.Items.Count==0){<p>Nenhum produto com estoque baixo.</p>}else{<div class="tabela dashboard-table" tabindex="0"><table><caption>Até vinte produtos ativos com saldo menor ou igual ao mínimo</caption><thead><tr><th>SKU</th><th>Produto</th><th>Saldo</th><th>Mínimo</th></tr></thead><tbody>@foreach(var p in d.EstoqueBaixo.Items){<tr><td>@p.Sku</td><td>@p.Nome</td><td>@p.Saldo</td><td>@p.Minimo</td></tr>}</tbody></table></div>}
+}
+@code{
+    private static readonly System.Globalization.CultureInfo Pt=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    private readonly CancellationTokenSource _cts=new();private DateTime _inicio,_fim;private bool _loading,_error;private DashboardResponse? _data;
+    protected override async Task OnInitializedAsync(){var hoje=TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow,TimeZoneInfo.FindSystemTimeZoneById(Configuration["APP_TIME_ZONE"]??"America/Cuiaba"));_inicio=new(hoje.Year,hoje.Month,1);_fim=_inicio.AddMonths(1);await CarregarAsync();}
+    private static string Local(DateTimeOffset d,string fuso)=>TimeZoneInfo.ConvertTime(d,TimeZoneInfo.FindSystemTimeZoneById(fuso)).ToString("dd/MM/yyyy HH:mm");
+    private static decimal Maximo(DashboardResponse d)=>Math.Max(1m,d.Evolucao.Max(x=>x.ReceitaLiquida));
+    private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.DashboardAsync(t,_inicio,_fim,c),_cts.Token);}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

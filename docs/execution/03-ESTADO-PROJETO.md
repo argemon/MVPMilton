@@ -1,5 +1,17 @@
 # 03 — Estado do projeto
 
+## Execução07–08 — 07/11/2026 America/Cuiaba, EM ANDAMENTO
+
+Nova solicitação anexada autoriza07 Dashboard e08 Relatórios sequencialmente, commit/push/PR/acompanhamento CI; sem09/deploy/merge. Autorizações antigas abaixo ficam históricas. Base812126c, checkout limpo em codex/stock-sales; branch criada codex/dashboard-reports.00–06 têm gate anterior199 testes, sem transferir aprovação para código novo. ADR-36 registrada antes da implementação;07 em implementação,08 não iniciado. .env e banco persistente preservados; somente bancos exclusivos descartáveis nos testes.
+
+### Gate07 — APROVADO localmente, 14h02
+
+Restore locked8 projetos e build Release0 avisos/erros. Regressão final:110 unitários+101 integrações Atlas aprovados,0 falhas/skips; complemento final de unidade115/115 com testes de limite monetário =216 casos distintos aprovados. Categorias ContainerSecurity/ContainerScale permanecem obrigatórias no CI final sem filtros, conforme ADR-35. Nenhum teste foi desabilitado. Primeira regressão teve3 falhas em expectativas/preparação de testes, corrigidas e reexecutadas (relatório11).
+
+M07-CA01–05: receita/canceladas/ticket/fuso/bordas/ranking/recentes/baixo estoque, limite20/totalItems, precisão acima2^53/limiteInt64, autorização e snapshot com commit concorrente comprovados. Duas jornadas HTTPS com API real e bancos Atlas exclusivos: confirmaçãoR$25/saldo8 → cancelamento/receita0/saldo10, filtros vazio/inválido/recuperação,0 JS/5xx. Capturas360/1280 revistas; tabelas têm rolagem horizontal/foco e filtro acessível. Limpeza dos bancos concluída. Gitleaks inicial213 arquivos sem segredos; auditoriaNuGet sem vulnerabilidades; arquitetura válida; .env hash inalterado. Sem schema/índice novo, explain do índice06 compatível. Comandos, arquivos, evidências e DoD no [relatório11](11-ENTREGA-DASHBOARD-RELATORIOS.md).
+
+08 liberado e iniciado somente após esse gate. CI integral e publicação Git dos dois blocos ainda pendentes.09 não autorizado. Banco persistente continua intacto; pendência operacional antiga de inicialização não foi contornada.
+
 ## Execução05/06 — 07/11/2026 (America/Cuiaba), CONCLUÍDA; aplicação no banco persistente aguarda autorização
 
 Solicitação anexada autoriza Estoque05 e Vendas06 em sequência, validações, commit/push/PR/CI; sem07/deploy/merge. Base local feature/block-04-products limpa, nova branch codex/stock-sales. Gate04 histórico139 testes/CI aprovado; regressão atual em execução antes do05. Probe Atlas executado com acesso autorizado: conexão/topologia transacional disponíveis; sem alteração no .env. Primeira execução restrita não alcançou o testhost; não constitui regressão aprovada. Uma disputa de último administrador falhou com Mongo112/transiente na regressão autorizada; investigar sem ocultar falha.06 não iniciado.
