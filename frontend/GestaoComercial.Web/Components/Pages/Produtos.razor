@@ -1,0 +1,35 @@
+@page "/produtos"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Produtos.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Produtos · Gestão Comercial</PageTitle>
+<h1>Produtos</h1><AuthorizeView Policy="Produtos.Gerenciar"><Authorized><a href="/produtos/novo">Cadastrar produto</a></Authorized></AuthorizeView>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+    <label for="busca">Início do nome ou SKU exato</label><input id="busca" @bind="_search" maxlength="150" />
+    <label for="categoria">Categoria</label><select id="categoria" @bind="_categoria"><option value="">Todas</option>@foreach(var r in _categorias){<option value="@r.Id">@r.Nome</option>}</select>
+    <label for="marca">Marca</label><select id="marca" @bind="_marca"><option value="">Todas</option>@foreach(var r in _marcas){<option value="@r.Id">@r.Nome</option>}</select>
+    <label for="status">Situação</label><select id="status" @bind="_status"><option value="true">Ativos</option><option value="false">Inativos</option><option value="todos">Todos</option></select>
+    <button disabled="@_loading">Pesquisar</button>
+</form>
+<label for="refBusca">Localizar categoria ou marca pelo início do nome</label><input id="refBusca" @bind="_refSearch" maxlength="80" /><button @onclick="ReferenciasAsync">Localizar referências</button>
+@if(_loading){<p role="status">Carregando…</p>}
+else if(_error){<p role="alert">Não foi possível consultar.</p><button @onclick="CarregarAsync">Repetir</button>}
+else if(_data is {} data){
+    @if(data.Items.Count==0){<p>Nenhum produto encontrado.</p>}
+    else{<div class="tabela"><table><caption>Produtos — total @data.TotalItems</caption><thead><tr><th>SKU</th><th>Nome</th><th>Preço</th><th>Saldo</th><th>Situação</th><th>Detalhe</th></tr></thead><tbody>
+    @foreach(var p in data.Items){<tr><td>@p.Sku</td><td>@p.Nome</td><td>@p.Preco.ToString("C",System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</td><td>@p.Saldo</td><td>@(p.Ativo?"Ativo":"Inativo")</td><td><a href="@($"/produtos/{p.Id}")">Consultar @p.Nome</a></td></tr>}
+    </tbody></table></div>}
+    <nav aria-label="Paginação"><button disabled="@(_page<=1)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems)" @onclick="ProximaAsync">Próxima</button></nav>
+}
+@code{
+    private readonly CancellationTokenSource _cts=new();private ProdutosResponse? _data;private IReadOnlyList<ReferenciaResponse> _categorias=[],_marcas=[];
+    private string _search="",_categoria="",_marca="",_status="true",_refSearch="";private bool _loading,_error;private int _page=1;
+    protected override async Task OnInitializedAsync(){await ReferenciasAsync();await CarregarAsync();}
+    private void Fail(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}
+    private async Task ReferenciasAsync(){try{_categorias=(await Sessao.UsarAsync((a,t,c)=>a.ReferenciasAsync(t,false,1,_refSearch,"todos",c),_cts.Token)).Items;_marcas=(await Sessao.UsarAsync((a,t,c)=>a.ReferenciasAsync(t,true,1,_refSearch,"todos",c),_cts.Token)).Items;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private async Task PesquisarAsync(){_page=1;await CarregarAsync();}private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.ProdutosAsync(t,_page,_search,Guid.TryParse(_categoria,out var cat)?cat:null,Guid.TryParse(_marca,out var brand)?brand:null,_status,c),_cts.Token);}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

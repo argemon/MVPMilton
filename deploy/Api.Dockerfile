@@ -6,5 +6,6 @@ RUN dotnet publish backend/GestaoComercial.Api -c Release --no-restore -o /out
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.12-noble
 WORKDIR /app
 COPY --from=build /out .
+RUN mkdir -p /app/images && chown app:app /app/images
 USER app
 ENTRYPOINT ["dotnet", "GestaoComercial.Api.dll"]

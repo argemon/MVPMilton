@@ -10,7 +10,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 namespace GestaoComercial.Infrastructure.Identity;
 
-public sealed class MongoAutenticacao(IMongoClient client, MongoConfiguration configuration, MongoUserStore store,
+public sealed partial class MongoAutenticacao(IMongoClient client, MongoConfiguration configuration, MongoUserStore store,
     UserManager<UsuarioIdentity> manager, TimeProvider clock, Microsoft.AspNetCore.Http.IHttpContextAccessor request) : IAutenticacao
 {
     private IMongoDatabase Db => client.GetDatabase(configuration.DatabaseName);
@@ -123,6 +123,7 @@ public sealed class MongoAutenticacao(IMongoClient client, MongoConfiguration co
         if (session is null || !SessaoValida(session, Now)) return null;
         var u = await store.Users.WithReadConcern(ReadConcern.Linearizable).WithReadPreference(ReadPreference.Primary).Find(s, x => x.Id == session.UsuarioId, new FindOptions { MaxTime = TimeSpan.FromSeconds(3) }).SingleOrDefaultAsync(ct);
         if (u is null || !u.Ativo || !Perfis.Valido(u.Perfil) || u.SecurityStamp != session.Stamp) return null;
+        if (u.EmployeeId is { } employeeId && !await Employees.WithReadConcern(ReadConcern.Linearizable).WithReadPreference(ReadPreference.Primary).Find(s, x => x.Id == employeeId && x.Ativo, new FindOptions { MaxTime = TimeSpan.FromSeconds(3) }).AnyAsync(ct)) return null;
         if (registrarUso)
         {
             var now = Now;
@@ -183,6 +184,7 @@ public sealed class MongoAutenticacao(IMongoClient client, MongoConfiguration co
             await GuardAdministrationAsync(s, token); var acting = await ActorAsync(actor, true, s, token);
             var u = acting.Id == id ? acting : await GuardUserAsync(id, s, token) ?? throw Error(FalhaAcesso.NaoEncontrado);
             if (u.Versao != versao) throw Error(FalhaAcesso.Versao);
+            if (ativo && u.EmployeeId is { } employeeId) await RequireActiveEmployeeAsync(employeeId, s, token);
             if (u.Perfil == perfil && u.Ativo == ativo) return Summary(u);
             if (u.Ativo && u.Perfil == Perfis.Administrador && (!ativo || perfil != Perfis.Administrador)
                 && await store.Users.CountDocumentsAsync(s, x => x.Ativo && x.Perfil == Perfis.Administrador, cancellationToken: token) <= 1) throw Error(FalhaAcesso.UltimoAdministrador);

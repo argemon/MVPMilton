@@ -1,0 +1,49 @@
+@page "/categorias"
+@page "/marcas"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Produtos.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>@Titulo · Gestão Comercial</PageTitle>
+<h1>@Titulo</h1><a href="/produtos">Produtos</a>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+    <label for="busca">Nome começa com</label><input id="busca" @bind="_search" maxlength="80" />
+    <label for="status">Situação</label><select id="status" @bind="_status"><option value="true">Ativos</option><option value="false">Inativos</option><option value="todos">Todos</option></select>
+    <button disabled="@_busy">Pesquisar</button>
+</form>
+@if(_message is not null){<p role="alert" tabindex="-1" @ref="_alert">@_message</p>}
+@if(_loading){<p role="status">Carregando…</p>}
+else if(_data is {} data){
+    @if(data.Items.Count==0){<p>Nenhum registro encontrado.</p>}
+    else {<div class="tabela"><table><caption>@Titulo — total @data.TotalItems</caption><thead><tr><th>Nome</th><th>Situação</th><th>Detalhe</th></tr></thead><tbody>
+    @foreach(var item in data.Items){<tr><td>@item.Nome</td><td>@(item.Ativo?"Ativo":"Inativo")</td><td><button @onclick="()=>Selecionar(item)">Consultar @item.Nome</button></td></tr>}
+    </tbody></table></div>}
+    <nav aria-label="Paginação"><button disabled="@(_page<=1||_busy)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems||_busy)" @onclick="ProximaAsync">Próxima</button></nav>
+}else{<button @onclick="CarregarAsync">Repetir</button>}
+<AuthorizeView Policy="Produtos.Gerenciar"><Authorized>
+<h2>@(_id is null?"Novo cadastro":"Editar cadastro")</h2><button @onclick="Novo">Novo</button>
+<form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
+    <label for="nome">Nome</label><input id="nome" @bind="_nome" required minlength="2" maxlength="80" />
+    @if(_id is not null){<label><input type="checkbox" @bind="_ativo" /> Ativo</label>
+        @if(!_ativo&&_wasActive){<label><input type="checkbox" @bind="_confirm" required /> Confirmo a desativação.</label>}}
+    <button disabled="@_busy">@(_busy?"Salvando…":"Salvar")</button>
+</form>
+</Authorized></AuthorizeView>
+@code {
+    private readonly CancellationTokenSource _cts=new();
+    private bool Marca=>new Uri(Navigation.Uri).AbsolutePath=="/marcas";
+    private string Titulo=>Marca?"Marcas":"Categorias";
+    private ReferenciasResponse? _data;private Guid? _id;private string _nome="",_search="",_status="true";private long _versao;
+    private int _page=1;private bool _ativo=true,_wasActive=true,_confirm,_loading,_busy,_focus;private string? _message;private ElementReference _alert;
+    protected override async Task OnParametersSetAsync(){Novo();await CarregarAsync();}
+    protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
+    private void Novo(){_id=null;_nome="";_ativo=true;_wasActive=true;_confirm=false;_message=null;}
+    private void Selecionar(ReferenciaResponse r){_id=r.Id;_nome=r.Nome;_ativo=r.Ativo;_wasActive=r.Ativo;_versao=r.Versao;_confirm=false;}
+    private void Fail(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else{_message=e.Status==409?"Conflito: nome já cadastrado, registro alterado ou referência em uso por produto ativo. Releia antes de tentar novamente.":"Não foi possível concluir. Confira os dados e tente novamente.";_focus=true;}}
+    private async Task PesquisarAsync(){_page=1;await CarregarAsync();}
+    private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync(){_loading=true;try{_data=await Sessao.UsarAsync((a,t,c)=>a.ReferenciasAsync(t,Marca,_page,_search,_status,c),_cts.Token);}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    private async Task SalvarAsync(){if(_busy||(!_ativo&&_wasActive&&!_confirm))return;_busy=true;try{var r=await Sessao.UsarAsync((a,t,c)=>a.SalvarReferenciaAsync(t,Marca,_id,_nome,_ativo,_versao,c),_cts.Token);Selecionar(r);await CarregarAsync();_message="Cadastro salvo.";}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

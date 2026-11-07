@@ -1,0 +1,56 @@
+@page "/clientes/novo"
+@page "/clientes/{Id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Clientes.Gerenciar")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Cliente · Gestão Comercial</PageTitle>
+<h1>@(Id is null ? "Cadastrar cliente" : "Ficha do cliente")</h1><a href="/clientes">Voltar à lista</a>
+@if (_message is not null) { <p role="alert" tabindex="-1" @ref="_alert">@_message</p> }
+@if (_loading) { <p role="status">Carregando…</p> }
+else if (_loaded) {
+    <form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
+        <label for="nome">Nome</label><input id="nome" @bind="_nome" required minlength="2" maxlength="150" />
+        <label for="tipo">Tipo</label><select id="tipo" @bind="_tipo"><option>PF</option><option>PJ</option></select><label for="documento">CPF/CNPJ (opcional, somente dígitos)</label><input id="documento" @bind="_documento" maxlength="14" inputmode="numeric" /><label for="email">Email de contato (opcional)</label><input id="email" type="email" @bind="_email" maxlength="254" />
+        <label for="telefone">Telefone (opcional)</label><input id="telefone" type="tel" @bind="_telefone" maxlength="25" />
+        @if (Id is not null) {
+            <label><input type="checkbox" @bind="_ativo" /> Cliente ativo</label>
+            @if (!_ativo && _wasActive) { <p>A desativação preserva o cadastro e seu histórico.</p><label><input type="checkbox" @bind="_confirm" required /> Confirmo a desativação.</label> }
+        }
+        <button disabled="@_busy">@(_busy ? "Salvando…" : "Salvar")</button>
+    </form>
+    @if (Id is not null) { <button @onclick="CarregarAsync" disabled="@_busy">Reler cadastro</button><h2>Histórico de compras</h2><button @onclick="HistoricoAsync" disabled="@_busy">Consultar histórico</button>@if (_historico) { <p>Nenhuma venda registrada</p> } }
+} else if (Id is not null) { <button @onclick="CarregarAsync">Repetir</button> }
+@code {
+    [Parameter] public Guid? Id { get; set; }
+    private readonly CancellationTokenSource _cts = new();
+    private string _nome = "", _email = "", _telefone = "", _tipo = "PF", _documento = "";
+    private bool _historico;
+    private string? _message;
+    private bool _ativo = true, _wasActive = true, _confirm, _loading, _busy, _loaded, _focus;
+    private long _versao;
+    private ElementReference _alert;
+    protected override Task OnParametersSetAsync() => CarregarAsync();
+    protected override async Task OnAfterRenderAsync(bool first) { if (_focus) { _focus = false; await _alert.FocusAsync(); } }
+    private void Failure(ApiFailure e) {
+        if (e.Status is 401 or 403) Navigation.NavigateTo(e.Status == 401 ? "/conta/entrar" : "/acesso-negado", true);
+        else { _message = e.Status == 409 ? "Conflito: releia o cadastro. Confira também se o documento já existe, inclusive em cadastro inativo." : e.Status == 400 ? "Confira nome, tipo, CPF/CNPJ, email e telefone informados." : e.Status == 404 ? "Cliente não localizado." : "Serviço indisponível. Tente novamente."; _focus = true; }
+    }
+    private async Task CarregarAsync() {
+        _loading = true; _loaded = false; _message = null;
+        try {
+            if (Id is { } id) { var f = await Sessao.UsarAsync((a,t,c) => a.ClienteAsync(t,id,c), _cts.Token); _tipo=f.Tipo; _documento=f.Documento ?? ""; _nome=f.Nome; _email=f.Email ?? ""; _telefone=f.Telefone ?? ""; _ativo=f.Ativo; _wasActive=f.Ativo; _versao=f.Versao; }
+            else { _nome=""; _email=""; _telefone=""; _ativo=true; _wasActive=true; }
+            _confirm=false; _historico=false; _loaded=true;
+        } catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _loading=false; }
+    }
+    private async Task SalvarAsync() {
+        if (_busy || (!_ativo && _wasActive && !_confirm)) return;
+        _busy=true;
+        try { var f = await Sessao.UsarAsync((a,t,c) => a.SalvarClienteAsync(t,Id,_nome,_tipo,string.IsNullOrWhiteSpace(_documento)?null:_documento,_email,_telefone,_ativo,_versao,c), _cts.Token); if (Id is null) Navigation.NavigateTo($"/clientes/{f.Id}"); else { _versao=f.Versao; _wasActive=f.Ativo; _message="Alteração salva."; } }
+        catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _busy=false; }
+    }
+    private async Task HistoricoAsync() { if (Id is not { } id) return; _busy=true; try { var h=await Sessao.UsarAsync((a,t,c)=>a.HistoricoClienteAsync(t,id,c),_cts.Token); _historico=h.Items.Count==0; } catch(ApiFailure e) { Failure(e); } catch(OperationCanceledException) when(_cts.IsCancellationRequested) { } finally { _busy=false; } }
+    public void Dispose() { _cts.Cancel(); _cts.Dispose(); }
+}

@@ -1,0 +1,18 @@
+@page "/usuarios/novo"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Usuarios.Gerenciar")]
+<PageTitle>Criar conta · Gestão Comercial</PageTitle>
+<h1>Criar conta de acesso</h1><a href="/funcionarios">Selecionar funcionário</a>
+<p>Use um funcionário ativo sem conta. A senha temporária exige troca no primeiro acesso.</p>
+@if (Erro) { <p role="alert" tabindex="-1" autofocus>Não foi possível criar a conta. Confira funcionário ativo e sem conta, email de login disponível e senha de 12 a 128 caracteres com maiúscula, minúscula, número e símbolo.</p> }
+<form action="/usuarios/criar" method="post" data-enhance="false">
+    <AntiforgeryToken />
+    <label for="funcionario">Identificador do funcionário</label><input id="funcionario" name="funcionarioId" value="@FuncionarioId" required />
+    <label for="email">Email de login</label><input id="email" name="email" type="email" required maxlength="254" autocomplete="off" />
+    <label for="perfil">Perfil</label><select id="perfil" name="perfil"><option>Vendedor</option><option>Estoquista</option><option>Administrador</option></select>
+    <label for="senha">Senha temporária</label><input id="senha" name="senha" type="password" required minlength="12" maxlength="128" autocomplete="new-password" />
+    <button>Criar conta</button>
+</form>
+@code {
+    [SupplyParameterFromQuery(Name = "funcionarioId")] public Guid? FuncionarioId { get; set; }
+    [SupplyParameterFromQuery(Name = "erro")] public bool Erro { get; set; }
+}

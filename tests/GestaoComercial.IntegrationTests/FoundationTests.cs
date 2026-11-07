@@ -145,6 +145,9 @@ public sealed class FoundationTests(MongoFixture fixture) : IClassFixture<MongoF
             b.ConfigureServices(s => s.AddSingleton<IStartupFilter, InternalPortFilter>());
         });
         await factory.Services.GetRequiredService<GestaoComercial.Infrastructure.Identity.AuthSchema>().InitializeAsync(default);
+        await factory.Services.GetRequiredService<GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema>().InitializeAsync(default);
+        await factory.Services.GetRequiredService<GestaoComercial.Infrastructure.Clientes.ClientesSchema>().InitializeAsync(default);
+        await factory.Services.GetRequiredService<GestaoComercial.Infrastructure.Produtos.ProdutosSchema>().InitializeAsync(default);
         using var client = factory.CreateClient(); client.DefaultRequestHeaders.Add("X-Test-Internal", "1");
         Assert.Equal("{\"status\":\"ready\"}", await client.GetStringAsync("/health/ready"));
         var typed = new WebHost::GestaoComercial.Web.ApiClients.EstadoApiClient(client);

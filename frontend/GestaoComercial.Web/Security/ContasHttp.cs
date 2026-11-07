@@ -56,6 +56,10 @@ public static class ContasHttp
         {
             o.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
             o.AddPolicy("Usuarios.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador").RequireClaim("troca", "nao"));
+            o.AddPolicy("Funcionarios.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador").RequireClaim("troca", "nao"));
+            o.AddPolicy("Clientes.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Vendedor").RequireClaim("troca", "nao"));
+            o.AddPolicy("Produtos.Ler", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Vendedor", "Estoquista").RequireClaim("troca", "nao"));
+            o.AddPolicy("Produtos.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Estoquista").RequireClaim("troca", "nao"));
         });
         services.AddCascadingAuthenticationState();
         services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, EstadoAutenticacao>();
@@ -72,6 +76,26 @@ public static class ContasHttp
     }
     public static void MapContas(this WebApplication app)
     {
+        app.MapGet("/imagens/produtos/{id:guid}",async(Guid id,HttpContext c,MongoTickets tickets,AcessoApiClient api)=>{
+            c.Response.Headers.CacheControl="no-store";
+            try {
+                var key=c.User.FindFirstValue(MongoTickets.Claim);var token=key is null?null:await tickets.TokenAsync(key,c.RequestAborted);
+                if(token is null) return Results.Unauthorized();var bytes=await api.ImagemProdutoAsync(token,id,c.RequestAborted);return Results.Bytes(bytes,"image/png");
+            }catch(ApiFailure e){return Results.Problem(statusCode:e.Status,title:"Imagem indisponível.");}
+        }).RequireAuthorization("Produtos.Ler");
+        app.MapPost("/usuarios/criar", async (HttpContext c, IAntiforgery anti, MongoTickets tickets, AcessoApiClient api) =>
+        {
+            c.Response.Headers.CacheControl = "no-store";
+            if (!await CsrfAsync(c, anti)) return Results.Problem(statusCode: 400, title: "Formulário inválido. Recarregue a página.");
+            var form = await c.Request.ReadFormAsync(c.RequestAborted);
+            if (!Guid.TryParse(form["funcionarioId"], out var id)) return Redirect(c, "/usuarios/novo?erro=true");
+            try {
+                var key = c.User.FindFirstValue(MongoTickets.Claim); var token = key is null ? null : await tickets.TokenAsync(key, c.RequestAborted);
+                if (token is null) return Redirect(c, "/conta/entrar");
+                var u = await api.CriarContaAsync(token, id, form["email"].ToString(), form["senha"].ToString(), form["perfil"].ToString(), c.RequestAborted);
+                return Redirect(c, $"/usuarios/{u.Id}");
+            } catch (ApiFailure e) { return Redirect(c, e.Status == 401 ? "/conta/entrar" : e.Status == 403 ? "/acesso-negado" : $"/usuarios/novo?funcionarioId={id}&erro=true"); }
+        }).RequireAuthorization("Usuarios.Gerenciar");
         app.MapPost("/conta/entrar", async (HttpContext c, IAntiforgery anti, MongoTickets tickets, AcessoApiClient api) =>
         {
             c.Response.Headers.CacheControl = "no-store";

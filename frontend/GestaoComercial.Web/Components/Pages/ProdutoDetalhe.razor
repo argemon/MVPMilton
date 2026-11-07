@@ -1,0 +1,59 @@
+@page "/produtos/novo"
+@page "/produtos/{Id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Produtos.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Produto · Gestão Comercial</PageTitle>
+<h1>@(Id is null?"Cadastrar produto":"Ficha do produto")</h1><a href="/produtos">Voltar à lista</a>
+@if(_message is not null){<p role="alert" tabindex="-1" @ref="_alert">@_message</p>}
+@if(_loading){<p role="status">Carregando…</p>}
+else if(_loaded){
+    @if(_product is {} p){<section><h2>@p.Nome</h2><p>SKU: @p.Sku · @p.Preco.ToString("C",Pt) · @(p.Ativo?"Ativo":"Inativo")</p><p>@p.Descricao</p><p>Saldo: @p.Saldo · Estoque mínimo: @p.EstoqueMinimo</p>
+        @if(p.ImagemUrl is not null){<img src="@($"/imagens/produtos/{p.Id}?v={p.Versao}")" alt="Imagem de @p.Nome" class="produto-imagem" />}
+        else{<p>Sem imagem</p>}</section>}
+    <AuthorizeView Policy="Produtos.Gerenciar"><Authorized>
+    @if(_categorias.Count==0){<p>Cadastre uma categoria ativa ou refine a pesquisa.</p><a href="/categorias">Gerenciar categorias</a>}
+    <label for="refBusca">Localizar categoria ou marca pelo início do nome</label><input id="refBusca" @bind="_refSearch" maxlength="80" /><button @onclick="ReferenciasAsync" disabled="@_busy">Localizar referências</button>
+    <form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
+        <label for="sku">SKU</label><input id="sku" @bind="_sku" required maxlength="40" pattern="[A-Za-z0-9._-]+" />
+        <label for="nome">Nome</label><input id="nome" @bind="_nome" required minlength="2" maxlength="150" />
+        <label for="descricao">Descrição</label><textarea id="descricao" @bind="_descricao" maxlength="2000"></textarea>
+        <label for="categoria">Categoria</label><select id="categoria" @bind="_categoria" required><option value="">Selecione</option>
+            @if(_categoria!=""&&!_categorias.Any(x=>x.Id.ToString()==_categoria)){<option value="@_categoria">Categoria atual</option>}
+            @foreach(var r in _categorias){<option value="@r.Id">@r.Nome</option>}</select>
+        <label for="marca">Marca (opcional)</label><select id="marca" @bind="_marca"><option value="">Sem marca</option>
+            @if(_marca!=""&&!_marcas.Any(x=>x.Id.ToString()==_marca)){<option value="@_marca">Marca atual</option>}
+            @foreach(var r in _marcas){<option value="@r.Id">@r.Nome</option>}</select>
+        <label for="preco">Preço de venda (R$)</label><input id="preco" @bind="_preco" required inputmode="decimal" placeholder="12,50" />
+        <label for="minimo">Estoque mínimo (UN)</label><input id="minimo" type="number" @bind="_minimo" required min="0" max="1000000" />
+        @if(Id is not null){<label><input type="checkbox" @bind="_ativo" /> Produto ativo</label>
+            @if(!_ativo&&_wasActive){<label><input type="checkbox" @bind="_confirm" required /> Confirmo a desativação.</label>}}
+        <button disabled="@_busy">@(_busy?"Salvando…":"Salvar")</button>
+    </form>
+    @if(Id is not null){<button @onclick="CarregarAsync" disabled="@_busy">Reler cadastro</button><h2>Imagem</h2><p>JPEG ou PNG até 2 MiB, até 4096 × 4096 pixels.</p>
+        <label for="arquivo">Selecionar imagem</label><InputFile id="arquivo" OnChange="EnviarImagemAsync" accept="image/jpeg,image/png" disabled="@_busy" />
+        @if(_product?.ImagemUrl is not null){<label><input type="checkbox" @bind="_confirmImage" /> Confirmo a remoção da imagem.</label><button @onclick="RemoverImagemAsync" disabled="@(_busy||!_confirmImage)">Remover imagem</button>}}
+    </Authorized><NotAuthorized>@if(Id is null){<p>Seu perfil permite somente consultar produtos.</p>}</NotAuthorized></AuthorizeView>
+}else{<button @onclick="CarregarAsync">Repetir</button>}
+@code{
+    [Parameter]public Guid? Id{get;set;}
+    private readonly CancellationTokenSource _cts=new();private static readonly System.Globalization.CultureInfo Pt=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    private ProdutoResponse? _product;private IReadOnlyList<ReferenciaResponse> _categorias=[],_marcas=[];private string _sku="",_nome="",_descricao="",_categoria="",_marca="",_preco="",_refSearch="";
+    private int _minimo;private long _versao;private bool _ativo=true,_wasActive=true,_confirm,_confirmImage,_loading,_loaded,_busy,_focus;private string? _message;private ElementReference _alert;
+    protected override Task OnParametersSetAsync()=>CarregarAsync();
+    protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
+    private void Message(string text){_message=text;_focus=true;}
+    private void Fail(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else Message(e.Status==409?"Conflito: SKU já cadastrado, cadastro alterado ou referência inativa. Releia os dados antes de tentar novamente.":e.Status==404?"Produto ou referência não localizado.":e.Status is 400 or 413 or 415?"Confira os dados e o arquivo: JPEG/PNG válido, até 2 MiB e 4096 pixels por dimensão.":"Serviço indisponível. Tente novamente.");}
+    private void Set(ProdutoResponse p){_product=p;_sku=p.Sku;_nome=p.Nome;_descricao=p.Descricao??"";_categoria=p.CategoriaId.ToString();_marca=p.MarcaId?.ToString()??"";_preco=p.Preco.ToString("F2",Pt);_minimo=p.EstoqueMinimo;_ativo=p.Ativo;_wasActive=p.Ativo;_versao=p.Versao;_confirm=false;_confirmImage=false;}
+    private async Task ReferenciasAsync(){try{_categorias=(await Sessao.UsarAsync((a,t,c)=>a.ReferenciasAsync(t,false,1,_refSearch,"true",c),_cts.Token)).Items;_marcas=(await Sessao.UsarAsync((a,t,c)=>a.ReferenciasAsync(t,true,1,_refSearch,"true",c),_cts.Token)).Items;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private async Task CarregarAsync(){_loading=true;_loaded=false;_message=null;try{await ReferenciasAsync();if(Id is {} id)Set(await Sessao.UsarAsync((a,t,c)=>a.ProdutoAsync(t,id,c),_cts.Token));else{_product=null;_sku="";_nome="";_descricao="";_categoria="";_marca="";_preco="";_minimo=0;_ativo=true;_wasActive=true;}_loaded=true;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    private async Task SalvarAsync(){if(_busy||(!_ativo&&_wasActive&&!_confirm))return;
+        if(!Guid.TryParse(_categoria,out var categoria)||!decimal.TryParse(_preco,System.Globalization.NumberStyles.AllowDecimalPoint,Pt,out var preco)){Message("Informe categoria e preço no formato 12,50.");return;}
+        if(preco is <0.01m or >9999999.99m||decimal.Truncate(preco*100m)!=preco*100m){Message("Preço deve ser positivo, até R$ 9.999.999,99, com até duas casas decimais.");return;}
+        _busy=true;try{var p=await Sessao.UsarAsync((a,t,c)=>a.SalvarProdutoAsync(t,Id,new(_sku,_nome,_descricao,categoria,Guid.TryParse(_marca,out var marca)?marca:null,preco,_minimo),_ativo,_versao,c),_cts.Token);if(Id is null)Navigation.NavigateTo($"/produtos/{p.Id}");else{Set(p);Message("Produto salvo.");}}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    private async Task EnviarImagemAsync(InputFileChangeEventArgs args){if(_busy||Id is not {} id)return;_busy=true;try{if(args.File.Size>2097152){Message("Imagem deve ter até 2 MiB.");return;}await using var stream=args.File.OpenReadStream(2097152,_cts.Token);using var memory=new MemoryStream();await stream.CopyToAsync(memory,_cts.Token);Set(await Sessao.UsarAsync((a,t,c)=>a.EnviarImagemAsync(t,id,memory.ToArray(),_versao,c),_cts.Token));Message("Imagem salva.");}catch(ApiFailure e){Fail(e);}catch(IOException){Message("Não foi possível ler o arquivo.");}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    private async Task RemoverImagemAsync(){if(_busy||!_confirmImage||Id is not {} id)return;_busy=true;try{await Sessao.UsarAsync(async(a,t,c)=>{await a.RemoverImagemAsync(t,id,_versao,c);return true;},_cts.Token);await CarregarAsync();Message("Imagem removida.");}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

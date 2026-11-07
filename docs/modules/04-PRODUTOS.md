@@ -20,7 +20,7 @@ Dentro: categoria, marca, produto, preço, estoque mínimo, status, imagem e sal
 
 ## 5. Atores e permissões
 
-Todos os quatro perfis: Produtos.Ler, inclusive categorias/marcas/imagens. Administrador/Estoquista: Produtos.Gerenciar. Vendedor só consulta. A API valida a permissão em todos os métodos, inclusive upload e DELETE exclusivo de imagem.
+Todos os três perfis vigentes: Produtos.Ler, inclusive categorias/marcas/imagens. Administrador/Estoquista: Produtos.Gerenciar. Vendedor só consulta. A API valida a permissão em todos os métodos, inclusive upload e DELETE exclusivo de imagem.
 
 ## 6. Entidades e evoluções de persistência
 
@@ -90,12 +90,12 @@ Unidade: escala monetária/limites, normalização SKU, mínimo, referências e 
 
 ## 14. Checklist de execução
 
-- [ ] Implementar cadastros/validações/permissões e volume privado; zero endpoint de movimento.
-- [ ] Gerar/revisar evoluções de persistência, testar do zero/upgrade 03→04 e aplicar explicitamente.
-- [ ] Conferir escritas de guarda/validadores e filtros condicionais e atomicidade produto+saldo+auditoria.
-- [ ] Implementar DTOs/HTTP/UI/imagens e atualizar OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
-- [ ] Registrar cenários, arquivos, limpeza de órfãos e comandos no estado.
+- [x] Implementar cadastros/validações/permissões e volume privado; zero endpoint de movimento.
+- [x] Gerar/revisar evoluções de persistência, testar do zero/upgrade 03→04 e aplicar explicitamente.
+- [x] Conferir escritas de guarda/validadores e filtros condicionais e atomicidade produto+saldo+auditoria.
+- [x] Implementar DTOs/HTTP/UI/imagens e atualizar OpenAPI.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` em MongoDB isolado.
+- [x] Registrar cenários, arquivos, limpeza de órfãos e comandos no estado.
 
 ## 15. DoD e desbloqueio
 

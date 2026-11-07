@@ -2,7 +2,7 @@
 
 ## Entrega desta etapa
 
-A execução permanece sequencial.00 está aprovado e a solicitação atual autoriza exclusivamente01 (autenticação, autorização e manutenção de contas incremental), conforme ADR-30. Não iniciar02 ou recursos comerciais futuros. A antiga restrição a Markdown foi superada pelas autorizações de software00/01.
+A execução permanece sequencial.00–03 estão aprovados; solicitação complementar autoriza04, commit/push/PR e acompanhamento do CI, sem merge/deploy. Não iniciar05 ou posteriores. ADR-31–33 registram os incrementos atuais; estado03 contém evidências. A antiga restrição a Markdown e autorização exclusiva01 são históricas.
 
 ## MVP interno
 

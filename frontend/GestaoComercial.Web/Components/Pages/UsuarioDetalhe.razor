@@ -11,6 +11,7 @@
 @if (_busy) { <p role="status">Aguarde…</p> }
 @if (_user is { } u) {
     <p>@u.Nome · @u.Email</p>
+    <p>Funcionário: @(u.FuncionarioId?.ToString() ?? "Sem vínculo (bootstrap)")</p>
     <form @onsubmit="SalvarAsync" @onsubmit:preventDefault>
         <label for="perfil">Perfil</label><select id="perfil" @bind="_perfil"><option>Administrador</option><option>Vendedor</option><option>Estoquista</option></select>
         <label><input type="checkbox" @bind="_ativo" /> Conta ativa</label>

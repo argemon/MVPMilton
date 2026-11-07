@@ -20,7 +20,7 @@ Dentro: cadastrar, listar, pesquisar, editar, ativar/desativar, criar conta opci
 
 ## 5. Atores e permissões
 
-Administrador: Funcionarios.Ler/Gerenciar. Só Admin: Usuarios.Gerenciar e criação de conta. Administrador não pode desativar funcionário ligado a usuário Admin; API exige permissão adicional. Vendedor/Estoquista recebem 403 em todas as rotas deste cadastro. Nenhum perfil ignora a regra do último Admin.
+Administrador: Funcionarios.Ler/Gerenciar e Usuarios.Gerenciar/criação de conta. Pode desativar funcionário ligado a Admin somente se outro Admin ativo permanecer, conforme ADR-31. Vendedor/Estoquista recebem 403 em todas as rotas deste cadastro. Nenhum perfil ignora a regra do último Admin.
 
 ## 6. Entidades e banco
 
@@ -62,7 +62,7 @@ Base `/api/v1`. `FuncionarioDetalhe={id,nome,email,telefone,ativo,versao,created
 | `/funcionarios/{id}` | DetalheFuncionario, ConfirmacaoInativacao | Não localizado; carregando; alteração confirmada; 409 oferece reler |
 | `/usuarios/novo?funcionarioId=...` | FormularioUsuario, SeletorFuncionario | Sem funcionário elegível; carregando; conta criada; vínculo/email duplicado |
 
-Rotas `/usuarios` e `/usuarios/{id}` do 01 passam a exibir vínculo/nome/email. Sucesso limpa senha temporária da tela; nunca a retorna na resposta. Administrador não vê ação de criar acesso. Foco no primeiro erro e teclado em 360/1280 px.
+Rotas `/usuarios` e `/usuarios/{id}` do 01 passam a exibir vínculo/nome/email. Sucesso limpa senha temporária da tela; nunca a retorna na resposta. Somente Administrador vê ação de criar acesso. Foco no primeiro erro e teclado em 360/1280 px.
 
 ## 11. Erros e concorrência
 
@@ -79,16 +79,16 @@ Unidade: nome/contatos, elegibilidade de vínculo, permissões de administrador,
 | M02-CA01 / CA-03 | Funcionário ativo sem conta | Cadastrar contato | Registro ativo com versão e nenhum usuário criado |
 | M02-CA02 / RF-03 | Admin e funcionário ativo | Criar acesso e entrar | Conta vinculada, troca obrigatória; depois da troca exige novo login |
 | M02-CA03 / CA-03 | Conta vinculada com sessão ativa | Desativar funcionário | Conta/sessões inativadas juntas; próxima chamada 401; registro preservado |
-| M02-CA04 / CA-17 | Funcionário ligado a Admin e operador Administrador | Tentar desativar por HTTP direto | 403 e nenhum efeito |
+| M02-CA04 / CA-17 | Funcionário e operador Vendedor/Estoquista | Tentar desativar por HTTP direto | 403 e nenhum efeito; último Admin protegido com409 inclusive via funcionário |
 | M02-CA05 / RN-18 | Dois requests com mesmo funcionário | Criar contas simultaneamente | Uma conta, um 201 e um 409, sem órfão |
 
 ## 14. Checklist de execução
 
-- [ ] Implementar entidade/casos de uso, vínculo e controles de transação sem antecipar outros cadastros.
-- [ ] Gerar/revisar evolução de persistência, testar do zero e upgrade 01→02, aplicar no banco local por tarefa explícita.
-- [ ] Implementar endpoints, DTOs, páginas e clientes HTTP; conferir OpenAPI.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
-- [ ] Demonstrar M02-CA01–05 e registrar testes/arquivos/comandos reais no estado.
+- [x] Implementar entidade/casos de uso, vínculo e controles de transação sem antecipar outros cadastros.
+- [x] Gerar/revisar evolução de persistência, testar do zero e upgrade 01→02, aplicar no banco local por tarefa explícita.
+- [x] Implementar endpoints, DTOs, páginas e clientes HTTP; conferir OpenAPI.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
+- [x] Demonstrar M02-CA01–05 e registrar testes/arquivos/comandos reais no estado.
 
 ## 15. DoD e desbloqueio
 
