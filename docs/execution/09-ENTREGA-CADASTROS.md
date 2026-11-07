@@ -140,3 +140,7 @@ O inventário dos arquivos novos/alterados e os resultados finais de Git/CI est�
 - `tests/GestaoComercial.UnitTests/HostTests.cs`
 - `tests/GestaoComercial.UnitTests/ProductRulesTests.cs`
 - `tests/GestaoComercial.UnitTests/packages.lock.json`
+
+## GitHub e CI desta entrega
+
+Commit de implementação:6d21cb3935ab39c19e49104d29175c63383bc48a, publicado em feature/block-04-products no repositório argemon/MVPMilton. [PR1](https://github.com/argemon/MVPMilton/pull/1) aberto para main, sem merge/deploy. CI do [push](https://github.com/argemon/MVPMilton/actions/runs/42346433471) e [PR](https://github.com/argemon/MVPMilton/actions/runs/42346477960) concluídas success em todas as etapas: build0 avisos/erros,77 unitários+62 integrações =139 aprovados/0 falhas/0 skips, dependências sem vulnerabilidades reportadas e scanner sem segredos. MongoDB8.0.17 replica set via Testcontainers e processamento de imagens Linux comprovados, sem Atlas/.env. Artefato evidencias-fundacao publicado. Nenhuma correção de CI necessária. Workflow existente preservado; nenhuma validação desabilitada. Snapshot exato do commit via git archive:170 arquivos/~861KB, Gitleaks8.24.2 com0 ocorrências. Um scan vazio causado por falha de cópia do índice foi descartado e refeito com contagem de arquivos e commit exato; não representa evidência de segurança.
