@@ -88,7 +88,9 @@ public sealed class HostTests
         using var doc = System.Text.Json.JsonDocument.Parse(await c.GetStringAsync("/openapi/v1.json")); var paths = doc.RootElement.GetProperty("paths");
         Assert.True(paths.GetProperty("/api/v1/auth/login").TryGetProperty("post", out _)); Assert.True(paths.GetProperty("/api/v1/auth/me").TryGetProperty("get", out _));
         Assert.True(paths.GetProperty("/api/v1/usuarios").TryGetProperty("post", out _)); Assert.True(paths.TryGetProperty("/api/v1/funcionarios", out _));
-        Assert.True(paths.TryGetProperty("/api/v1/clientes", out _)); Assert.True(paths.TryGetProperty("/api/v1/produtos", out _)); Assert.False(paths.TryGetProperty("/api/v1/estoque/saldos", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/clientes", out _)); Assert.True(paths.TryGetProperty("/api/v1/produtos", out _)); Assert.True(paths.TryGetProperty("/api/v1/estoque/saldos", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/vendas", out _));
+        Assert.False(paths.TryGetProperty("/api/v1/dashboard", out _));
     }
     [Fact]
     public async Task LoginFailsClosedWhenMongoIsUnavailable()

@@ -130,3 +130,11 @@ As verificações de tamanho de tokenHash/handleHash são feitas na criação pe
 ## Evoluções02–04
 
 02-employees/version3 acrescenta employees e índice users.employeeId unique parcial binData.03-customers/version4 acrescenta customers e documento unique parcial string.04-products/version5 acrescenta categories/brands/products, índices normalizados e referências/ativo/id. Produto tem saldo incorporado obrigatório (quantidade Int32 zero/versao Int64 um na criação), preço Int64 e moeda BRL. Nenhuma coleção stock_movements/sales criada. Todos os inicializadores são explícitos, strict/error, conferem definição/checksum e preservam dados; readiness exige os cinco catálogos. Upload atualiza imagem/versão/auditoria em transação, sem I/O de arquivo na sessão. Índices/evoluções não rodam no startup.
+
+## Implementação05 —07/11/2026
+
+RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.
+
+## Evolução06 implementada
+
+06-sales/version7 cria sales com itens incorporados e validators strict/error para tipos, limites, produtos/IDs distintos, total/subtotais e metadados de estado. Expande validadores05 aceitando manuais antigos e vínculos comerciais e índices únicos parciais vendaId/itemId/tipo; recibos aceitam status200/201 e resposta concluída vinculada ao recurso. Catálogos05/06 preservados; instalação/reexecução detectam definições divergentes, sem alteração silenciosa. CLI explícita aplica00–06 e readiness exige ambos; casos de uso conferem catálogo antes de escrever, impedindo coleção implícita. Runtime não recebe delete de sales nem update/delete de movimentos/auditoria. Dados comerciais permanecem no backend. Detalhes e evidências no relatório10.

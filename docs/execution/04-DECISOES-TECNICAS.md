@@ -66,6 +66,26 @@ Imagem usa volume privado configurável por Images:RootPath, fora do webroot, ch
 
 Biblioteca necessária para validar decodificação/reencodar, sem parser caseiro. Versões e API conferidas nas fontes primárias: [SkiaSharp3.119.4](https://www.nuget.org/packages/SkiaSharp/3.119.4), [assets Linux](https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux.NoDependencies/3.119.4), [SKCodec](https://learn.microsoft.com/en-us/dotnet/api/skiasharp.skcodec?view=skiasharp). Licença MIT do projeto; auditoria NuGet e teste Ubuntu/CI validarão a dependência. ImageSharp3.1.12 foi descartado antes da implementação devido aos avisos de vulnerabilidade da página oficial, sem instalar esse pacote.
 
+## ADR-34 — Execução05–06 e idempotência comercial (07/11/2026)
+
+Solicitação anexada autoriza05 e06 sequencialmente, commit/push/PR e CI, sem merge/deploy/07. Autorizações anteriores não restringem esta execução. Gate05 deve passar antes de qualquer implementação06.
+
+Estoque mantém products.saldo como fonte operacional única; ajuste é delta assinado, inclusive para zerar (delta=-saldo atual), nunca saldo absoluto. Comandos manuais usam chave UUID por intenção, escopo versionado por rota e SHA-256 dos campos normalizados. Recibo pertence ao ator/escopo/chave e guarda resposta original, sem TTL. Índice manual de movimento usa operacaoId global; reutilização por outro ator não revela recibo nem aplica efeito. Coordenador comercial concreto repete no máximo duas transações transitórias em5s; commit incerto repete somente commit e retorna RESULTADO_DESCONHECIDO se não resolvido. Duplicata aborta antes da consulta majority/primary fora da sessão. Nenhuma coleção sales no05.
+
+Complemento ADR-34: duas fixtures de integração simultâneas no máximo (xUnit MaxParallelThreads=2). A execução de todas as classes junto ao navegador saturou o Atlas compartilhado, provocando503/timeouts em preparação e nos testes antigos. Não ampliar orçamento5s, aceitar503 como sucesso ou remover testes; as disputas de cada cenário continuam paralelas em sessões independentes. Navegador e regressão pesada são validados em execuções separadas. Perfil ContainerSecurity roda integralmente no CI autenticado; Atlas não recebe criação de usuários/roles.
+
+Prova de falhas05: decorator exclusivamente nos testes envolve IMongoClient/IClientSessionHandle, delega todos os dados ao MongoDB real e injeta rótulos oficiais no controle de commit. UnknownTransactionCommitResult após commit real não repete corpo nem aborta; falha persistente dá503 e mesma chave resolve recibo. TransientTransactionError antes de confirmar aborta e recomeça o corpo inteiro, inclusive quando originado no commit (corrigido após a prova). Não há endpoint de falha, banco em memória ou mudança do orçamento operacional.
+
+## ADR-35 — Incremento06 (07/11/2026)
+
+Gate05 aprovado no commit59acdbc/CI42374796524 com173 testes. Extrair da implementação05 somente a coordenação concreta de recibo/transação para reutilização comercial; não criar Repository/Unit of Work. Confirmar/cancelar chama a mesma atualização condicional de estoque na sessão da venda; produto inativo é permitido apenas no estorno. Chaves, hashes e respostas originais mantêm isolamento por ator/escopo. PUT de rascunho usa versão e não exige chave nova no contrato HTTP.
+
+Evolução06-sales/version7 expande validadores de movimentos/recibos sem invalidar manuais05, acrescenta sales/índices comerciais e preserva catálogos anteriores. Inicialização05 reconhece apenas as definições exatas05 ou06 para retomar upgrade parcial; divergência desconhecida bloqueia, nunca sobrescreve. Nenhuma evolução no startup. Domain concentra totalização/estados/itens e Application declara portas sem BSON. Guardas seguem recibo→venda→cliente→produtos UUID crescente. Snapshots e total permanecem em centavos long/checked; borda HTTP converte para reais. Vendedor só recebe suas vendas/contagens/histórico; cancelamento exige Administrador.
+
+Comandos de estoque/venda conferem o catálogo explícito do módulo antes de escrever: ausência retorna503 PERSISTENCIA_NAO_INICIALIZADA. Isso impede que insert transacional crie implicitamente uma coleção sem validator/índices se alguém chamar a API antes da tarefa operacional. Não executar DDL no startup nem no caso de uso.
+
+Perfil de volume: StockQueryTests é marcado ContainerScale. O lote10mil concluiu às08:55:13 na execução Atlas com uma fixture; o primeiro cenário da fixture seguinte falhou por timeout a partir de08:55:31. A correlação sugere pressão no cluster compartilhado, sem afirmar causa raiz. A regressão Atlas usual exclui explicitamente ContainerScale e ContainerSecurity; ambos continuam obrigatórios e sem filtro no CI autenticado isolado. A consulta10mil já teve prova Atlas (302ms total/49ms servidor), e não será repetida junto às demais validações locais. Não mudar assert, orçamento ou workflow para obter aprovação.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

@@ -1,0 +1,41 @@
+@page "/estoque/{Operacao}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Estoque.Movimentar")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Movimentar estoque · Gestão Comercial</PageTitle>
+<h1>@Titulo</h1><a href="/estoque">Consultar saldos</a>
+@if(_message is not null){<p role="alert" tabindex="-1" @ref="_alert">@_message</p>}
+@if(!Valida){<p>Operação não encontrada.</p>}
+else{
+<AuthorizeView Policy="@(Operacao=="ajuste"?"Estoque.Ajustar":"Estoque.Movimentar")"><Authorized>
+<label for="busca">Localizar produto pelo início do nome ou SKU</label><input id="busca" @bind="_search" disabled="@(_pending||_busy)" maxlength="150" /><button @onclick="BuscarAsync" disabled="@(_pending||_busy)">Localizar produtos</button>
+@if(_loading){<p role="status">Carregando produtos…</p>}
+<form @onsubmit="EnviarAsync" @onsubmit:preventDefault>
+<fieldset disabled="@(_pending||_busy)">
+<label for="produto">Produto ativo</label><select id="produto" @bind="_produto" required><option value="">Selecione</option>@foreach(var p in _produtos){<option value="@p.Id">@p.Sku — @p.Nome (saldo @p.Saldo)</option>}</select>
+<label for="quantidade">@(Operacao=="ajuste"?"Variação com sinal (ex.: -3 retira, +3 acrescenta)":"Quantidade (UN)")</label><input id="quantidade" type="number" @bind="_quantidade" required min="@(Operacao=="ajuste"?-1000000:1)" max="1000000" />
+@if(Operacao=="ajuste"){<p>Para zerar, informe o negativo do saldo atual. O ajuste sempre registra uma variação, nunca substitui o saldo.</p>}
+<label for="motivo">Justificativa (10 a 500 caracteres)</label><textarea id="motivo" @bind="_motivo" required minlength="10" maxlength="500"></textarea>
+<label><input type="checkbox" @bind="_confirm" required /> Confirmo esta movimentação.</label></fieldset>
+<button disabled="@(_busy||_done)">@(_busy?"Processando…":_pending?"Reconsultar / repetir mesma operação":"Registrar")</button>
+</form>
+@if(_receipt is {} m){<section><h2>Movimento registrado</h2><p>@m.Tipo: @m.Delta.ToString("+0;-0;0") UN · saldo na operação: @m.SaldoAntes → @m.SaldoDepois</p><p>Referência: @m.Id</p><p>Saldo atual: @(_current?.ToString()??"ainda não consultado")</p><button @onclick="SaldoAtualAsync" disabled="@_busy">Atualizar saldo</button><button @onclick="Nova">Nova movimentação</button></section>}
+</Authorized><NotAuthorized><p>Seu perfil não permite esta operação.</p></NotAuthorized></AuthorizeView>}
+@code{
+    [Parameter]public string Operacao{get;set;}="";
+    private string Titulo=>Operacao=="entrada"?"Entrada de mercadorias":Operacao=="saida"?"Saída manual":"Ajustar estoque";
+    private bool Valida=>Operacao is "entrada" or "saida" or "ajuste";
+    private readonly CancellationTokenSource _cts=new();private IReadOnlyList<ProdutoResponse> _produtos=[];private string _search="",_produto="",_motivo="";private int _quantidade=1;private bool _confirm,_busy,_pending,_done,_loading,_focus;private Guid _key=Guid.NewGuid();private MovimentoResponse? _receipt;private int? _current;private string? _message;private ElementReference _alert;
+    protected override async Task OnParametersSetAsync(){Nova();if(Valida)await BuscarAsync();}
+    protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
+    private void Message(string value){_message=value;_focus=true;}
+    private void Fail(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else Message(e.Code switch{"ESTOQUE_INSUFICIENTE"=>"Saldo insuficiente. Nenhuma movimentação foi aplicada.","SALDO_EXCEDE_LIMITE"=>"O saldo excederia o limite permitido.","RECURSO_INATIVO"=>"Produto inativo. Selecione outro produto.","SALDO_INEXISTENTE"=>"Saldo inconsistente. Solicite verificação ao administrador.","CHAVE_REUTILIZADA"=>"A chave desta operação já foi utilizada com outros dados.",_=>e.Status==400?"Confira quantidade e justificativa.":"Não foi possível concluir a consulta."});}
+    private async Task BuscarAsync(){_loading=true;try{_produtos=(await Sessao.UsarAsync((a,t,c)=>a.ProdutosAsync(t,1,_search,null,null,"true",c),_cts.Token)).Items;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    private async Task EnviarAsync(){if(_busy||_done||!_confirm)return;if(!Guid.TryParse(_produto,out var id)||_quantidade==0||_quantidade is < -1000000 or >1000000||(Operacao!="ajuste"&&_quantidade<1)||_motivo.Trim().Length is <10 or >500){Message("Selecione produto, quantidade válida e justificativa de 10 a 500 caracteres.");return;}
+        _busy=true;try{_receipt=await Sessao.UsarAsync((a,t,c)=>a.MovimentarAsync(t,_key,Operacao=="entrada"?"entradas":Operacao=="saida"?"saidas":"ajustes",id,_quantidade,_motivo,c),_cts.Token);_pending=false;_done=true;Message("Movimentação registrada.");await SaldoAtualAsync();}catch(ApiFailure e){if(e.Status>=500||e.Code=="OPERACAO_EM_ANDAMENTO"){_pending=true;Message("Resultado ainda não confirmado. Use Reconsultar / repetir para resolver a mesma operação, sem alterar os dados.");}else{_pending=false;Fail(e);}}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    private async Task SaldoAtualAsync(){if(_receipt is not {} m)return;try{_current=(await Sessao.UsarAsync((a,t,c)=>a.ProdutoAsync(t,m.ProdutoId,c),_cts.Token)).Saldo;}catch(ApiFailure){Message("Movimento confirmado; não foi possível atualizar o saldo atual. Tente consultar novamente.");}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private void Nova(){_key=Guid.NewGuid();_receipt=null;_current=null;_pending=false;_done=false;_confirm=false;_motivo="";_quantidade=1;_message=null;}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

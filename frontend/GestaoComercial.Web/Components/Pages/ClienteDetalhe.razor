@@ -20,13 +20,13 @@ else if (_loaded) {
         }
         <button disabled="@_busy">@(_busy ? "Salvando…" : "Salvar")</button>
     </form>
-    @if (Id is not null) { <button @onclick="CarregarAsync" disabled="@_busy">Reler cadastro</button><h2>Histórico de compras</h2><button @onclick="HistoricoAsync" disabled="@_busy">Consultar histórico</button>@if (_historico) { <p>Nenhuma venda registrada</p> } }
+    @if (Id is not null) { <button @onclick="CarregarAsync" disabled="@_busy">Reler cadastro</button><h2>Histórico de compras</h2><button @onclick="HistoricoAsync" disabled="@_busy">Consultar histórico</button>@if (_historico is {} h) { @if(h.Items.Count==0){<p>Nenhuma venda registrada</p>}else{<div class="tabela"><table><caption>Histórico — total @h.TotalItems</caption><thead><tr><th>Venda</th><th>Estado</th><th>Total</th></tr></thead><tbody>@foreach(var v in h.Items){<tr><td><a href="@($"/vendas/{v.Id}")">@v.Id</a></td><td>@v.Status</td><td>@v.Total.ToString("C",System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</td></tr>}</tbody></table></div>}<nav aria-label="Paginação do histórico"><button disabled="@(_busy||_historyPage<=1)" @onclick="HistoricoAnteriorAsync">Anterior</button><span>Página @_historyPage</span><button disabled="@(_busy||(long)_historyPage*h.PageSize>=h.TotalItems)" @onclick="HistoricoProximoAsync">Próxima</button></nav> } }
 } else if (Id is not null) { <button @onclick="CarregarAsync">Repetir</button> }
 @code {
     [Parameter] public Guid? Id { get; set; }
     private readonly CancellationTokenSource _cts = new();
     private string _nome = "", _email = "", _telefone = "", _tipo = "PF", _documento = "";
-    private bool _historico;
+    private HistoricoClienteResponse? _historico;private int _historyPage=1;
     private string? _message;
     private bool _ativo = true, _wasActive = true, _confirm, _loading, _busy, _loaded, _focus;
     private long _versao;
@@ -42,7 +42,7 @@ else if (_loaded) {
         try {
             if (Id is { } id) { var f = await Sessao.UsarAsync((a,t,c) => a.ClienteAsync(t,id,c), _cts.Token); _tipo=f.Tipo; _documento=f.Documento ?? ""; _nome=f.Nome; _email=f.Email ?? ""; _telefone=f.Telefone ?? ""; _ativo=f.Ativo; _wasActive=f.Ativo; _versao=f.Versao; }
             else { _nome=""; _email=""; _telefone=""; _ativo=true; _wasActive=true; }
-            _confirm=false; _historico=false; _loaded=true;
+            _confirm=false; _historico=null;_historyPage=1; _loaded=true;
         } catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _loading=false; }
     }
     private async Task SalvarAsync() {
@@ -51,6 +51,8 @@ else if (_loaded) {
         try { var f = await Sessao.UsarAsync((a,t,c) => a.SalvarClienteAsync(t,Id,_nome,_tipo,string.IsNullOrWhiteSpace(_documento)?null:_documento,_email,_telefone,_ativo,_versao,c), _cts.Token); if (Id is null) Navigation.NavigateTo($"/clientes/{f.Id}"); else { _versao=f.Versao; _wasActive=f.Ativo; _message="Alteração salva."; } }
         catch (ApiFailure e) { Failure(e); } catch (OperationCanceledException) when (_cts.IsCancellationRequested) { } finally { _busy=false; }
     }
-    private async Task HistoricoAsync() { if (Id is not { } id) return; _busy=true; try { var h=await Sessao.UsarAsync((a,t,c)=>a.HistoricoClienteAsync(t,id,c),_cts.Token); _historico=h.Items.Count==0; } catch(ApiFailure e) { Failure(e); } catch(OperationCanceledException) when(_cts.IsCancellationRequested) { } finally { _busy=false; } }
+    private async Task HistoricoAsync() { if (Id is not { } id) return; _busy=true; try { var h=await Sessao.UsarAsync((a,t,c)=>a.HistoricoClienteAsync(t,id,c,_historyPage),_cts.Token); _historico=h; } catch(ApiFailure e) { Failure(e); } catch(OperationCanceledException) when(_cts.IsCancellationRequested) { } finally { _busy=false; } }
+    private async Task HistoricoAnteriorAsync(){_historyPage--;await HistoricoAsync();}
+    private async Task HistoricoProximoAsync(){_historyPage++;await HistoricoAsync();}
     public void Dispose() { _cts.Cancel(); _cts.Dispose(); }
 }

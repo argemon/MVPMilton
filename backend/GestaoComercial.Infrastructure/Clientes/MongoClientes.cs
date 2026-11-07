@@ -7,7 +7,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 namespace GestaoComercial.Infrastructure.Clientes;
 
-public sealed class MongoClientes(OperacoesCadastro operations) : IClientes
+public sealed class MongoClientes(OperacoesCadastro operations, GestaoComercial.Application.Vendas.IVendas vendas) : IClientes
 {
     private static readonly string[] Roles = ["Administrador", "Vendedor"];
     private IMongoCollection<ClienteDocumento> Customers => operations.Db.GetCollection<ClienteDocumento>("customers");
@@ -59,7 +59,7 @@ public sealed class MongoClientes(OperacoesCadastro operations) : IClientes
         OperacoesCadastro.Pagina(page,pageSize);
         if (inicio.HasValue != fim.HasValue || inicio is { } a && fim is { } b && (a >= b || b.DayNumber - a.DayNumber > 366)) throw new CadastroException("VALIDACAO");
         await ConsultarAsync(ator,id,ct);
-        // Incremental contract03. Replace query in06; never access/create a future collection.
-        return new([],page,pageSize,0);
+        var p=await vendas.ListarAsync(ator,id,null,inicio,fim,page,pageSize,ct);
+        return new(p.Items.Select(x=>new VendaCliente(x.Id,x.CriadoEm,x.Status,x.TotalCentavos)).ToArray(),p.Page,p.PageSize,p.TotalItems);
     }
 }

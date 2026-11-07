@@ -60,6 +60,12 @@ public static class ContasHttp
             o.AddPolicy("Clientes.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Vendedor").RequireClaim("troca", "nao"));
             o.AddPolicy("Produtos.Ler", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Vendedor", "Estoquista").RequireClaim("troca", "nao"));
             o.AddPolicy("Produtos.Gerenciar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Estoquista").RequireClaim("troca", "nao"));
+            o.AddPolicy("Estoque.Ler", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Vendedor", "Estoquista").RequireClaim("troca", "nao"));
+            o.AddPolicy("Estoque.Historico", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Estoquista").RequireClaim("troca", "nao"));
+            o.AddPolicy("Estoque.Movimentar", p => p.RequireAuthenticatedUser().RequireRole("Administrador", "Estoquista").RequireClaim("troca", "nao"));
+            o.AddPolicy("Estoque.Ajustar", p => p.RequireAuthenticatedUser().RequireRole("Administrador").RequireClaim("troca", "nao"));
+            foreach(var policy in new[]{"Vendas.Ler","Vendas.Criar","Vendas.Editar","Vendas.Confirmar"})o.AddPolicy(policy,p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador","Vendedor"));
+            o.AddPolicy("Vendas.Cancelar",p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador"));
         });
         services.AddCascadingAuthenticationState();
         services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, EstadoAutenticacao>();

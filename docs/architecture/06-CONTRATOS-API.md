@@ -132,3 +132,11 @@ ADR-23 mantém os campos monetários HTTP existentes (preco, precoUnitario, tota
 Conversão 12.50 →1250→12.50; 12.505 dá400 VALIDACAO. Total calculado internamente e snapshots em centavos. CSV mantém reais decimais com ponto, sem mudar unidade dos relatórios. Versao é versão de negócio, não guardVersion. Registro/commit MongoDB incerto dá503 RESULTADO_DESCONHECIDO com Retry-After e repetição da mesma Idempotency-Key, sem afirmar rollback ou criar nova intenção. Limite de representação de agregado dá400 LIMITE_MONETARIO_EXCEDIDO. OpenAPI/cliente/tests de conversão devem refletir esses limites na implementação; rotas, policies, status de sucesso e escopo dos módulos permanecem iguais.
 
 Os nomes físicos users/employees/customers/categories/brands/products/sales/stock_movements não renomeiam rotas/DTOs em português. API mapeia explicitamente employeeId persistido para funcionarioId de transporte, preço em centavos para preco em reais e saldo incorporado para o saldo informativo existente. Nenhum documento de persistência é retornado diretamente.
+
+## Implementação05 —07/11/2026
+
+RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.
+
+## Incremento06
+
+GET /vendas retorna página de `VendaResumo={id,clienteId,clienteNome?,criador,status,total,versao,criadoEm}`, projetada no servidor sem itens/documento do cliente. GET /vendas/{id} e respostas de comandos retornam VendaDetalhe conforme M06. GET /clientes/{id}/vendas passa a usar resumos reais filtrados pelo criador para Vendedor. Campos monetários seguem reais na borda e centavos long internamente. POST criar/confirmar/cancelar/descartar exigem Idempotency-Key UUID e devolvem recibo original; PUT usa versão. Movimentos acrescentam vendaId/itemId UUID nullable. Códigos503 incluem PERSISTENCIA_NAO_INICIALIZADA e RESULTADO_DESCONHECIDO. Nenhuma rota07/08 foi acrescentada.

@@ -42,6 +42,12 @@ public static class EndpointsAcesso
             o.AddPolicy("Clientes.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Vendedor"));
             o.AddPolicy("Produtos.Ler", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Vendedor", "Estoquista"));
             o.AddPolicy("Produtos.Gerenciar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Estoquista"));
+            o.AddPolicy("Estoque.Ler", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Vendedor", "Estoquista"));
+            o.AddPolicy("Estoque.Historico", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Estoquista"));
+            o.AddPolicy("Estoque.Movimentar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador", "Estoquista"));
+            o.AddPolicy("Estoque.Ajustar", p => p.RequireAuthenticatedUser().RequireClaim("troca", "nao").RequireRole("Administrador"));
+            foreach(var policy in new[]{"Vendas.Ler","Vendas.Criar","Vendas.Editar","Vendas.Confirmar"})o.AddPolicy(policy,p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador","Vendedor"));
+            o.AddPolicy("Vendas.Cancelar",p=>p.RequireAuthenticatedUser().RequireClaim("troca","nao").RequireRole("Administrador"));
         });
         services.AddSingleton<IdentificadorThrottle>();
         services.AddRateLimiter(o =>
