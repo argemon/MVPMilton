@@ -32,6 +32,8 @@ builder.Services.AddScoped<OperacoesCadastro>();
 builder.Services.AddScoped<GestaoComercial.Application.Clientes.IClientes, GestaoComercial.Infrastructure.Clientes.MongoClientes>();
 builder.Services.AddSingleton<GestaoComercial.Infrastructure.Clientes.ClientesSchema>();
 builder.Services.AddSingleton<GestaoComercial.Infrastructure.Produtos.ProdutosSchema>();
+builder.Services.AddSingleton<GestaoComercial.Infrastructure.Estoque.EstoqueSchema>();
+builder.Services.AddScoped<GestaoComercial.Application.Estoque.IEstoque, GestaoComercial.Infrastructure.Estoque.MongoEstoque>();
 var imagesRoot=builder.Configuration["Images:RootPath"];
 if(string.IsNullOrWhiteSpace(imagesRoot)&&!builder.Environment.IsDevelopment()&&!builder.Environment.IsEnvironment("Testing")) throw new InvalidOperationException("Configuração obrigatória: Images:RootPath.");
 builder.Services.AddSingleton(new GestaoComercial.Infrastructure.Produtos.ImagensPrivadas(imagesRoot??Path.Combine(builder.Environment.ContentRootPath,".local","images")));
@@ -67,7 +69,7 @@ if (args.Contains("--probe-mongo") || args.Contains("--initialize-persistence"))
     try
     {
         var foundation = app.Services.GetRequiredService<MongoFoundation>();
-        if (args.Contains("--initialize-persistence")) { await foundation.InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<AuthSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Clientes.ClientesSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Produtos.ProdutosSchema>().InitializeAsync(CancellationToken.None); }
+        if (args.Contains("--initialize-persistence")) { await foundation.InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<AuthSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Clientes.ClientesSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Produtos.ProdutosSchema>().InitializeAsync(CancellationToken.None); await app.Services.GetRequiredService<GestaoComercial.Infrastructure.Estoque.EstoqueSchema>().InitializeAsync(CancellationToken.None); }
         if (!await foundation.SupportsTransactionsAsync(CancellationToken.None)) throw new InvalidOperationException();
         Console.WriteLine("MongoDB: conexão e topologia transacional disponíveis; origem " + (mongoConfiguration.IsAtlas ? "Atlas/SRV" : "servidor configurado") + ".");
     }
@@ -93,7 +95,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 app.Use(async (context, next) =>
 {
-    if (context.Items.ContainsKey(typeof(SessaoAtual)) && (context.Request.Path.StartsWithSegments("/api/v1/usuarios") || context.Request.Path.StartsWithSegments("/api/v1/funcionarios") || context.Request.Path.StartsWithSegments("/api/v1/clientes") || context.Request.Path.StartsWithSegments("/api/v1/produtos") || context.Request.Path.StartsWithSegments("/api/v1/categorias") || context.Request.Path.StartsWithSegments("/api/v1/marcas")))
+    if (context.Items.ContainsKey(typeof(SessaoAtual)) && (context.Request.Path.StartsWithSegments("/api/v1/usuarios") || context.Request.Path.StartsWithSegments("/api/v1/funcionarios") || context.Request.Path.StartsWithSegments("/api/v1/clientes") || context.Request.Path.StartsWithSegments("/api/v1/produtos") || context.Request.Path.StartsWithSegments("/api/v1/categorias") || context.Request.Path.StartsWithSegments("/api/v1/marcas") || context.Request.Path.StartsWithSegments("/api/v1/estoque")))
     {
         var auth = context.RequestServices.GetRequiredService<IAutenticacao>();
         if (await auth.ValidarAsync(context.Request.Headers.Authorization.ToString()[7..], true, context.RequestAborted) is not { } session) { context.Response.StatusCode = 401; return; }
@@ -105,10 +107,11 @@ app.MapAcesso();
 app.MapFuncionarios();
 app.MapClientes();
 app.MapProdutos();
+app.MapEstoque();
 app.MapGet("/health/live", () => Results.Ok(new HealthResponse("ok"))).AllowAnonymous();
-app.MapGet("/health/ready", async (MongoFoundation mongo, AuthSchema auth, GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema employees, GestaoComercial.Infrastructure.Clientes.ClientesSchema customers, GestaoComercial.Infrastructure.Produtos.ProdutosSchema products, CancellationToken ct) =>
+app.MapGet("/health/ready", async (MongoFoundation mongo, AuthSchema auth, GestaoComercial.Infrastructure.Funcionarios.FuncionariosSchema employees, GestaoComercial.Infrastructure.Clientes.ClientesSchema customers, GestaoComercial.Infrastructure.Produtos.ProdutosSchema products, GestaoComercial.Infrastructure.Estoque.EstoqueSchema stock, CancellationToken ct) =>
 {
-    var ready = await mongo.IsReadyAsync(ct) && await auth.IsReadyAsync(ct) && await employees.IsReadyAsync(ct) && await customers.IsReadyAsync(ct) && await products.IsReadyAsync(ct);
+    var ready = await mongo.IsReadyAsync(ct) && await auth.IsReadyAsync(ct) && await employees.IsReadyAsync(ct) && await customers.IsReadyAsync(ct) && await products.IsReadyAsync(ct) && await stock.IsReadyAsync(ct);
     return Results.Json(new HealthResponse(ready ? "ready" : "unavailable"), statusCode: ready ? 200 : 503);
 }).AllowAnonymous();
 if (app.Environment.IsDevelopment()) app.MapOpenApi().AllowAnonymous();

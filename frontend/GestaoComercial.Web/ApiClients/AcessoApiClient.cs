@@ -9,11 +9,12 @@ public sealed class ApiFailure(int status, string? code = null) : Exception("Nã
 internal record LoginResponse(string AccessToken, DateTimeOffset ExpiraEm, UsuarioAutenticado Usuario);
 public sealed partial class AcessoApiClient(HttpClient http)
 {
-    private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? token, object? body, CancellationToken ct)
+    private async Task<HttpResponseMessage> SendAsync(HttpMethod method, string path, string? token, object? body, CancellationToken ct, Guid? chave = null)
     {
         using var request = new HttpRequestMessage(method, path);
         if (token is not null) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         if (body is not null) request.Content = JsonContent.Create(body);
+        if (chave is { } key) request.Headers.Add("Idempotency-Key", key.ToString());
         try
         {
             var response = await http.SendAsync(request, ct);

@@ -3,3 +3,4 @@
 form{display:flex;flex-direction:column;align-items:flex-start;gap:.65rem;margin:1rem 0}header form{margin:0}input,select{font:inherit;padding:.7rem;border:1px solid #657c88;border-radius:.3rem;max-width:100%;width:24rem}input[type=checkbox]{width:auto}input:focus-visible,select:focus-visible{outline:3px solid #d28b00;outline-offset:3px}.conta{max-width:34rem;margin:auto}.tabela{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:.8rem;border-bottom:1px solid #bdcdd5;overflow-wrap:anywhere}nav{display:flex;align-items:center;gap:1rem;margin:1rem 0}[role=alert]{color:#99241b;font-weight:600}button{max-width:100%}
 nav{flex-wrap:wrap}textarea{font:inherit;max-width:100%;width:32rem;padding:.7rem}
 .produto-imagem{display:block;max-width:100%;max-height:24rem;object-fit:contain}
+fieldset{min-inline-size:0;width:100%;max-width:34rem;display:flex;flex-direction:column;align-items:flex-start;gap:.65rem}fieldset label{max-width:100%}

@@ -1,7 +1,7 @@
 # GestaoComercial — instruções para agentes
 
 - Leia [o índice](docs/README.md), [o estado](docs/execution/03-ESTADO-PROJETO.md), o bloco liberado e seus documentos normativos antes de alterar arquivos.
-- A solicitação atual autoriza os blocos02–04, sequencialmente e sem aprovação intermediária, além de commit/push/PR e acompanhamento do CI. Não iniciar05 nem fazer deploy ou merge automático. ADR-30 mantém Administrador, Vendedor e Estoquista.
+- A solicitação atual autoriza os blocos05–06, sequencialmente e sem aprovação intermediária, além de commit/push/PR e acompanhamento do CI. Iniciar06 somente após o gate05; não iniciar07 nem fazer deploy ou merge automático. ADR-30 mantém Administrador, Vendedor e Estoquista.
 - Na implementação futura, execute somente um bloco liberado por vez, na ordem de [execução](docs/execution/00-PLANO-EXECUCAO.md). Não antecipar catálogo ou pedidos.
 - Use .NET 10 LTS, ASP.NET Core API, Blazor Web App Interactive Server, MongoDB, MongoDB.Driver oficial, xUnit, Testcontainers e Docker Compose com replica set. Frontend e backend ficam fisicamente separados.
 - Respeite Domain ← Application ← Infrastructure e a composição na Api. Frontend referencia somente Shared Contracts, nunca backend ou banco de negócio.
@@ -20,6 +20,6 @@
 - Transações snapshot/majority/primary em replica set, updates condicionais com resultado conferido, escritas de guarda efetivas e operações sequenciais; nenhum Task.WhenAll na mesma sessão. Não há reserva no MVP.
 - Integração com MongoDB real e transações: Atlas isolado por execução conforme ADR-28 ou perfil Testcontainers explícito; ausência de Docker não autoriza simulação/standalone, mas não bloqueia o caminho Atlas comprovado. Evoluções de coleções/índices/validadores são explícitas e idempotentes; sem schema mutável no startup.
 
-- Auditorias06/08 são históricas. Estado vigente em03 contém os gates atuais; preservar evidências antigas sem tratá-las como atuais. Blocos02–04 autorizados nesta conversa;05 e seguintes aguardam nova solicitação.
+- Auditorias06/08 são históricas. Estado vigente em03 contém os gates atuais; preservar evidências antigas sem tratá-las como atuais. Blocos05–06 autorizados nesta conversa;07 e seguintes aguardam nova solicitação.
 
 - ADR-27–29 atualizam a execução00: reutilizar Atlas existente e .env sem sobrescrever/imprimir credenciais; integração pode usar bancos descartáveis próprios nesse cluster, sem criar instância paralela. rs0/Testcontainers aplicam-se ao caminho local/CI, não são exigência de nome/topologia Atlas. Estrutura física atual é backend/Projeto, frontend/Projeto e tests/UnitTests/IntegrationTests conforme solicitação.

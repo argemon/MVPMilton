@@ -1,6 +1,6 @@
 # 00 — Plano de execução
 
-Estado vigente:00–03 aprovados e04 autorizado em execução após os gates anteriores. Solicitação complementar inclui commit/push/PR/CI, sem merge/deploy/05. O estado03 registra resultados; descrições documentais históricas abaixo não substituem a implementação atual.
+Solicitação atual autoriza05 (Estoque) e06 (Vendas), sequencialmente, além de commit/push/PR/CI. Gate05 obrigatório antes de06. Sem07, merge automático ou deploy. Autorizações anteriores abaixo são históricas; evidências correntes no estado03.
 
 
 > Atualização vigente00 — ADR-27–29: implementação autorizada com Atlas já configurado em .env, sem sobrescrever segredos. Development reutiliza MONGODB_URI; Production/Staging exigem configuração externa específica. Integração pode executar transações reais em bancos efêmeros exclusivos no mesmo cluster ou perfil Testcontainers explícito; não criar outro MongoDB quando Atlas atende. rs0 é nome apenas do perfil local, não do Atlas. As exigências universais de Docker/rs0, somente Markdown e adaptação ainda não autorizada nas seções históricas anteriores ficam superadas nesses pontos.

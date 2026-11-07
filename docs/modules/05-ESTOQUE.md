@@ -95,3 +95,7 @@ Unidade: sinais, motivo, limite, negativo e overflow calculados antes da atribui
 ## 15. DoD e desbloqueio
 
 DoD global, RF-09–12 e CA-06/07 demonstrados; saldo/razão conciliam e zero falha de integridade. Desbloquear **06**. Nenhum teste depende de venda, cancelamento ou relatório futuro.
+
+## Implementação05 —07/11/2026
+
+RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.

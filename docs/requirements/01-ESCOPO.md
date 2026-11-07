@@ -1,6 +1,6 @@
 # 01 — Escopo
 
-## Entrega desta etapa
+Solicitação atual autoriza05 (Estoque) e06 (Vendas), sequencialmente, além de commit/push/PR/CI. Gate05 obrigatório antes de06. Sem07, merge automático ou deploy. Autorizações anteriores abaixo são históricas; evidências correntes no estado03.
 
 A execução permanece sequencial.00–03 estão aprovados; solicitação complementar autoriza04, commit/push/PR e acompanhamento do CI, sem merge/deploy. Não iniciar05 ou posteriores. ADR-31–33 registram os incrementos atuais; estado03 contém evidências. A antiga restrição a Markdown e autorização exclusiva01 são históricas.
 

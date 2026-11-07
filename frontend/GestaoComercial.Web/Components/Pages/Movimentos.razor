@@ -1,0 +1,30 @@
+@page "/estoque/movimentos"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Estoque.Historico")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+<PageTitle>Movimentações · Gestão Comercial</PageTitle>
+<h1>Histórico de movimentações</h1><a href="/estoque">Consultar saldos</a>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+<label for="produto">Identificador do produto (opcional)</label><input id="produto" @bind="_produto" />
+<label for="tipo">Tipo</label><select id="tipo" @bind="_tipo"><option value="">Todos</option><option>Entrada</option><option>SaidaManual</option><option>Ajuste</option></select>
+<label for="inicio">Início (inclusive)</label><input type="date" id="inicio" @bind="_inicio" />
+<label for="fim">Fim (exclusive)</label><input type="date" id="fim" @bind="_fim" />
+<p>Informe ambas as datas ou deixe as duas em branco. Período máximo: 366 dias.</p><button disabled="@_loading">Pesquisar</button></form>
+@if(_loading){<p role="status">Carregando movimentos…</p>}
+else if(_error){<p role="alert">Não foi possível consultar. Confira identificador, período e filtros.</p><button @onclick="CarregarAsync">Repetir</button>}
+else if(_data is {} data){
+@if(data.Items.Count==0){<p>Nenhum movimento encontrado.</p>}
+else{<div class="tabela"><table><caption>Movimentos — total @data.TotalItems</caption><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Variação</th><th>Antes → depois</th><th>Responsável</th><th>Motivo / operação</th></tr></thead><tbody>
+@foreach(var m in data.Items){<tr><td>@TimeZoneInfo.ConvertTime(m.OcorridoEm,TimeZoneInfo.FindSystemTimeZoneById(Configuration["APP_TIME_ZONE"]??"America/Cuiaba")).ToString("dd/MM/yyyy HH:mm")</td><td><a href="@($"/produtos/{m.ProdutoId}")">@m.ProdutoId</a></td><td>@m.Tipo</td><td>@m.Delta.ToString("+0;-0;0")</td><td>@m.SaldoAntes → @m.SaldoDepois</td><td>@m.Ator.Nome</td><td>@m.Motivo<br /><small>@m.Id</small></td></tr>}
+</tbody></table></div>}
+<nav aria-label="Paginação"><button disabled="@(_page<=1)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems)" @onclick="ProximaAsync">Próxima</button></nav>}
+@code{
+    private readonly CancellationTokenSource _cts=new();private MovimentosResponse? _data;private string _produto="",_tipo="";private DateTime? _inicio,_fim;private int _page=1;private bool _loading,_error;
+    protected override Task OnInitializedAsync()=>CarregarAsync();
+    private async Task PesquisarAsync(){_page=1;await CarregarAsync();}private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.MovimentosAsync(t,_page,_produto,_tipo,_inicio?.ToString("yyyy-MM-dd")??"",_fim?.ToString("yyyy-MM-dd")??"",c),_cts.Token);}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

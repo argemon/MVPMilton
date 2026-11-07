@@ -66,6 +66,14 @@ Imagem usa volume privado configurável por Images:RootPath, fora do webroot, ch
 
 Biblioteca necessária para validar decodificação/reencodar, sem parser caseiro. Versões e API conferidas nas fontes primárias: [SkiaSharp3.119.4](https://www.nuget.org/packages/SkiaSharp/3.119.4), [assets Linux](https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux.NoDependencies/3.119.4), [SKCodec](https://learn.microsoft.com/en-us/dotnet/api/skiasharp.skcodec?view=skiasharp). Licença MIT do projeto; auditoria NuGet e teste Ubuntu/CI validarão a dependência. ImageSharp3.1.12 foi descartado antes da implementação devido aos avisos de vulnerabilidade da página oficial, sem instalar esse pacote.
 
+## ADR-34 — Execução05–06 e idempotência comercial (07/11/2026)
+
+Solicitação anexada autoriza05 e06 sequencialmente, commit/push/PR e CI, sem merge/deploy/07. Autorizações anteriores não restringem esta execução. Gate05 deve passar antes de qualquer implementação06.
+
+Estoque mantém products.saldo como fonte operacional única; ajuste é delta assinado, inclusive para zerar (delta=-saldo atual), nunca saldo absoluto. Comandos manuais usam chave UUID por intenção, escopo versionado por rota e SHA-256 dos campos normalizados. Recibo pertence ao ator/escopo/chave e guarda resposta original, sem TTL. Índice manual de movimento usa operacaoId global; reutilização por outro ator não revela recibo nem aplica efeito. Coordenador comercial concreto repete no máximo duas transações transitórias em5s; commit incerto repete somente commit e retorna RESULTADO_DESCONHECIDO se não resolvido. Duplicata aborta antes da consulta majority/primary fora da sessão. Nenhuma coleção sales no05.
+
+Complemento ADR-34: duas fixtures de integração simultâneas no máximo (xUnit MaxParallelThreads=2). A execução de todas as classes junto ao navegador saturou o Atlas compartilhado, provocando503/timeouts em preparação e nos testes antigos. Não ampliar orçamento5s, aceitar503 como sucesso ou remover testes; as disputas de cada cenário continuam paralelas em sessões independentes. Navegador e regressão pesada são validados em execuções separadas. Perfil ContainerSecurity roda integralmente no CI autenticado; Atlas não recebe criação de usuários/roles.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

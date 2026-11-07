@@ -1,0 +1,29 @@
+@page "/estoque"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Estoque.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+<PageTitle>Estoque · Gestão Comercial</PageTitle>
+<h1>Estoque</h1>
+<AuthorizeView Policy="Estoque.Movimentar"><Authorized><p><a href="/estoque/entrada">Registrar entrada</a> · <a href="/estoque/saida">Registrar saída</a> · <a href="/estoque/movimentos">Histórico</a></p></Authorized></AuthorizeView>
+<AuthorizeView Policy="Estoque.Ajustar"><Authorized><a href="/estoque/ajuste">Ajustar estoque</a></Authorized></AuthorizeView>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+<label for="busca">Início do nome ou SKU exato</label><input id="busca" @bind="_search" maxlength="150" />
+<label for="status">Situação</label><select id="status" @bind="_ativo"><option value="true">Ativos</option><option value="false">Inativos</option><option value="todos">Todos</option></select>
+<label><input type="checkbox" @bind="_abaixo" /> Saldo no mínimo ou abaixo</label><button disabled="@_loading">Pesquisar</button></form>
+@if(_loading){<p role="status">Carregando saldos…</p>}
+else if(_error){<p role="alert">Não foi possível consultar os saldos.</p><button @onclick="CarregarAsync">Repetir</button>}
+else if(_data is {} data){
+@if(data.Items.Count==0){<p>Nenhum produto encontrado.</p>}
+else{<div class="tabela"><table><caption>Saldos — total @data.TotalItems</caption><thead><tr><th>SKU</th><th>Produto</th><th>Saldo (UN)</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody>
+@foreach(var p in data.Items){<tr><td>@p.Sku</td><td><a href="@($"/produtos/{p.ProdutoId}")">@p.Nome</a></td><td>@p.Saldo</td><td>@p.Minimo</td><td>@(p.Ativo?"Ativo":"Inativo")</td></tr>}
+</tbody></table></div>}
+<nav aria-label="Paginação"><button disabled="@(_page<=1)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems)" @onclick="ProximaAsync">Próxima</button></nav>}
+@code{
+    private readonly CancellationTokenSource _cts=new();private SaldosResponse? _data;private string _search="",_ativo="true";private int _page=1;private bool _abaixo,_loading,_error;
+    protected override Task OnInitializedAsync()=>CarregarAsync();
+    private async Task PesquisarAsync(){_page=1;await CarregarAsync();}private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.SaldosAsync(t,_page,_search,_ativo,_abaixo,c),_cts.Token);}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

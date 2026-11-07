@@ -130,3 +130,7 @@ As verificações de tamanho de tokenHash/handleHash são feitas na criação pe
 ## Evoluções02–04
 
 02-employees/version3 acrescenta employees e índice users.employeeId unique parcial binData.03-customers/version4 acrescenta customers e documento unique parcial string.04-products/version5 acrescenta categories/brands/products, índices normalizados e referências/ativo/id. Produto tem saldo incorporado obrigatório (quantidade Int32 zero/versao Int64 um na criação), preço Int64 e moeda BRL. Nenhuma coleção stock_movements/sales criada. Todos os inicializadores são explícitos, strict/error, conferem definição/checksum e preservam dados; readiness exige os cinco catálogos. Upload atualiza imagem/versão/auditoria em transação, sem I/O de arquivo na sessão. Índices/evoluções não rodam no startup.
+
+## Implementação05 —07/11/2026
+
+RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.

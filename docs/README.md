@@ -4,7 +4,7 @@ Documentação inicial em português do Brasil, preparada em 06/11/2026. A pasta
 
 ## Como usar
 
-Estado atual:00–04 aprovados no caminho .NET+Atlas,139 testes locais passaram; publicação GitHub/CI registrada no estado. Autenticação BFF/cookie, funcionários/contas e clientes PF/PJ demonstrados. Produtos/categorias/marcas/imagens não incluem movimentos ou vendas. Ler [estado atual](execution/03-ESTADO-PROJETO.md); auditorias06/08 são históricas.05 não autorizado.
+Estado atual:00–04 aprovados no caminho .NET+Atlas,139 testes locais passaram; publicação GitHub/CI registrada no estado. Autenticação BFF/cookie, funcionários/contas e clientes PF/PJ demonstrados. Produtos/categorias/marcas/imagens não incluem movimentos ou vendas. Ler [estado atual](execution/03-ESTADO-PROJETO.md); auditorias06/08 são históricas.Solicitação atual autoriza05–06 sequenciais; execução e evidências no estado.
 
 Comece pela visão geral, escopo, decisões técnicas e plano. Cada módulo referencia os contratos e critérios que o executor deve satisfazer. RF identifica requisito funcional; RNF, requisito não funcional; RN, regra de negócio; CA, cenário de aceite; ADR, decisão técnica; H, hipótese; Q, questão aberta.
 
@@ -66,3 +66,5 @@ Revisão dos módulos em 06/11/2026: todos os blocos00–11 contêm contrato de 
 ## Precedência e mudanças
 
 A solicitação do usuário prevalece. Dentro desta especificação, decisões técnicas definem escolhas; requisitos definem comportamento; documentos de banco, API e segurança detalham mecanismos; módulos definem a entrega. Divergência entre documentos bloqueia a implementação daquele ponto: corrigir a especificação e registrar a decisão, sem escolher silenciosamente uma versão.
+
+[Entrega05–06 e evidências correntes](execution/10-ENTREGA-ESTOQUE-VENDAS.md).
