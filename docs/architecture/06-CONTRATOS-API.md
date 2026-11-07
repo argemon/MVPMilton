@@ -136,3 +136,7 @@ Os nomes físicos users/employees/customers/categories/brands/products/sales/sto
 ## Implementação05 —07/11/2026
 
 RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.
+
+## Incremento06
+
+GET /vendas retorna página de `VendaResumo={id,clienteId,clienteNome?,criador,status,total,versao,criadoEm}`, projetada no servidor sem itens/documento do cliente. GET /vendas/{id} e respostas de comandos retornam VendaDetalhe conforme M06. GET /clientes/{id}/vendas passa a usar resumos reais filtrados pelo criador para Vendedor. Campos monetários seguem reais na borda e centavos long internamente. POST criar/confirmar/cancelar/descartar exigem Idempotency-Key UUID e devolvem recibo original; PUT usa versão. Movimentos acrescentam vendaId/itemId UUID nullable. Códigos503 incluem PERSISTENCIA_NAO_INICIALIZADA e RESULTADO_DESCONHECIDO. Nenhuma rota07/08 foi acrescentada.

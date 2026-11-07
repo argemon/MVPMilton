@@ -13,7 +13,7 @@ public sealed class EstoqueSchema(IMongoClient client, MongoConfiguration config
     public const string Id = "05-stock";
     private static BsonDocument Type(string value) => new("bsonType", value);
     private static BsonDocument Text(int min, int max) => new() { { "bsonType", "string" }, { "minLength", min }, { "maxLength", max } };
-    private static BsonDocument MovementValidator => new("$and", new BsonArray
+    internal static BsonDocument MovementValidator => new("$and", new BsonArray
     {
         FuncionariosSchema.Validator(new BsonDocument
         {
@@ -27,7 +27,7 @@ public sealed class EstoqueSchema(IMongoClient client, MongoConfiguration config
         }),
         BsonDocument.Parse("{ $expr: { $and: [ { $ne: ['$delta',0] }, { $eq: ['$saldoDepois',{$add:['$saldoAntes','$delta']}] }, { $or: [ {$and:[{$eq:['$tipo','Entrada']},{$gt:['$delta',0]}]}, {$and:[{$eq:['$tipo','SaidaManual']},{$lt:['$delta',0]}]}, {$eq:['$tipo','Ajuste']} ] } ] } }")
     });
-    private static BsonDocument ReceiptValidator => new("$and", new BsonArray
+    internal static BsonDocument ReceiptValidator => new("$and", new BsonArray
     {
         FuncionariosSchema.Validator(new BsonDocument
         {
@@ -46,8 +46,8 @@ public sealed class EstoqueSchema(IMongoClient client, MongoConfiguration config
     public async Task InitializeAsync(CancellationToken ct)
     {
         if (!await previous.IsReadyAsync(ct)) throw new InvalidOperationException("Evolução04 ausente.");
-        await FuncionariosSchema.EnsureCollectionAsync(Db, "stock_movements", MovementValidator, ct);
-        await FuncionariosSchema.EnsureCollectionAsync(Db, "idempotency_receipts", ReceiptValidator, ct);
+        await GestaoComercial.Infrastructure.Vendas.VendasSchema.EnsureCompatibleAsync(Db, "stock_movements", MovementValidator, GestaoComercial.Infrastructure.Vendas.VendasSchema.MovementValidator, ct);
+        await GestaoComercial.Infrastructure.Vendas.VendasSchema.EnsureCompatibleAsync(Db, "idempotency_receipts", ReceiptValidator, GestaoComercial.Infrastructure.Vendas.VendasSchema.ReceiptValidator, ct);
         await Index("stock_movements", "ix_stock_data_id", new BsonDocument { { "ocorridoEm", -1 }, { "_id", -1 } }, false, null, ct);
         await Index("stock_movements", "ix_stock_produto_data_id", new BsonDocument { { "produtoId", 1 }, { "ocorridoEm", -1 }, { "_id", -1 } }, false, null, ct);
         await Index("stock_movements", "ux_stock_operacao", new BsonDocument("operacaoId",1), true, new BsonDocument("operacaoId",new BsonDocument("$type","binData")), ct);

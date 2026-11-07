@@ -1,0 +1,32 @@
+@page "/vendas"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "Vendas.Ler")]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject SessaoCircuito Sessao
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+<PageTitle>Vendas · Gestão Comercial</PageTitle>
+<h1>Vendas</h1><a href="/vendas/nova">Iniciar venda</a>
+<form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
+<label for="clienteBusca">Localizar cliente pelo início do nome ou documento</label><input id="clienteBusca" @bind="_clientSearch" maxlength="150" /><button type="button" @onclick="ClientesAsync">Localizar clientes</button>
+<label for="cliente">Cliente</label><select id="cliente" @bind="_cliente"><option value="">Todos</option>@foreach(var c in _clientes){<option value="@c.Id">@c.Nome</option>}</select>
+<label for="status">Estado</label><select id="status" @bind="_status"><option value="">Todos</option><option>Rascunho</option><option>Confirmada</option><option>Cancelada</option><option>Descartada</option></select>
+<label for="inicio">Criação desde (inclusive)</label><input type="date" id="inicio" @bind="_inicio" />
+<label for="fim">Criação até (exclusive)</label><input type="date" id="fim" @bind="_fim" /><p>Informe ambas as datas ou deixe ambas em branco. Período máximo: 366 dias.</p><button disabled="@_loading">Pesquisar</button></form>
+@if(_loading){<p role="status">Carregando vendas…</p>}
+else if(_error){<p role="alert">Não foi possível consultar. Confira os filtros.</p><button @onclick="CarregarAsync">Repetir</button>}
+else if(_data is {} data){
+@if(data.Items.Count==0){<p>Nenhuma venda encontrada no seu acesso.</p>}
+else{<div class="tabela"><table><caption>Vendas — total @data.TotalItems</caption><thead><tr><th>Venda</th><th>Criação</th><th>Cliente</th><th>Criador</th><th>Estado</th><th>Total</th></tr></thead><tbody>
+@foreach(var v in data.Items){<tr><td><a href="@($"/vendas/{v.Id}")">@v.Id</a></td><td>@TimeZoneInfo.ConvertTime(v.CriadoEm,TimeZoneInfo.FindSystemTimeZoneById(Configuration["APP_TIME_ZONE"]??"America/Cuiaba")).ToString("dd/MM/yyyy HH:mm")</td><td>@(v.ClienteNome??"Cliente do rascunho")<br /><a href="@($"/clientes/{v.ClienteId}")">Cadastro atual</a></td><td>@v.Criador.Nome</td><td>@v.Status</td><td>@v.Total.ToString("C",Pt)</td></tr>}
+</tbody></table></div>}
+<nav aria-label="Paginação"><button disabled="@(_page<=1)" @onclick="AnteriorAsync">Anterior</button><span>Página @_page</span><button disabled="@((long)_page*data.PageSize>=data.TotalItems)" @onclick="ProximaAsync">Próxima</button></nav>}
+@code{
+    private static readonly System.Globalization.CultureInfo Pt=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    private readonly CancellationTokenSource _cts=new();private VendasResponse? _data;private IReadOnlyList<ClienteResponse> _clientes=[];private string _clientSearch="";private string _cliente="",_status="";private DateTime? _inicio,_fim;private int _page=1;private bool _loading,_error;
+    protected override async Task OnInitializedAsync(){await ClientesAsync();await CarregarAsync();}
+    private async Task ClientesAsync(){try{_clientes=(await Sessao.UsarAsync((a,t,c)=>a.ClientesAsync(t,1,_clientSearch,"","todos",c),_cts.Token)).Items;}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private async Task PesquisarAsync(){_page=1;await CarregarAsync();}private async Task AnteriorAsync(){_page--;await CarregarAsync();}private async Task ProximaAsync(){_page++;await CarregarAsync();}
+    private async Task CarregarAsync(){_loading=true;_error=false;try{_data=await Sessao.UsarAsync((a,t,c)=>a.VendasAsync(t,_page,_cliente,_status,_inicio?.ToString("yyyy-MM-dd")??"",_fim?.ToString("yyyy-MM-dd")??"",c),_cts.Token);}catch(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else _error=true;}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
+    public void Dispose(){_cts.Cancel();_cts.Dispose();}
+}

@@ -89,7 +89,8 @@ public sealed class HostTests
         Assert.True(paths.GetProperty("/api/v1/auth/login").TryGetProperty("post", out _)); Assert.True(paths.GetProperty("/api/v1/auth/me").TryGetProperty("get", out _));
         Assert.True(paths.GetProperty("/api/v1/usuarios").TryGetProperty("post", out _)); Assert.True(paths.TryGetProperty("/api/v1/funcionarios", out _));
         Assert.True(paths.TryGetProperty("/api/v1/clientes", out _)); Assert.True(paths.TryGetProperty("/api/v1/produtos", out _)); Assert.True(paths.TryGetProperty("/api/v1/estoque/saldos", out _));
-        Assert.False(paths.TryGetProperty("/api/v1/vendas", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/vendas", out _));
+        Assert.False(paths.TryGetProperty("/api/v1/dashboard", out _));
     }
     [Fact]
     public async Task LoginFailsClosedWhenMongoIsUnavailable()

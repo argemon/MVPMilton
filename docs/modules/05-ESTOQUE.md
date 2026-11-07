@@ -85,12 +85,12 @@ Unidade: sinais, motivo, limite, negativo e overflow calculados antes da atribui
 
 ## 14. Checklist de execução
 
-- [ ] Confirmar gate Produtos e ausência de estoque manipulado por cadastro.
-- [ ] Criar modelo/portas/transação/idempotência sem coleções de Venda.
-- [ ] Gerar/revisar evoluções de persistência e privilégios; testar do zero e upgrade 04→05; aplicar explicitamente.
-- [ ] Implementar API/UI/HTTP/OpenAPI, timeout e repetição segura.
-- [ ] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
-- [ ] Registrar concorrência, rollback, reconciliação e M05-CA01–05 no estado.
+- [x] Confirmar gate Produtos e ausência de estoque manipulado por cadastro.
+- [x] Criar modelo/portas/transação/idempotência sem coleções de Venda.
+- [x] Gerar/revisar evoluções de persistência e privilégios; testar do zero e upgrade 04→05; aplicar explicitamente.
+- [x] Implementar API/UI/HTTP/OpenAPI, timeout e repetição segura.
+- [x] Executar `dotnet restore`, `dotnet build --no-restore -c Release`, `dotnet test -c Release --no-build` com MongoDB isolado.
+- [x] Registrar concorrência, rollback, reconciliação e M05-CA01–05 no estado.
 
 ## 15. DoD e desbloqueio
 
@@ -99,3 +99,5 @@ DoD global, RF-09–12 e CA-06/07 demonstrados; saldo/razão conciliam e zero fa
 ## Implementação05 —07/11/2026
 
 RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.
+
+Gate05 aprovado no commit59acdbc, CI42374796524:173 testes sem falhas/skips, build/auditoria/scanner aprovados. Evoluções aplicadas explicitamente apenas em bancos isolados; desenvolvimento exige tarefa operacional manual. Falhas Atlas preservadas no relatório, não contadas como aprovação local.06 liberado pela solicitação atual.

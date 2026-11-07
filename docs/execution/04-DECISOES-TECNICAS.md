@@ -76,6 +76,16 @@ Complemento ADR-34: duas fixtures de integração simultâneas no máximo (xUnit
 
 Prova de falhas05: decorator exclusivamente nos testes envolve IMongoClient/IClientSessionHandle, delega todos os dados ao MongoDB real e injeta rótulos oficiais no controle de commit. UnknownTransactionCommitResult após commit real não repete corpo nem aborta; falha persistente dá503 e mesma chave resolve recibo. TransientTransactionError antes de confirmar aborta e recomeça o corpo inteiro, inclusive quando originado no commit (corrigido após a prova). Não há endpoint de falha, banco em memória ou mudança do orçamento operacional.
 
+## ADR-35 — Incremento06 (07/11/2026)
+
+Gate05 aprovado no commit59acdbc/CI42374796524 com173 testes. Extrair da implementação05 somente a coordenação concreta de recibo/transação para reutilização comercial; não criar Repository/Unit of Work. Confirmar/cancelar chama a mesma atualização condicional de estoque na sessão da venda; produto inativo é permitido apenas no estorno. Chaves, hashes e respostas originais mantêm isolamento por ator/escopo. PUT de rascunho usa versão e não exige chave nova no contrato HTTP.
+
+Evolução06-sales/version7 expande validadores de movimentos/recibos sem invalidar manuais05, acrescenta sales/índices comerciais e preserva catálogos anteriores. Inicialização05 reconhece apenas as definições exatas05 ou06 para retomar upgrade parcial; divergência desconhecida bloqueia, nunca sobrescreve. Nenhuma evolução no startup. Domain concentra totalização/estados/itens e Application declara portas sem BSON. Guardas seguem recibo→venda→cliente→produtos UUID crescente. Snapshots e total permanecem em centavos long/checked; borda HTTP converte para reais. Vendedor só recebe suas vendas/contagens/histórico; cancelamento exige Administrador.
+
+Comandos de estoque/venda conferem o catálogo explícito do módulo antes de escrever: ausência retorna503 PERSISTENCIA_NAO_INICIALIZADA. Isso impede que insert transacional crie implicitamente uma coleção sem validator/índices se alguém chamar a API antes da tarefa operacional. Não executar DDL no startup nem no caso de uso.
+
+Perfil de volume: StockQueryTests é marcado ContainerScale. O lote10mil concluiu às08:55:13 na execução Atlas com uma fixture; o primeiro cenário da fixture seguinte falhou por timeout a partir de08:55:31. A correlação sugere pressão no cluster compartilhado, sem afirmar causa raiz. A regressão Atlas usual exclui explicitamente ContainerScale e ContainerSecurity; ambos continuam obrigatórios e sem filtro no CI autenticado isolado. A consulta10mil já teve prova Atlas (302ms total/49ms servidor), e não será repetida junto às demais validações locais. Não mudar assert, orçamento ou workflow para obter aprovação.
+
 ## Histórico anterior à revisão MongoDB — não usar como stack vigente
 
 ## Natureza deste registro

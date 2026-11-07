@@ -103,3 +103,13 @@ Unidade: total em centavos Int64, limites/duplicidade, transições, produto ina
 ## 15. DoD e desbloqueio
 
 RF-06/13–16 completos, DoD global e CA-08–13 aprovados, zero falha de integridade/segurança. Desbloquear **07**. Toda comprovação usa endpoints existentes até 06, sem depender de dashboard/relatório.
+
+## Implementação06 —07/11/2026, em validação final
+
+Implementados rascunho, edição versionada, confirmação, cancelamento, descarte, resumos paginados e histórico real do cliente. `VendaResumo={id,clienteId,clienteNome?,criador,status,total,versao,criadoEm}` é projeção sem itens/documento pessoal; detalhe preserva o contrato acima. Movimentos retornam vendaId/itemId nullable, somente preenchidos em Venda/EstornoVenda. Chave/recibo/transação são coordenados pela mesma implementação comprovada05, e saldos usam a mesma atualização condicional.
+
+Evolução06-sales/version7 explícita e repetível: sales, validação de estados/itens/somas, índices de consulta, expansão compatível de movimentos/recibos e índice comercial unique.05 reconhece definições exatas antigas/expandidas para retomar upgrade parcial. Escritas sem catálogo explícito retornam503, sem criar coleções implicitamente. Nenhuma DDL no startup.
+
+Interface inclui busca de cliente/produto por nome/documento/SKU, quantidade/remoção, preços/subtotais/total, estados e motivo, filtros com seleção legível, paginação, histórico real e links de cadastros atuais separados de snapshots. Confirmação exige rascunho salvo; intenções pendentes mantêm chave/corpo e oferecem repetir. Após recibo recuperado, GET mostra estado atual. Itens confirmados/cancelados são somente leitura.
+
+Primeira validação:17 integrações de Vendas/upgrade/BFF aprovadas,0 falhas/0 ignorados. Jornada de navegador passou com saldo10→8→10 e histórico cancelado; verificações finais de teclado e regressão completa em andamento. Comandos, inventário, falhas corrigidas e gates serão consolidados no [relatório](../execution/10-ENTREGA-ESTOQUE-VENDAS.md) e no estado03.07 não autorizado.

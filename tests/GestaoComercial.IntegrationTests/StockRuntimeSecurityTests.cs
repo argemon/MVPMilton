@@ -13,7 +13,7 @@ public sealed class StockRuntimeSecurityTests(StockFixture f) : IClassFixture<St
         Assert.Equal("true",Environment.GetEnvironmentVariable("TEST_MONGO_CONTAINER"));
         var mongo=f.Auth.Mongo;var db=mongo.Client.GetDatabase(mongo.Name);
         var privileges=new BsonArray();
-        foreach(var collection in new[]{"products","users","api_sessions","idempotency_receipts"})privileges.Add(new BsonDocument{{"resource",new BsonDocument{{"db",mongo.Name},{"collection",collection}}},{"actions",new BsonArray{"find","insert","update"}}});
+        foreach(var collection in new[]{"products","users","api_sessions","idempotency_receipts","sales"})privileges.Add(new BsonDocument{{"resource",new BsonDocument{{"db",mongo.Name},{"collection",collection}}},{"actions",new BsonArray{"find","insert","update"}}});
         foreach(var collection in new[]{"stock_movements","audit_events"})privileges.Add(new BsonDocument{{"resource",new BsonDocument{{"db",mongo.Name},{"collection",collection}}},{"actions",new BsonArray{"find","insert"}}});
         await db.RunCommandAsync<BsonDocument>(new BsonDocument{{"createRole","stock_runtime_test"},{"privileges",privileges},{"roles",new BsonArray()}});
         var password=Convert.ToHexString(RandomNumberGenerator.GetBytes(24));
@@ -31,6 +31,7 @@ public sealed class StockRuntimeSecurityTests(StockFixture f) : IClassFixture<St
         await Denied(()=>own.RunCommandAsync<BsonDocument>(new BsonDocument{{"collMod","stock_movements"},{"validator",new BsonDocument()}}));
         await Denied(()=>own.GetCollection<BsonDocument>("stock_movements").InsertOneAsync(new BsonDocument("_id","bad"),new InsertOneOptions{BypassDocumentValidation=true}));
         await Denied(()=>runtime.GetDatabase(mongo.Name+"x").GetCollection<BsonDocument>("tickets").Find(FilterDefinition<BsonDocument>.Empty).ToListAsync());
+        await Denied(()=>own.GetCollection<BsonDocument>("sales").DeleteManyAsync(FilterDefinition<BsonDocument>.Empty));
     });
     private static async Task Denied(Func<Task> command)
     {

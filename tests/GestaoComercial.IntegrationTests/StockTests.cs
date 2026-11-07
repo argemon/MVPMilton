@@ -58,6 +58,8 @@ public sealed class StockTests(StockFixture stock) : IClassFixture<StockFixture>
         using var overflow=await Move(c,p.Id,"entradas",1);Assert.Equal(HttpStatusCode.Conflict,overflow.StatusCode);Assert.Contains("SALDO_EXCEDE_LIMITE",await overflow.Content.ReadAsStringAsync());Assert.Equal(int.MaxValue,await Balance(c,p.Id));
         await raw.UpdateOneAsync(filter,new BsonDocument("$unset",new BsonDocument("saldo",1)),new UpdateOptions{BypassDocumentValidation=true});
         using var absent=await Move(c,p.Id,"saidas",1);Assert.Equal(HttpStatusCode.Conflict,absent.StatusCode);Assert.Contains("SALDO_INEXISTENTE",await absent.Content.ReadAsStringAsync());Assert.False((await raw.Find(filter).SingleAsync()).Contains("saldo"));
+        // Restore the privileged corruption fixture so later list tests do not depend on execution order.
+        await raw.UpdateOneAsync(filter,new BsonDocument("$set",new BsonDocument{{"ativo",false},{"saldo",new BsonDocument{{"quantidade",0},{"versao",1L}}}}));
     });
     [Fact] public Task IdempotencyIsConcurrentBodyBoundAndActorIsolated()=>F.Mongo.SafeAsync(async()=>
     {

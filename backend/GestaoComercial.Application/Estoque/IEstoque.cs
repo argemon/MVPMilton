@@ -2,7 +2,7 @@ using GestaoComercial.Application.Acesso;
 namespace GestaoComercial.Application.Estoque;
 
 public sealed record SaldoProduto(Guid ProdutoId, string Sku, string Nome, int Saldo, int Minimo, bool Ativo);
-public sealed record Movimento(Guid Id, Guid ProdutoId, string Tipo, int Delta, int SaldoAntes, int SaldoDepois, string Motivo, Guid AtorId, string AtorNome, DateTimeOffset OcorridoEm);
+public sealed record Movimento(Guid Id, Guid ProdutoId, string Tipo, int Delta, int SaldoAntes, int SaldoDepois, string Motivo, Guid AtorId, string AtorNome, DateTimeOffset OcorridoEm, Guid? VendaId=null, Guid? ItemId=null);
 public sealed record PaginaEstoque<T>(IReadOnlyList<T> Items, int Page, int PageSize, long TotalItems);
 public interface IEstoque
 {

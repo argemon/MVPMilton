@@ -134,3 +134,7 @@ As verificações de tamanho de tokenHash/handleHash são feitas na criação pe
 ## Implementação05 —07/11/2026
 
 RF-09–12 implementados conforme contratos acima, sem sales. Evolução explícita05-stock/version6 acrescenta movimentos manuais/recibos e readiness exige05. Evidências, inventário e gates no [relatório de entrega](../execution/10-ENTREGA-ESTOQUE-VENDAS.md). Execução06 somente após gate05 integral;07 não autorizado.
+
+## Evolução06 implementada
+
+06-sales/version7 cria sales com itens incorporados e validators strict/error para tipos, limites, produtos/IDs distintos, total/subtotais e metadados de estado. Expande validadores05 aceitando manuais antigos e vínculos comerciais e índices únicos parciais vendaId/itemId/tipo; recibos aceitam status200/201 e resposta concluída vinculada ao recurso. Catálogos05/06 preservados; instalação/reexecução detectam definições divergentes, sem alteração silenciosa. CLI explícita aplica00–06 e readiness exige ambos; casos de uso conferem catálogo antes de escrever, impedindo coleção implícita. Runtime não recebe delete de sales nem update/delete de movimentos/auditoria. Dados comerciais permanecem no backend. Detalhes e evidências no relatório10.

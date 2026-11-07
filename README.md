@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–04 implementados e aprovados,139 testes locais passaram. Publicação GitHub/CI no estado. Funcionários com acesso vinculado, clientes PF/PJ e produtos/categorias/marcas/imagens privadas. Estoque05 implementado, em validação final; Vendas06 aguarda o gate05. Resultados e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
+> **Estágio atual:** blocos00–05 aprovados;06 implementado e em validação final. Estoque auditável e vendas transacionais com snapshots, baixa/estorno, idempotência e histórico real do cliente. Evidências e limites no [estado](docs/execution/03-ESTADO-PROJETO.md).
 
 ## Objetivo
 
@@ -208,10 +208,10 @@ Testes usam somente bancos próprios verificados vazios, com limpeza limitada ao
 
 Rotas: /funcionarios, /usuarios/novo, /clientes, /produtos, /categorias e /marcas. Cada cadastro possui consulta/edição e desativação lógica. Apenas Administrador mantém funcionários/contas; Administrador/Vendedor mantêm clientes; Administrador/Estoquista mantêm produtos e referências. Vendedor consulta produtos. Clientes têm histórico vazio tipado nesta etapa; vendas chegam somente no06.
 
-A tarefa explícita --initialize-persistence aplica as evoluções00–05; nunca ocorre alteração de schema no startup. Development reutiliza o .env ignorado, sem sobrescrevê-lo. Testes usam bancos descartáveis exclusivos. Senhas de contas humanas não aparecem em Shared Contracts nem são devolvidas pela API.
+A tarefa explícita --initialize-persistence aplica as evoluções00–06; nunca ocorre alteração de schema no startup. Development reutiliza o .env ignorado, sem sobrescrevê-lo. Testes usam bancos descartáveis exclusivos. Senhas de contas humanas não aparecem em Shared Contracts nem são devolvidas pela API.
 
 Images__RootPath configura o diretório privado da API, obrigatório fora de Development/Testing. Development usa .local/images; Compose usa volume productimages em /app/images, com acesso do usuário app. Backup deve incluir esse volume. Nunca montar o diretório no Web/wwwroot. JPEG/PNG: até2MiB e4096×4096; conteúdo decodificado/reencodado em PNG sem metadados. Atualizar cadastro não altera saldo, cuja criação é zero.
 
 Para remover órfãos, interrompa todas as escritas/API e faça backup de banco+imagens. No mesmo ambiente e diretório configurados, execute o binário API com --cleanup-orphan-images --maintenance. O comando remove apenas nomes UUID.png não referenciados pelo banco selecionado; não limpa no startup, não apaga diretórios e não altera metadados comerciais. Nunca executar apontando para banco diferente do volume. Falha de commit mantém arquivos para essa manutenção, preservando a imagem anterior.
 
-Entrega de Estoque/Vendas: [evidências e pendências](docs/execution/10-ENTREGA-ESTOQUE-VENDAS.md). Para o perfil Atlas, execute testes com `--filter "Category!=ContainerSecurity"`; o CI executa a suíte integral com MongoDB autenticado isolado, incluindo restrições de coleção. Não usar a conta Atlas de desenvolvimento no CI.
+Entrega de Estoque/Vendas: [evidências e pendências](docs/execution/10-ENTREGA-ESTOQUE-VENDAS.md). Para o perfil Atlas, execute testes com `--filter "Category!=ContainerSecurity&Category!=ContainerScale"`; o CI executa a suíte integral com MongoDB autenticado isolado, incluindo restrições de coleção. Não usar a conta Atlas de desenvolvimento no CI.

@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using Xunit;
 using Xunit.Abstractions;
 
+[Trait("Category","ContainerScale")]
 public sealed class StockQueryTests(StockFixture f,ITestOutputHelper output) : IClassFixture<StockFixture>
 {
     [Fact]public Task LowStockPlanIsMeasuredWithTenThousandProducts()=>f.Auth.Mongo.SafeAsync(async()=>

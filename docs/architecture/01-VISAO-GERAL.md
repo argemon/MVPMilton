@@ -2,7 +2,7 @@
 
 ## Objetivo e limites
 
-Construir o GestaoComercial, sistema web para gestão interna de uma empresa, usado como TCC de Engenharia de Software. A implementação atual cobre00–04, com gates no estado03; estoque e vendas abaixo permanecem planejamento do MVP. A modelagem parte das regras presentes e não utiliza diagrama ou banco do TCC antigo.
+Construir o GestaoComercial, sistema web para gestão interna de uma empresa, usado como TCC de Engenharia de Software. A implementação atual cobre00–06; gates e validações correntes no estado03.05 aprovado e06 em validação final. A modelagem parte das regras presentes e não utiliza diagrama ou banco do TCC antigo.
 
 O MVP cobre acesso, funcionários, clientes, produtos, estoque, vendas, dashboard e relatórios. Não cobre emissão fiscal, contas a pagar/receber, processamento de pagamento, multiempresa, múltiplos depósitos nem comércio eletrônico. [Escopo e hipóteses](../requirements/01-ESCOPO.md).
 
@@ -49,4 +49,4 @@ BFF significa o servidor web que intermedeia chamadas da interface à API. Naveg
 
 .NET 10 LTS é obrigatório e confirmado pela [política oficial de suporte](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core). Fixar a versão de correção disponível ao implementar; esta documentação não determina um patch futuro. As escolhas próprias do projeto estão no [registro ADR](../execution/04-DECISOES-TECNICAS.md).
 
-Arquitetura vigente: ADR-20–30, MongoDB.Driver oficial e integração MongoDB real isolada, Atlas ou perfil Testcontainers.00–04 implementados; estado03 contém os gates e evidências. Perfis solicitados atualizados na ADR-30; sequência preservada.
+Arquitetura vigente: ADR-20–30, MongoDB.Driver oficial e integração MongoDB real isolada, Atlas ou perfil Testcontainers.00–06 implementados; estado03 contém os gates e evidências. Perfis solicitados atualizados na ADR-30; sequência preservada.

@@ -4,3 +4,5 @@ form{display:flex;flex-direction:column;align-items:flex-start;gap:.65rem;margin
 nav{flex-wrap:wrap}textarea{font:inherit;max-width:100%;width:32rem;padding:.7rem}
 .produto-imagem{display:block;max-width:100%;max-height:24rem;object-fit:contain}
 fieldset{min-inline-size:0;width:100%;max-width:34rem;display:flex;flex-direction:column;align-items:flex-start;gap:.65rem}fieldset label{max-width:100%}
+.item-venda{width:100%;min-width:0;max-width:100%}.venda-itens table{min-width:34rem}.venda-itens td:not(:first-child){white-space:nowrap}
+.tabela:focus-visible{outline:3px solid #d28b00;outline-offset:3px}
