@@ -1,52 +1,34 @@
-# 01 — Escopo
+# 01 — Escopo oficial do TCC
 
-Solicitação atual autoriza07 (Dashboard) e08 (Relatórios), sequencialmente, além de commit/push/PR/CI. Gate07 obrigatório antes de08. Sem09, merge automático ou deploy. Autorizações anteriores abaixo são históricas; evidências correntes no estado03.
+## Objetivo
 
-A execução permanece sequencial.00–03 estão aprovados; solicitação complementar autoriza04, commit/push/PR e acompanhamento do CI, sem merge/deploy. Não iniciar05 ou posteriores. ADR-31–33 registram os incrementos atuais; estado03 contém evidências. A antiga restrição a Markdown e autorização exclusiva01 são históricas.
+Aplicação web de gestão comercial apresentada localmente à banca de Engenharia de Software. Executa na máquina do apresentador, consumindo **um único MongoDB Atlas já configurado**. O objetivo é comprovar o funcionamento das funcionalidades e apresentar uma interface bonita e organizada, não operar um produto de produção.
 
-## MVP interno
+## Escopo funcional
 
-| Bloco | Entrega | Prioridade |
-| --- | --- | --- |
-| 00–01 | Fundação, login/logout, usuários, perfis e sessão segura | P0 |
-| 02–04 | Funcionários, clientes, categorias, marcas e produtos com imagem | P1 |
-| 05–06 | Estoque auditável e vendas transacionais com cancelamento | P0 |
-| 07–08 | Dashboard e relatórios de vendas/estoque/movimentos com CSV | P1 |
-| 09–10 | Homologação, backup/restore e publicação | P0 |
+| Blocos | Entrega |
+| --- | --- |
+| 00–01 | Fundação, autenticação, perfis e permissões |
+| 02–04 | Funcionários, clientes, categorias, marcas e produtos |
+| 05–06 | Estoque e vendas com histórico e cancelamento |
+| 07–08 | Dashboard, relatórios e exportações CSV |
+| 09 | Carga de dados fictícios e restauração controlada **no mesmo banco** |
+| 10 | Vistoria funcional, testes, correção de bugs, layout responsivo e preparação da apresentação |
 
-P0 é obrigatório para segurança e integridade; P1 também integra o MVP e não pode ser omitido na entrega final. P2 significa posterior ao MVP.
+RF-01 a RF-20 continuam correspondendo às funcionalidades implementadas. 09 e 10 são etapas de demonstração/qualidade, sem novos recursos comerciais.
 
-## Exclusões
+## Exclusões definitivas
 
-Catálogo/pedido público, carrinho e consumidor autenticado pertencem ao bloco 11, P2. Fora do escopo atual: fiscal, gateway, caixa financeiro, contas, comissões, compras/fornecedores, reserva, múltiplos estoques, multiempresa, fracionamento, descontos, trocas parciais, sincronização offline e integrações externas.
+**Não haverá** publicação/deploy, servidor público, catálogo público, pedidos online, segundo ambiente ou segundo banco, alta disponibilidade, observabilidade avançada, testes massivos de carga, pagamento online ou integração fiscal. O repositório conserva histórico técnico, mas esses itens não fazem parte dos critérios de conclusão do TCC.
 
-## Hipóteses adotadas
+## Regras preservadas
 
-- H-01: uma empresa e um estoque por instalação; sem tenantId ou depósito.
-- H-02: produtos vendidos em `UN` inteira; nenhuma quantidade fracionada no MVP.
-- H-03: venda exige cliente identificado e ativo; sem consumidor genérico implícito.
-- H-04: BRL, interface pt-BR e fuso inicial America/Cuiaba configurável por instalação.
-- H-05: preço positivo sem desconto/frete/tributo e sem registro de recebimento; confirmar representa operação comercial, não comprovação de pagamento.
-- H-06: uma réplica e backup diário; metas de desempenho/recuperação são propostas a medir.
-- H-07: perfis fixos e acesso de vendedor às próprias vendas; relatórios comerciais ficam com administrador.
+- Uma empresa, um estoque por produto, BRL e interface pt-BR.
+- Saldo não negativo e movimentações auditáveis.
+- Vendas confirmadas baixam saldo atomicamente; cancelamentos estornam uma única vez.
+- Cadastro lógico inativo preserva históricos; privilégios são validados na API.
+- Na carga, usar apenas dados fictícios e preservar registros manuais.
 
-Hipóteses são decisões de projeto propostas, não informações extraídas do TCC. Mudança que afete domínio exige revisar banco, contratos e testes antes de executar o bloco correspondente.
+## Aceite
 
-## Questões abertas e impacto
-
-| Questão | Definição necessária | Até quando | Comportamento provisório |
-| --- | --- | --- | --- |
-| Q-01 | Confirmar UN inteira, cliente obrigatório, dados mínimos e ausência de desconto | Antes de validar 03/04/06 com orientador | Seguir H-02/03/05 e documento opcional |
-| Q-02 | Host, domínio, TLS, custo e responsável por operação/backup | Antes de 10 | Desenvolver/homologar localmente |
-| Q-03 | Responsável, retenção e tratamento de dados pessoais | Antes de produção real | Somente dados sintéticos |
-| Q-04 | Escopo de catálogo: pedido, reserva, entrega e pagamento | Antes de 11 | Nenhum endpoint público |
-
-A revisão detalhou em módulo11/ADR-18 uma proposta P2 de catálogo e solicitação anônima sem reserva/baixa/pagamento/entrega, com RF-21–24 e RN-21–24 propostos. Q-04 continua aberta até aceite/ajuste; a proposta não autoriza implementar11 nem amplia o MVP.
-
-## Limites de aceite
-
-MVP completo exige todos os RF-01 a RF-20, RNF e CA-01 a CA-18. Catálogo não compensa pendências do MVP. Não declarar conformidade legal ou prontidão produtiva apenas pela existência desta documentação.
-
-## Revisão técnica MongoDB
-
-Mudança exclusivamente de persistência e representação interna, conforme ADR-20–25. RF/RN/CA, prioridades, exclusões, hipóteses e sequência não são ampliados. Nenhuma reserva de estoque foi liberada. MongoDB.Driver oficial, documentos/índices e transações de replica set substituem a arquitetura de armazenamento anterior; a revisão documental original não alterou código; as autorizações00/01 posteriores converteram a fundação e implementaram autenticação, conforme estado03. Valores internos em centavos Int64 BRL, preservando contratos HTTP em reais.
+A banca deve conseguir ver os principais módulos funcionando na máquina do apresentador: login, cadastros, estoque, venda/cancelamento, Dashboard e Relatórios. O Bloco 10 também verifica carga, restauração e aparência do Web App.

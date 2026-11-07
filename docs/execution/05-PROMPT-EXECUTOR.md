@@ -1,5 +1,8 @@
 # 05 — Prompt do executor
 
+> **Planejamento oficial vigente (07/11/2026):** TCC para uma apresentação local em um único ambiente e banco MongoDB Atlas. Blocos 00–08: concluídos conforme evidências do projeto; 09: carga de dados fictícios no banco existente; 10: homologação funcional e acabamento visual. Sem publicação, hospedagem, catálogo ou pedidos online. Orientações históricas divergentes abaixo não prevalecem sobre este escopo.
+
+
 ## Uso
 
 Copiar o texto abaixo em um novo contexto de implementação, preencher o bloco alvo e respeitar o estado real. Não usar este prompt como autorização para implementar nesta entrega documental.

@@ -1,5 +1,8 @@
 # 06 — Critérios de aceite
 
+> **Planejamento oficial vigente (07/11/2026):** TCC para uma apresentação local em um único ambiente e banco MongoDB Atlas. Blocos 00–08: concluídos conforme evidências do projeto; 09: carga de dados fictícios no banco existente; 10: homologação funcional e acabamento visual. Sem publicação, hospedagem, catálogo ou pedidos online. Orientações históricas divergentes abaixo não prevalecem sobre este escopo.
+
+
 Todos os dados são sintéticos. `Dado / Quando / Então` define resultado observável, incluindo ausência de efeitos parciais. A coleção é o roteiro mínimo e não substitui casos de limite dos módulos.
 
 | ID / rastreio | Dado | Quando | Então |
@@ -25,10 +28,10 @@ Todos os dados são sintéticos. `Dado / Quando / Então` define resultado obser
 
 ## Evidência e incremento
 
-Cada execução registra CA, versão/commit, pré-condições, comando/roteiro, esperado, observado e evidência. CA-04 no bloco 03 aceita histórico vazio; repetir com vendas reais sintéticas no 06. CA-16/18 pertencem à homologação/publicação; antes disso módulos verificam somente o subconjunto já entregue.
+Cada execução registra CA, versão/commit, pré-condições, comando/roteiro, esperado, observado e evidência. CA-04 no bloco 03 aceita histórico vazio; repetir com vendas reais sintéticas no 06. CA-16/18 devem ser interpretados somente no contexto de homologação e apresentação local; antes disso módulos verificam somente o subconjunto já entregue.
 
 Falhas em P0 impedem avanço. Não marcar cenário aprovado porque existe endpoint, porque compilou ou porque o documento foi escrito.
 
 ## Evidências técnicas após revisão MongoDB
 
-CA-01–18 não mudam de resultado comercial. Nova implementação deve comprová-los com MongoDB real isolado via Atlas ou perfil Testcontainers com replica set, sessões independentes, updates condicionais, índices únicos/validadores e transações snapshot/majority. Em CA-05/06/08/14, persistência armazena 1250/2500 centavos e resposta mantém 12.50/25.00 reais; média 1.005 arredonda só a apresentação final para1.01. CA-07 inclui validação direta do servidor e usuário runtime sem bypass. CA-10/11 incluem conflito de escrita e commit incerto, sem efeito duplicado. CA-16 inclui ambos os bancos, configuração de replica set, arquivos/key ring e versão de schema, com restore isolado medido. Documentação não é evidência de execução.
+CA-01–18 não mudam de resultado comercial. Nova implementação deve comprová-los com MongoDB real isolado via Atlas ou perfil Testcontainers com replica set, sessões independentes, updates condicionais, índices únicos/validadores e transações snapshot/majority. Em CA-05/06/08/14, persistência armazena 1250/2500 centavos e resposta mantém 12.50/25.00 reais; média 1.005 arredonda só a apresentação final para1.01. CA-07 inclui validação direta do servidor e usuário runtime sem bypass. CA-10/11 incluem conflito de escrita e commit incerto, sem efeito duplicado. A restauração exigida no Bloco 09 refere-se apenas a dados demonstrativos identificados no único banco Atlas, com preservação de dados manuais. Documentação não é evidência de execução.

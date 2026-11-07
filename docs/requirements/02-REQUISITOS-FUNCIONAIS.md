@@ -27,17 +27,6 @@ Prioridade e atores devem ser lidos com a [matriz](05-MATRIZ-PERMISSOES.md). A c
 | RF-19 | P1 / Admin | Relatório paginado/CSV de vendas com totais do filtro completo | RN-07/13/19/20 | CA-14/15/17 / 08 |
 | RF-20 | P1 / Admin, Estoquista nos relatórios de estoque | Relatórios/CSV de saldo atual e movimentações filtradas com totais | RN-09/19/20 | CA-15/17 / 08 |
 
-## Requisitos P2 propostos — fora do MVP
-
-ADR-18 detalha a alternativa de menor complexidade. Estes requisitos só se tornam escopo de implementação do 11 após aceite/ajuste de Q-04; não alteram RF-01–20 nem sua definição de pronto.
-
-| ID | Prioridade / ator | Comportamento verificável | Regras / aceite local |
-| --- | --- | --- | --- |
-| RF-21 | P2 / Admin | Publicar/despublicar produto ativo com versão, sem alterar cadastro/saldo | RN-21/24; M11-CA01/04 |
-| RF-22 | P2 / visitante | Consultar página/detalhe/imagem de produto ativo e publicado sem dados internos | RN-21; M11-CA01/06 |
-| RF-23 | P2 / visitante | Enviar solicitação com nome/telefone/itens e receber protocolo idempotente sem consumir saldo | RN-22/23/24; M11-CA02/03/04 |
-| RF-24 | P2 / Admin | Consultar/encerrar solicitação com versão/motivo e preservar contato/snapshots sob autorização | RN-22/24; M11-CA05/06 |
-
 ## Indicadores normativos RF-17 / RF-19 (MVP)
 
 Intervalo civil `[inicio,fim)` convertido em UTC. Selecionar vendas com `confirmadoEm` no intervalo, inclusive as atualmente canceladas. Rascunhos/Descartadas não entram.
@@ -57,7 +46,7 @@ RF-03 no bloco 01 entrega manutenção de perfil/status/senha do administrador b
 
 ## Persistência e unidade monetária — revisão técnica
 
-RF-01–20 mantêm o comportamento e RF-21–24 continuam propostas P2. Implementação alvo usa MongoDB.Driver e transações MongoDB para efeitos multi-documento. RF-08/13/14/16/17/19 preservam preços/totais/snapshots em centavos Int64 internos, com mesma apresentação em reais e arredondamento final da média. RF-09–12 usam saldo incorporado em products e movimentos separados; RF-03 mantém vínculo único e revogação atômica. Fórmulas, filtros, endpoints e limites acima continuam válidos.
+RF-01–20 mantêm o comportamento e RF-21–24 [históricos, fora do escopo atual] foram retirados do escopo atual. Implementação alvo usa MongoDB.Driver e transações MongoDB para efeitos multi-documento. RF-08/13/14/16/17/19 preservam preços/totais/snapshots em centavos Int64 internos, com mesma apresentação em reais e arredondamento final da média. RF-09–12 usam saldo incorporado em products e movimentos separados; RF-03 mantém vínculo único e revogação atômica. Fórmulas, filtros, endpoints e limites acima continuam válidos.
 
 ## Incremento autorizado07–08 — ADR-36
 

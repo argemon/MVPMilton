@@ -1,5 +1,10 @@
 # 03 — Estado do projeto
 
+## Plano oficial revisado — 07/11/2026
+
+**Apenas documentação atualizada nesta revisão.** Blocos 00–08 concluídos conforme os registros de execução abaixo; **09 Carga de Dados** e **10 Homologação/Acabamento Visual** pendentes até validação própria. A aplicação do TCC será exibida localmente com o único banco MongoDB Atlas existente. Foram retirados do escopo deploy/publicação e catálogo/pedidos. Textos históricos abaixo não autorizam módulos excluídos. Nenhum teste novo executado nesta revisão documental.
+
+
 ## Execução07–08 — 07/11/2026 America/Cuiaba, CONCLUÍDA; sem deploy/merge
 
 ### Resultado final do código — 14h46
