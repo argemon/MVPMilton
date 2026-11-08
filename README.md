@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–09 aprovados,242 testes no CI integral (126 unitários+116 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Carga administrativa gerada, restaurada e repetida no único Atlas existente, sem duplicações ou divergências de saldo. Evidências no [estado](docs/execution/03-ESTADO-PROJETO.md). Bloco10 em homologação; resultados atuais no [relatório](docs/execution/07-RELATORIO-HOMOLOGACAO.md).
+> **Estágio atual:** blocos00–09 aprovados,242 testes no CI integral (126 unitários+116 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Carga administrativa gerada, restaurada e repetida no único Atlas existente, sem duplicações ou divergências de saldo. Evidências no [estado](docs/execution/03-ESTADO-PROJETO.md). Bloco10 homologado funcional e visualmente; resultados e limites no [relatório](docs/execution/07-RELATORIO-HOMOLOGACAO.md).
 
 ## Objetivo
 
@@ -104,7 +104,8 @@ dotnet build --configuration Release --no-restore
 Abra dois terminais na raiz, mantendo ambos em execução:
 
 ```powershell
-# Terminal1 — API
+# Terminal1 — API (imagens privadas em caminho persistente)
+$env:Images__RootPath = Join-Path (Get-Location) '.local/images'
 dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https
 ```
 

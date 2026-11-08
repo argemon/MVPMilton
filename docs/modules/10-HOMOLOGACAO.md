@@ -78,12 +78,16 @@ Atualizar `docs/execution/03-ESTADO-PROJETO.md` e registrar um relatório concis
 
 ## 9. Definition of Done
 
-- [ ] Blocos 00–09 verificados com fluxos reais; erros críticos corrigidos.
-- [ ] Estoque/vendas/estorno e números de Dashboard/Relatórios coerentes.
-- [ ] Carga e restauração funcionando no único banco Atlas.
-- [ ] Todas as telas principais vistoriadas visualmente e layout profissional/responsivo.
-- [ ] Build/testes aplicáveis aprovados, ou limitações explícitas sem declarar aprovação indevida.
-- [ ] Instruções de execução local e roteiro da apresentação preparados.
-- [ ] Documentação e estado atualizados; GitHub/CI consultados quando disponíveis.
+- [x] Blocos 00–09 verificados com fluxos reais; erros críticos corrigidos.
+- [x] Estoque/vendas/estorno e números de Dashboard/Relatórios coerentes.
+- [x] Carga e restauração funcionando no único banco Atlas.
+- [x] Todas as telas principais vistoriadas visualmente e layout profissional/responsivo.
+- [x] Build/testes aplicáveis aprovados, ou limitações explícitas sem declarar aprovação indevida.
+- [x] Instruções de execução local e roteiro da apresentação preparados.
+- [x] Documentação e estado atualizados; GitHub/CI consultados quando disponíveis.
 
 **Fim do projeto:** apresentar o sistema localmente à banca. Não há Bloco 11 nem publicação posterior.
+
+## Evidência de execução — 07/11/2026
+
+Homologação real no banco existente, jornadas/carga/CSV/perfis e acabamento visual comprovados no [relatório](../execution/07-RELATORIO-HOMOLOGACAO.md).126 unitários locais finais e242 testes no CI integral do commit912eb15 (126+116),0 falhas/skips.33 páginas/fichas×4 larguras,0 overflow de página/JS; zoom equivalente125/150 e teclado conferidos. Sem deploy/merge, novo banco local ou alteração do .env. Os detalhes, limites e links de CI ficam no relatório e estado.

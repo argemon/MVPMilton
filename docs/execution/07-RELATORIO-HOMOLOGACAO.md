@@ -1,6 +1,6 @@
 # Relatório de homologação — Bloco 10
 
-Execução em 07/11/2026, America/Cuiaba. **Em andamento; aprovação final depende das jornadas restantes e do CI.** Base `b3b7b1d`, branch `codex/final-homologation`. ADR-38 registra a autorização e as decisões antes das alterações.
+Execução em 07/11/2026, America/Cuiaba. **Homologação funcional e visual aprovada; CI integral do commit912eb15 aprovado.** Base `b3b7b1d`, branch `codex/final-homologation`. ADR-38 registra a autorização e as decisões antes das alterações.
 
 ## Escopo e método
 
@@ -28,7 +28,7 @@ A primeira execução unitária foi anulada por falha de conexão do testhost; a
 - Campos de busca fora de formulários colados aos links: labels/campos em blocos com espaçamento.
 - Acabamento: tipografia, cards, cores, tabelas, cabeçalhos, bordas, foco e estados de erro consistentes. Sem nova biblioteca ou regra comercial.
 
-Captura anterior: `screens/before-dashboard.png`. A primeira revisão visual encontrou menu móvel aberto e campos colados; ajustes posteriores exigem nova varredura. Referências Bling/Omie/Tiny não foram consultadas; nenhuma comparação atual é afirmada.
+Captura anterior: `screens/before-dashboard.png`. A primeira revisão visual encontrou menu móvel aberto e campos colados; a varredura final repetiu33 páginas/fichas×4 larguras (132 medições),0 overflow de página e0 exceções JavaScript. Referências Bling/Omie/Tiny não foram consultadas; nenhuma comparação atual é afirmada.
 
 ## Comandos reais
 
@@ -60,6 +60,27 @@ Usar produto fictício próprio para demonstrar movimentos, evitando alterar os 
 - Produto fictício para a jornada; conferir saldo inicial antes de repetir a demonstração.
 - Navegador em zoom100%, tamanho desktop e páginas prontas; fechar consoles com informações privadas.
 
-## Pendências desta execução
+## Resultado final e limites
 
-Concluir restauração/repetição da carga e preservação dos manuais, CSV, login/navegação real dos perfis não administrativos, revisão final após polimento, build/testes finais, scanner, push/PR e CI. Não declarar o Bloco10 concluído antes dessas evidências.
+| Módulo | Homologação |
+| --- | --- |
+| 00 Fundação | Hosts HTTPS, health, Atlas, navegação e páginas de erro disponíveis |
+| 01 Autenticação | Login/logout reais dos três perfis; erro de senha no formulário; CSRF400; expiração real de sessão própria401; trocas e revogações |
+| 02 Funcionários | Criação/edição/persistência, ativar/desativar, conta vinculada e paginação |
+| 03 Clientes | PF sintético válido, CPF/CNPJ inválidos, duplicidade409, busca/paginação e histórico cancelado |
+| 04 Produtos | Categoria/marca, cadastro e busca, SKU duplicado409, precisão monetária400, PNG privado carregado na página |
+| 05 Estoque | Entrada/saída/ajustes, negativo bloqueado, repetição idempotente e corpo divergente409; saldo20 final |
+| 06 Vendas | Rascunho3×12,50, confirmação, baixa, cancelamento, estorno e histórico preservado |
+| 07 Dashboard | Indicadores e gráficos reais; receita final18401569 centavos e totais iguais aos relatórios |
+| 08 Relatórios | Cinco filtros/consultas/CSV;251 vendas no arquivo,26 canceladas contribuindo0; soma18401569 centavos |
+| 09 Carga | Repetição→restauração→repetição aprovadas no único banco; carga final completa e manuais preservados |
+
+75 verificações HTTP específicas (57+18),16 verificações de perfis no navegador e expiração real401 têm registros próprios; não somar essas verificações como se fossem novos testes xUnit. PNG foi reconferido no caminho persistente de apresentação após reinício. O verificador da conciliação inicialmente gravou no caminho histórico09: a cópia prévia efetivamente existente em .local/demo-before-repeat.json foi restaurada e o resultado10 separado em artifacts/block10/persistent-check.json; nenhum histórico versionado foi removido.
+
+Totais finais no banco:16 funcionários,15 contas,42 clientes,101 produtos,6 categorias,6 marcas,251 vendas (225 confirmadas/26 canceladas),857 movimentos;0 divergências. Incluem a carga12/12/40/100/5/5/250/850, administrador inicial e registros fictícios manuais criados na homologação. Todos os manuais permanecem identificados;4 funcionários adicionais incluem o primeiro cadastro da tentativa de automação. Não houve limpeza de coleções. Receita líquida18401569 centavos, compartilhada por Dashboard, relatório e soma exata do CSV, reconferida após a restauração. A carga levou vários minutos; sua execução integral não é recomendada durante a fala.
+
+Evidências finais adicionais: demo.json, browser-roles.json, expiry.json, extra-checks.json, totals.json, csv-checks.json, csv-totals.json, responsive-final.json, zoom-keyboard.json, login-ui.json, extra-ui.json e image-final.log em artifacts/block10. Revisão em1920×1080,1366×768,768×1024 e390×844. Zoom125%/150% foi emulado por viewport CSS equivalente1092/910px e escala de dispositivo, não acionado pelo menu de zoom do navegador. Menu móvel também validado com foco real e sequência completa de Enter. Ficha de usuário e imagem privada visitadas adicionalmente. Capturas inspecionadas, incluindo Dashboard, relatórios, formulários, tabelas e telas de permissão.
+
+Build final Release0 avisos/erros;126 unitários locais finais,0 falhas/ignorados. Nenhum teste transacional foi substituído por memória. [CI PR42427827241](https://github.com/argemon/MVPMilton/actions/runs/42427827241) e [push42427798381](https://github.com/argemon/MVPMilton/actions/runs/42427798381), commit912eb15: sucesso;126 unitários+116 integrações=242 aprovados,0 falhas/ignorados, sem filtros, MongoDB8.0.17/Testcontainers autenticado/replica set. Todas as etapas, auditoria e scanner aprovadas; logs guardados em ci-pr.log/ci-pr.json. Auditoria local NuGet sem vulneráveis e Gitleaks241 arquivos sem segredos. .env e acesso privado ignorados/preservados. Ajuste final de script de navegação removeu um listener sem uso, recompilado e conferido localmente; o CI do HEAD final será acompanhado no PR antes da entrega.
+
+[PR5](https://github.com/argemon/MVPMilton/pull/5), sem merge/deploy. Sem defeito crítico funcional identificado na vistoria. Corrigidos3 problemas de apresentação (navegação, largura e campos colados), mais polimento simples. Limites: não se afirma enumeração exaustiva de todo estado transitório nem teste nativo de zoom; concorrência/rollback/segurança/volume são comprovados pela suíte integral no CI, não executada contra o banco persistente. Requisitos comerciais históricos de publicação/backup isolado/HA não fazem parte da aprovação acadêmica ADR-37/38. Não foram implementadas novas funcionalidades ou bibliotecas. Não há próximo bloco: preparar a máquina e apresentar à banca.

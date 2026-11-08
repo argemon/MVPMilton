@@ -7,6 +7,5 @@
     };
     desktop.addEventListener('change', updateMenu);
     document.addEventListener('DOMContentLoaded', updateMenu);
-    document.addEventListener('blazor:navigation', updateMenu);
     if (document.readyState !== 'loading') updateMenu();
 })();
