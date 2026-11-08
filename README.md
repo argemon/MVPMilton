@@ -2,7 +2,7 @@
 
 Sistema web de gestão comercial desenvolvido como projeto de TCC de Engenharia de Software. A proposta é centralizar cadastros, estoque e vendas de uma empresa, com controle de acesso, histórico auditável, indicadores e relatórios.
 
-> **Estágio atual:** blocos00–09 aprovados,242 testes no CI integral (126 unitários+116 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Carga administrativa gerada, restaurada e repetida no único Atlas existente, sem duplicações ou divergências de saldo. Evidências no [estado](docs/execution/03-ESTADO-PROJETO.md). Bloco10 não iniciado.
+> **Estágio atual:** blocos00–09 aprovados,242 testes no CI integral (126 unitários+116 integrações MongoDB),0 falhas/skips; build Release sem avisos/erros. Carga administrativa gerada, restaurada e repetida no único Atlas existente, sem duplicações ou divergências de saldo. Evidências no [estado](docs/execution/03-ESTADO-PROJETO.md). Bloco10 em homologação; resultados atuais no [relatório](docs/execution/07-RELATORIO-HOMOLOGACAO.md).
 
 ## Objetivo
 
@@ -91,3 +91,28 @@ A demonstração será feita na máquina do apresentador; acesso ao Atlas requer
 Aplicação e sessões Web usam o único banco `gestao_comercial_dev` no Atlas e a conexão do `.env` existente. Inicializar explicitamente API e Web após build (sem executar migração no startup). O registro de tickets Web é compatibilizado pelo inicializador para catálogo compartilhado (ADR-37); nenhum banco antigo é apagado.
 
 Entre como Administrador e abra **Administração > Dados de Demonstração**. **Gerar carga** cria/retoma o cenário; **Restaurar carga** exige confirmação e recusa alterações/referências manuais antes de excluir. Senhas dos usuários sintéticos são aleatórias e não publicadas; redefina pelo fluxo administrativo existente se precisar apresentar login com outro perfil. Cenário-base fixo07/11/2026: para visualizar todo o histórico, filtre01/08/2026–08/11/2026. Não utilizar dados pessoais reais.
+
+## Executar para a apresentação local
+
+Na raiz do repositório, com o `.env` existente e SDK.NET10 instalado:
+
+```powershell
+dotnet restore --locked-mode
+dotnet build --configuration Release --no-restore
+```
+
+Abra dois terminais na raiz, mantendo ambos em execução:
+
+```powershell
+# Terminal1 — API
+dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https
+```
+
+```powershell
+# Terminal2 — Blazor
+dotnet run --project frontend/GestaoComercial.Web --configuration Release --no-build --launch-profile https
+```
+
+Abra [Gestão Comercial local](https://localhost:7243). Os hosts usam Development e leem o `.env` existente sem alterá-lo. Se necessário, confie no certificado local com `dotnet dev-certs https --trust`. O banco e o administrador já foram inicializados no Bloco09; não repetir bootstrap/evoluções para uma apresentação normal. Não imprimir credenciais.
+
+Acesso inicial privado permanece em `.local/demo-access.json`, ignorado pelo Git; contas fictícias adicionais da homologação estão em `.local/block10-roles.json`, também privado. O sistema não publica senhas na página de carga. Dashboard/Relatórios:01/08/2026–08/11/2026 (fim exclusivo). Internet é necessária para o Atlas. [Roteiro de12 minutos e checklist](docs/execution/07-RELATORIO-HOMOLOGACAO.md).

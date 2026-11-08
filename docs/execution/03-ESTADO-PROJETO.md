@@ -1,5 +1,14 @@
 # 03 — Estado do projeto
 
+## Execução10 — EM ANDAMENTO — 07/11/2026 America/Cuiaba
+
+Solicitação explícita atual autoriza10, commit/push/PR e CI; ADR-38 prevalece sobre a restrição09 histórica. Base main b3b7b1d, branch codex/final-homologation.09 concluído previamente. Sem deploy/merge ou novo banco; .env preservado por SHA-256.
+
+Restore locked/build Release0 avisos/erros;126 unitários aprovados,0 falhas/skips após falha inicial de conexão do testhost. API/Blazor HTTPS e Edge reais no único gestao_comercial_dev;75 verificações HTTP (57+18), expiração real de sessão sintética401, jornada entrada20→venda3×12,50→saldo17→cancelamento→saldo20 e histórico preservado. Dashboard/Relatórios com totais idênticos; reconciliação sem divergências.29 rotas×4 larguras na primeira revisão sem overflow de página/JS; polimento final exige nova revisão. Restauração da carga, perfis no navegador, CSV, revisão final e CI ainda em execução. Não declarar DoD10 concluída.
+
+Arquivos, comandos, diagnósticos e evidências no [relatório de homologação](07-RELATORIO-HOMOLOGACAO.md). Próximo passo: concluir estes gates e preparar a apresentação local; não há bloco11/publicação.
+
+
 ## Execução09 — CONCLUÍDO — CI integral aprovado — 07/11/2026 America/Cuiaba
 
 Somente09 autorizado/implementado (ADR-37);10-Homologação não iniciado. Branch codex/demo-data atualizada por fast-forward à documentação oficial ada96fd, preservando requisitos/plano remotos e as instruções explícitas mais recentes do usuário. PR3/706b61f foi mesclado externamente; nenhum merge de PR/deploy executado pelo agente.
