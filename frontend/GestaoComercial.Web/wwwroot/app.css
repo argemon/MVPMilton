@@ -18,3 +18,4 @@ header>a:first-child{font-size:1.2rem;text-decoration:none;letter-spacing:-.025e
 @media(max-width:480px){header span{order:3;flex-basis:100%;text-align:left}header>a:first-child{flex:1}header a,header button{font-size:.85rem}.sidebar-links{grid-template-columns:1fr 1fr}main{padding:1rem}th,td{padding:.65rem}.indicadores{grid-template-columns:repeat(2,minmax(0,1fr))}.indicadores strong{font-size:1.35rem}.indicadores article{padding:.8rem}input,select,textarea{width:100%}input[type=checkbox]{width:auto}form,section{min-width:0}section{padding:1rem}}
 
 main>label,main>input,main>select{display:block}main>label{margin-top:1rem;margin-bottom:.4rem}main>input,main>select{margin-bottom:.6rem}main>a{display:inline-block;margin-bottom:.75rem}main>button{margin:.25rem 0 .75rem}
+.tabela td{overflow-wrap:normal}

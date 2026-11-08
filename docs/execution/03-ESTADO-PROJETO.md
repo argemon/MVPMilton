@@ -610,3 +610,5 @@ Próximo bloco: 01 Autenticação, ainda BLOQUEADO pelo gate 00. Não iniciado. 
 - `shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj`
 - `shared/GestaoComercial.Contracts/HealthResponse.cs`
 - `shared/GestaoComercial.Contracts/packages.lock.json`
+
+Revisão suplementar final: quebra natural de palavras corrigida nas tabelas (perfil Administrador legível sem divisão interna).16 páginas com tabelas×4 larguras=64 medições adicionais,0 overflow de página/JS (artifacts/block10/tables-final.json). Build table-build.log:0 avisos/erros. Correção visual sem alteração de regras; acompanhar o novo HEAD no CI do PR5.
