@@ -16,7 +16,7 @@ Atualizado em 07/11/2026. Este é um **projeto acadêmico para demonstração lo
 | 07 | Dashboard | Concluído |
 | 08 | Relatórios e CSV | Concluído |
 | 09 | Carga e restauração de dados fictícios | Concluído |
-| 10 | Homologação, correções e acabamento visual | Pendente, depende de 09 |
+| 10 | Homologação, correções e acabamento visual | Concluído — ver relatório de homologação |
 
 ## Sequência
 
