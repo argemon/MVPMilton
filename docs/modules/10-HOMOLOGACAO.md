@@ -90,4 +90,4 @@ Atualizar `docs/execution/03-ESTADO-PROJETO.md` e registrar um relatório concis
 
 ## Evidência de execução — 07/11/2026
 
-Homologação real no banco existente, jornadas/carga/CSV/perfis e acabamento visual comprovados no [relatório](../execution/07-RELATORIO-HOMOLOGACAO.md).126 unitários locais finais e242 testes no CI integral do commit912eb15 (126+116),0 falhas/skips.33 páginas/fichas×4 larguras,0 overflow de página/JS; zoom equivalente125/150 e teclado conferidos. Sem deploy/merge, novo banco local ou alteração do .env. Os detalhes, limites e links de CI ficam no relatório e estado.
+Homologação real no banco existente, jornadas/carga/CSV/perfis e acabamento visual comprovados no [relatório](../execution/07-RELATORIO-HOMOLOGACAO.md).126 unitários locais finais e242 testes no CI integral do código final0d49db9 (126+116),0 falhas/skips.33 páginas/fichas×4 larguras,0 overflow de página/JS; zoom equivalente125/150 e teclado conferidos. Sem deploy/merge, novo banco local ou alteração do .env. Os detalhes, limites e links de CI ficam no relatório e estado.
