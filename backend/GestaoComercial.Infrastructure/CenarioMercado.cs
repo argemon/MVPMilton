@@ -31,7 +31,7 @@ internal static class CenarioMercado
     {
         long[] bases = [350,450,500,525,60,65,35,40,549,559,699,499,249,249,499,399,299,499,799,599];
         var item=index/5;var tamanho=index%5;
-        return index/20 switch
+        return (index/20) switch
         {
             0 => bases[item]*new[]{1,2,4,8,10}[tamanho],
             1 => bases[item]*new[]{8,9,15,18,20}[tamanho],
