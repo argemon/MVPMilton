@@ -27,4 +27,17 @@ internal static class CenarioMercado
         var embalagem = grupo == 4 && item >= 18 ? $"pacote {index % 5 + 1} UN" : Embalagens[grupo][index % 5];
         return $"{Produtos[item]} {embalagem}";
     }
+    internal static long Preco(int index)
+    {
+        long[] bases = [350,450,500,525,60,65,35,40,549,559,699,499,249,249,499,399,299,499,799,599];
+        var item=index/5;var tamanho=index%5;
+        return index/20 switch
+        {
+            0 => bases[item]*new[]{1,2,4,8,10}[tamanho],
+            1 => bases[item]*new[]{8,9,15,18,20}[tamanho],
+            2 => bases[item]*new[]{2,5,10,60,120}[tamanho]/10,
+            3 => bases[item]*new[]{1,2,4,6,10}[tamanho],
+            _ => item>=18?bases[item]*(tamanho+1):bases[item]*new[]{5,7,9,12,18}[tamanho]/5
+        };
+    }
 }

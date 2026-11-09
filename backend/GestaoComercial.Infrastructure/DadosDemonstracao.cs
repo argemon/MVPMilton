@@ -70,7 +70,7 @@ public sealed class DadosDemonstracao(OperacoesCadastro operations,IHttpContextA
             var items=new Guid[100];var random=new Random(902026);
             for(var i=0;i<100;i++)
             {
-                var n=i;var price=199+random.Next(500,50001)%4000;var quantity=100+random.Next(0,301);if(n>=90)quantity=7;
+                var n=i;var price=CenarioMercado.Preco(n);random.Next(500,50001);var quantity=100+random.Next(0,301);if(n>=90)quantity=7;
                 items[i]=await Step("produto/"+i,async()=>(await products.SalvarAsync(ator,null,DadosProduto.Criar($"TCC-DEMO-{n+1:D3}",CenarioMercado.Produto(n),"Produto ilustrativo de supermercado — demonstração acadêmica",categories[n/20],brands[n/20],price,20),true,0,ct)).Id);
                 foreach(var (kind,amount) in new[]{("Entrada",quantity),("SaidaManual",5),("Ajuste",-2)})
                 {var step=$"estoque/{i}/{kind}";await Step(step,async()=>(await stock.MovimentarAsync(ator,Key(run+step),items[n],kind,amount,"Cenário fictício de demonstração",ct)).Id);}
@@ -116,8 +116,8 @@ public sealed class DadosDemonstracao(OperacoesCadastro operations,IHttpContextA
                 if(p.Nome=="Produto fictício "+(n+1))await Step("mercado/produto/"+n,async()=>(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,CenarioMercado.Produto(n),"Produto ilustrativo de supermercado — demonstração acadêmica",categories[n/20],brands[n/20],p.PrecoCentavos,p.EstoqueMinimo),p.Ativo,p.Versao,ct)).Id);
                 // Only the original generated price is eligible; manual price changes survive.
                 p=await products.ConsultarAsync(ator,items[n],ct);
-                if(p.Nome==CenarioMercado.Produto(n)&&p.PrecoCentavos==originalPrice)
-                    await Step("mercado/preco/"+n,async()=>(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,p.Nome,p.Descricao,p.CategoriaId,p.MarcaId,199+originalPrice%4000,p.EstoqueMinimo),p.Ativo,p.Versao,ct)).Id);
+                if(p.Nome==CenarioMercado.Produto(n)&&(p.PrecoCentavos==originalPrice||p.PrecoCentavos==199+originalPrice%4000))
+                    await Step("mercado/preco-embalagem/"+n,async()=>(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,p.Nome,p.Descricao,p.CategoriaId,p.MarcaId,CenarioMercado.Preco(n),p.EstoqueMinimo),p.Ativo,p.Versao,ct)).Id);
             }
             for(var i=95;i<100;i++){var n=i;await Step("inativar-produto/"+i,async()=>{var p=await products.ConsultarAsync(ator,items[n],ct);return(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,p.Nome,p.Descricao,p.CategoriaId,p.MarcaId,p.PrecoCentavos,p.EstoqueMinimo),false,p.Versao,ct)).Id;});}
             for(var i=9;i<12;i++){var n=i;await Step("inativar-funcionario/"+i,async()=>{var e=await employees.ConsultarFuncionarioAsync(ator,workers[n],ct);return(await employees.AtualizarFuncionarioAsync(ator,e.Id,new(e.Nome,e.Email,e.Telefone),false,e.Versao,ct)).Id;});}
