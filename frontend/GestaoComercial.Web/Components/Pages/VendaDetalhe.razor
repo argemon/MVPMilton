@@ -7,7 +7,7 @@
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
 <PageTitle>Venda · Gestão Comercial</PageTitle>
-<h1>@(Id is null?"Iniciar venda":"Detalhe da venda")</h1><a href="/vendas">Voltar às vendas</a>
+<h1>@(Id is null?"Nova venda":"Detalhe da venda")</h1><a href="/vendas">Voltar às vendas</a>
 @if(_message is not null){<p role="alert" tabindex="-1" @ref="_alert">@_message</p>}
 @if(_loading){<p role="status">Carregando venda…</p>}
 else if(_loaded){
@@ -19,7 +19,7 @@ else if(_loaded){
 @foreach(var i in v.Itens){<tr><td>@i.SkuSnapshot — @i.NomeSnapshot<br /><a href="@($"/produtos/{i.ProdutoId}")">Cadastro atual do produto</a></td><td>@i.Quantidade</td><td>@i.PrecoUnitario.ToString("C",Pt)</td><td>@i.Total.ToString("C",Pt)</td></tr>}
 </tbody></table></div><p><strong>Total: @v.Total.ToString("C",Pt)</strong></p></section>}
 @if(_sale is null||_sale.Status=="Rascunho"){
-<h2>Editar rascunho</h2><p>Rascunho não reserva estoque. Salvar atualiza os preços a partir do cadastro; confirme após revisar os valores registrados.</p>
+<h2>@(_sale is null ? "1. Monte a venda" : "Editar itens da venda")</h2><p>Escolha o cliente, localize os produtos e adicione as quantidades. Depois salve para revisar e confirmar a venda com baixa no estoque.</p><p>Rascunho não reserva estoque. Salvar atualiza os preços a partir do cadastro; confirme após revisar os valores registrados.</p>
 <fieldset disabled="@(_busy||_pending is not null)">
 <label for="clienteBusca">Localizar cliente pelo início do nome ou documento</label><input id="clienteBusca" @bind="_clientSearch" maxlength="150" /><button @onclick="ClientesAsync">Localizar clientes</button>
 <label for="cliente">Cliente ativo</label><select id="cliente" @bind="_cliente"><option value="">Selecione</option>@if(_cliente!=""&&!_clientes.Any(x=>x.Id.ToString()==_cliente)){<option value="@_cliente">Cliente atual — @_cliente</option>}@foreach(var c in _clientes){<option value="@c.Id">@c.Nome</option>}</select>
@@ -32,7 +32,7 @@ else if(_loaded){
 }
 @if(_sale is {} sale){
 @if(sale.Status is "Rascunho" or "Confirmada"){
-<h2>Ações da venda</h2><fieldset disabled="@(_busy||_pending is not null)">
+<h2>@(sale.Status=="Rascunho" ? "2. Revise e confirme a venda" : "Ações da venda")</h2><fieldset disabled="@(_busy||_pending is not null)">
 <label><input id="confirmarAcao" type="checkbox" @bind="_confirm" /> Revisei os itens, os valores e confirmo a ação escolhida.</label>
 @if(sale.Status=="Rascunho"){@if(Alterado){<p>Salve as alterações do rascunho e revise os valores registrados antes de confirmar.</p>}<button @onclick='()=>AcaoAsync("confirmacao")' disabled="@(!_confirm||sale.Itens.Count==0||Alterado)">Confirmar venda e baixar estoque</button>}
 <label for="motivo">Motivo do cancelamento ou descarte (10 a 500 caracteres)</label><textarea id="motivo" @bind="_motivo" minlength="10" maxlength="500"></textarea>

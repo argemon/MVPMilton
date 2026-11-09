@@ -6,6 +6,7 @@
 @inject NavigationManager Navigation
 <PageTitle>Produtos · Gestão Comercial</PageTitle>
 <h1>Produtos</h1><AuthorizeView Policy="Produtos.Gerenciar"><Authorized><a href="/produtos/novo">Cadastrar produto</a></Authorized></AuthorizeView>
+<p>Organização dos produtos: <a href="/categorias">Categorias</a> · <a href="/marcas">Marcas / fabricantes</a></p>
 <form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
     <label for="busca">Início do nome ou SKU exato</label><input id="busca" @bind="_search" maxlength="150" />
     <label for="categoria">Categoria</label><select id="categoria" @bind="_categoria"><option value="">Todas</option>@foreach(var r in _categorias){<option value="@r.Id">@r.Nome</option>}</select>

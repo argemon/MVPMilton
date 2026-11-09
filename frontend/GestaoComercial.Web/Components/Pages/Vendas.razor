@@ -6,7 +6,7 @@
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
 <PageTitle>Vendas · Gestão Comercial</PageTitle>
-<h1>Vendas</h1><a href="/vendas/nova">Iniciar venda</a>
+<h1>Histórico de vendas</h1><AuthorizeView Policy="Vendas.Criar"><Authorized><a class="botao" href="/vendas/nova">＋ Nova venda</a></Authorized></AuthorizeView>
 <form @onsubmit="PesquisarAsync" @onsubmit:preventDefault>
 <label for="clienteBusca">Localizar cliente pelo início do nome ou documento</label><input id="clienteBusca" @bind="_clientSearch" maxlength="150" /><button type="button" @onclick="ClientesAsync">Localizar clientes</button>
 <label for="cliente">Cliente</label><select id="cliente" @bind="_cliente"><option value="">Todos</option>@foreach(var c in _clientes){<option value="@c.Id">@c.Nome</option>}</select>

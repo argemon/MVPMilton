@@ -1,5 +1,25 @@
 # 03 — Estado do projeto
 
+## Ajuste da tela inicial — 09/11/2026
+
+A pedido do responsável após captura da home: rota / agora apresenta área de trabalho com atalhos de nova venda, clientes, estoque e produtos, consultas secundárias e destaque ao dashboard somente para Administrador. Cada atalho usa a policy existente; troca obrigatória de senha continua bloqueando atalhos. Removida consulta técnica de readiness da home, mantendo MeAsync e tratamento de falha de sessão. Sem regra/contrato/persistência novos; .env e Atlas não acessados/alterados nesta correção. Alterações locais anteriores de login e .vs preservadas.
+
+Arquivos desta correção: InicioTecnico.razor, app.css, complemento ADR-38 e este registro. Comando real aprovado: dotnet test tests/GestaoComercial.UnitTests --configuration Release --verbosity minimal -m:1 -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/home-build", DOTNET_CLI_HOME=.local/dotnet; 127 aprovados, 0 falhas/ignorados. Compilação dos sete projetos concluída. Primeiro teste no output padrão encontrou DLLs bloqueadas pelos hosts abertos; pasta isolada sem restore falhou por assets ausentes; restore inicial falhou por acesso NuGet e repetição com acesso autorizado concluiu. git diff --check sem erros. Sem novos testes de integração, pois apenas composição visual/atalhos, sem comportamento transacional alterado.
+
+Limites: nova composição ainda não inspecionada em navegador real; aplicação já aberta continua executando a compilação anterior e precisa ser reiniciada para carregar a nova tela. Sem commit/push/CI desta correção; não atribuir CI histórico ao código atual. Próxima ação: reiniciar Web, conferir início nos três perfis e larguras do bloco10. Nenhum bloco adicional, deploy ou merge.
+
+## Acesso administrativo restabelecido — 09/11/2026
+
+Após o responsável autorizar o IP atual no Network Access do Atlas existente, diagnóstico local com TLS1.2 retornou Atlas ping OK; API readiness200 e login do administrador original200. Criada a conta fictícia solicitada, vinculada a funcionário ativo, pelo POST autenticado de funcionários e usuários, perfil Administrador. Novo login200 e perfil conferidos; sessões de verificação encerradas por logout. Senha temporária exige troca no primeiro acesso. Credenciais somente em arquivo .local ignorado; .env preservado e nenhuma escrita direta em documentos. Procedimento local create-requested-admin.ps1; tentativa inicial recusada400 por filtro ativo=todos em endpoint que recebe bool?, corrigido no procedimento para omitir filtro; nenhum usuário existente redefinido. Sem novos testes de integração ou CI nesta ação operacional. Nenhum deploy/merge ou novo banco.
+
+## Suporte ao login — 09/11/2026
+
+Relato: POST de login exibe somente “Erro”. Confirmado defeito no DocumentoConta: parâmetros string Erro/ReturnUrl eram literais. Corrigidos para expressões Razor; AccountDocumentTests renderiza o documento real e verifica mensagem segura e retorno /produtos. Complemento registrado na ADR-38. Arquivos: DocumentoConta.razor, AccountDocumentTests.cs e registros03/04. Nenhuma regra, persistência, credencial ou .env alterado; diretório .vs preexistente não incluído.
+
+Comandos reais: `dotnet test tests/GestaoComercial.UnitTests --configuration Release --no-restore --filter FullyQualifiedName~AccountDocumentTests --verbosity minimal -m:1` (1 aprovado) e `dotnet test tests/GestaoComercial.UnitTests --configuration Release --no-build --no-restore --verbosity minimal` (127 aprovados, zero falhas/skips), com DOTNET_CLI_HOME=.local/dotnet. Tentativas iniciais sem elevação falharam na compilação sem diagnóstico; execução autorizada acima concluiu. Integração MongoDB não executada: teste é exclusivamente de renderização, sem mudança de comportamento transacional.
+
+Diagnóstico local autorizado: HTTP Web7243=200, API7143/health/live=200; API8081/health/ready=503, login direto com acesso privado=503 OPERACAO_INDISPONIVEL (nenhum token exposto). DNS SRV resolveu3 nós; TCP27017 conectou nos3. Ping MongoDB.Driver no Atlas existente, somente leitura, falhou por TimeoutException com heartbeat TLS: AuthenticationException → Win32Exception0x80090304 (“A autoridade de segurança local não pode ser contatada”). Esse resultado pertence ao processo de diagnóstico; não prova causa idêntica no processo API do usuário. Nenhuma evidência de senha inválida. Diagnóstico temporário em .local/login-diagnostic, ignorado. Mensagem corrigida compilada, mas hosts existentes não reiniciados. Pendência: reiniciar API/Web em PowerShell do usuário, verificar readiness e repetir login; se falhar, obter diagnóstico do processo API. Login funcional ainda não confirmado, sem commit/push/CI desta correção. Nenhum bloco novo, deploy ou merge.
+
 ## Execução10 — HOMOLOGAÇÃO APROVADA — 07/11/2026 America/Cuiaba
 
 Código final0d49db9: CI PR42429190111 e push42429186208 success,242 testes sem falhas/skips,build/auditoria/scanner aprovados. Detalhamento do gate final ao fim deste registro.
@@ -242,6 +262,14 @@ Falhas intermediárias foram corrigidas e a suíte foi repetida: ordem dos POSTs
 ## Histórico preservado00 e auditorias anteriores
 
 # 03 — Estado do projeto
+
+## Ajuste da tela inicial — 09/11/2026
+
+A pedido do responsável após captura da home: rota / agora apresenta área de trabalho com atalhos de nova venda, clientes, estoque e produtos, consultas secundárias e destaque ao dashboard somente para Administrador. Cada atalho usa a policy existente; troca obrigatória de senha continua bloqueando atalhos. Removida consulta técnica de readiness da home, mantendo MeAsync e tratamento de falha de sessão. Sem regra/contrato/persistência novos; .env e Atlas não acessados/alterados nesta correção. Alterações locais anteriores de login e .vs preservadas.
+
+Arquivos desta correção: InicioTecnico.razor, app.css, complemento ADR-38 e este registro. Comando real aprovado: dotnet test tests/GestaoComercial.UnitTests --configuration Release --verbosity minimal -m:1 -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/home-build", DOTNET_CLI_HOME=.local/dotnet; 127 aprovados, 0 falhas/ignorados. Compilação dos sete projetos concluída. Primeiro teste no output padrão encontrou DLLs bloqueadas pelos hosts abertos; pasta isolada sem restore falhou por assets ausentes; restore inicial falhou por acesso NuGet e repetição com acesso autorizado concluiu. git diff --check sem erros. Sem novos testes de integração, pois apenas composição visual/atalhos, sem comportamento transacional alterado.
+
+Limites: nova composição ainda não inspecionada em navegador real; aplicação já aberta continua executando a compilação anterior e precisa ser reiniciada para carregar a nova tela. Sem commit/push/CI desta correção; não atribuir CI histórico ao código atual. Próxima ação: reiniciar Web, conferir início nos três perfis e larguras do bloco10. Nenhum bloco adicional, deploy ou merge.
 
 ## Histórico aprovado — implementação00 com Atlas (06/11/2026, America/Cuiaba)
 
@@ -622,3 +650,15 @@ Correção final da navegação real: no celular, cliques com navegação aprimo
 Commit0d49db9 aprovado integralmente: [CI PR42429190111](https://github.com/argemon/MVPMilton/actions/runs/42429190111) e [push42429186208](https://github.com/argemon/MVPMilton/actions/runs/42429186208), todas as etapas success.126 unitários+116 integrações=242 aprovados,0 falhas/skips; build0 avisos/erros; auditoria e scanner aprovados. Log real: artifacts/block10/ci-code-final.log. Inclui a quebra natural das tabelas e o inicializador de navegação aprimorada. Roteiros locais finais:132 medições de33 páginas/fichas,64 medições adicionais de tabelas e12 navegações por clique,0 overflow de página/JS; zoom equivalente e teclado reconferidos. Cinco problemas de apresentação corrigidos; nenhum defeito crítico funcional identificado.
 
 Hosts/navegador temporários encerrados após logout; dados e imagem privada persistente preservados. .env idêntico por SHA-256;241 arquivos candidatos sem credenciais conhecidas/Gitleaks,45 Markdown/142 links locais válidos e diff limpo. Acesso somente nos arquivos privados ignorados; não versionar/exibir. Iniciar para a banca conforme README. Os commits seguintes apenas registram evidências; conferir seu CI no PR antes de encerrar a entrega, sem repetir a carga ou abrir outro bloco.
+
+## Correção de usabilidade e cenário de mercado — 09/11/2026
+
+Solicitação: esclarecer Marcas, tornar a execução da venda visível e substituir dados genéricos por um supermercado. Complemento ADR-38 registrado antes da implementação. Nova venda agora tem atalho direto no menu e destaque no histórico; tela existente orienta montagem, salvamento e confirmação. Marcas/fabricantes e categorias ficam acessíveis em Produtos, mantendo contratos e permissões.
+
+CenarioMercado/DadosDemonstracao representam 100 apresentações ilustrativas de Camil, Nestlé, Piracanjuba, Ypê e Colgate, cinco categorias, 52 combinações de nomes sintéticos. Geração atualiza nomes genéricos antigos comprovados pela auditoria da geração; novas etapas idempotentes reutilizam serviços de cadastro. Preços originais da seed passam para faixa R$1,99–41,98; preços manuais diferentes são preservados. IDs, saldos e snapshots de vendas/movimentos permanecem. Sem restauração, exclusão, novo banco ou edição do .env.
+
+Arquivos desta correção: CenarioMercado.cs, DadosDemonstracao.cs, LayoutPrincipal.razor, Produtos.razor, Vendas.razor, VendaDetalhe.razor, DadosDemonstracao.razor, DemonstrationTests.cs e registros03/04. Alterações anteriores de home/login/CSS e .vs já existiam no início e foram preservadas.
+
+Execuções reais: dotnet build -c Release --no-restore -m:1 aprovado inicialmente, zero avisos/erros; dotnet test tests/GestaoComercial.UnitTests -c Release --no-restore -m:1 aprovado,127/127, zero skips. Primeira tentativa de build encontrou hosts com arquivos abertos; reiniciados localmente. Build posterior da solução encontrou testhost com arquivos abertos; execução final usa OutputPath isolado. Teste DemonstrationTests ampliado para conversão legada, repetição, saldo/preço e preservação integral das vendas; resultado final ainda pendente neste registro. Sem afirmar regressão integral/CI aprovado.
+
+Atualização de nomes aplicada por POST administrativo autenticado no Atlas existente,200; busca Arroz encontrou10 apresentações e hash .env preservado. Complemento de preços em aplicação pela mesma operação. Navegador real: login e /vendas/nova, atalho presente,21 opções em cada seletor (20 registros+padrão),390px sem overflow e1366px conferidos. Capturas locais artifacts/block10/screens/market-sale-mobile.png e market-sale-desktop.png. Não repetir jornadas transacionais antigas como evidência nova. Pendência: finalizar teste de integração, atualização de preços e revisão Git/CI. Nenhum bloco seguinte, deploy ou merge.
