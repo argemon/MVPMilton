@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Xunit;
 
+[Collection("CargaDemonstracao")]
 public sealed class DemonstrationTests(SalesFixture fixture) : IClassFixture<SalesFixture>
 {
     private AuthFixture F=>fixture.Auth;

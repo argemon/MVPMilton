@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Xunit;
 
+[Collection("CargaDemonstracao")]
 public sealed class DemonstrationCleanupTests(SalesFixture fixture):IClassFixture<SalesFixture>
 {
     private const string Path="/api/v1/administracao/dados-demonstracao";
