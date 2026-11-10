@@ -18,3 +18,7 @@ Produtos à esquerda, cupom à direita e navegação administrativa recolhida ne
 - 1920×1080,1366×768,768×1024,390×844: sem overflow de página/erros JS. Ação de finalizar dentro do viewport nas duas larguras desktop; em telas estreitas os painéis se empilham e a página rola. Capturas artifacts/block10/screens/pdv-final-{1920,1366,768,390}.png; também revisão/conclusão/cancelamento. Capturas1920/1366/390 revisadas visualmente. Não afirmar zoom nativo/auditoria completa de acessibilidade neste ajuste.
 
 Arquivos: VendaDetalhe.razor, novo wwwroot/pdv.css, SalesBffTests.cs, ADR/estado, módulo06 e este relatório. Home/login/app.css e .vs preexistentes preservados; não incluir no commit desta solicitação. .env não editado; aplicação usa o Atlas existente. Sem deploy/merge. CI do novo código deve ser acompanhado no PR; gates anteriores não são prova da versão PDV.
+
+## Gate final do código
+
+Commit47ac7e6: [CI PR42727683240](https://github.com/argemon/MVPMilton/actions/runs/42727683240) e [push42727675126](https://github.com/argemon/MVPMilton/actions/runs/42727675126) success.127+116=243 testes,0 falhas/skips;build0 avisos/erros,auditoria e scanner aprovados. Local final OutputPath=.local/pdv-release:build0 avisos/erros,128 unitários+2 integrações aprovados. Diferença de1 teste unitário corresponde ao teste de conta preexistente não incluído no PR. Próximo atendimento com cupom vazio também aprovado no navegador;prévia final pdv-preview.png não persistida. O commit documental posterior apenas registra estes resultados e recebe seus próprios checks.
