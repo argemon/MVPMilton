@@ -6,64 +6,91 @@
 @inject SessaoCircuito Sessao
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
-<PageTitle>Venda · Gestão Comercial</PageTitle>
-<h1>@(Id is null?"Iniciar venda":"Detalhe da venda")</h1><a href="/vendas">Voltar às vendas</a>
+<HeadContent><link rel="stylesheet" href="pdv.css" /></HeadContent>
+<PageTitle>Frente de caixa · Gestão Comercial</PageTitle>
+<div class="pdv">
+<div class="pdv-top"><div><a href="/vendas" class="pdv-back">← Histórico de vendas</a><h1>Frente de caixa <span>PDV</span></h1></div><div class="pdv-state"><i></i>@(_sale?.Status ?? "Venda em aberto")</div></div>
 @if(_message is not null){<p role="alert" tabindex="-1" @ref="_alert">@_message</p>}
-@if(_loading){<p role="status">Carregando venda…</p>}
+@if(_loading){<p role="status">Preparando frente de caixa…</p>}
 else if(_loaded){
-@if(_sale is {} v){<section><h2>@v.Status</h2><p>Venda @v.Id · versão @v.Versao</p><p>Criada em @Local(v.CriadoEm) por @v.Criador.Nome.</p>
-<p>Cliente histórico: @(v.ClienteSnapshot?.Nome??"Será congelado na confirmação") · <a href="@($"/clientes/{v.ClienteId}")">Cadastro atual do cliente</a></p>
-@foreach(var pair in new[]{("Confirmação",v.Confirmacao),("Cancelamento",v.Cancelamento),("Descarte",v.Descarte)}){@if(pair.Item2 is {} e){<p>@pair.Item1: @Local(e.Data) · @e.Ator.Nome @e.Motivo</p>}}
-<p>Deslize a tabela ou use as setas do teclado para consultar todas as colunas.</p>
-<div class="tabela venda-itens" tabindex="0" role="region" aria-label="Itens da venda"><table><caption>Itens da venda — valores registrados</caption><thead><tr><th>SKU / produto</th><th>Quantidade</th><th>Preço unitário</th><th>Subtotal</th></tr></thead><tbody>
-@foreach(var i in v.Itens){<tr><td>@i.SkuSnapshot — @i.NomeSnapshot<br /><a href="@($"/produtos/{i.ProdutoId}")">Cadastro atual do produto</a></td><td>@i.Quantidade</td><td>@i.PrecoUnitario.ToString("C",Pt)</td><td>@i.Total.ToString("C",Pt)</td></tr>}
-</tbody></table></div><p><strong>Total: @v.Total.ToString("C",Pt)</strong></p></section>}
-@if(_sale is null||_sale.Status=="Rascunho"){
-<h2>Editar rascunho</h2><p>Rascunho não reserva estoque. Salvar atualiza os preços a partir do cadastro; confirme após revisar os valores registrados.</p>
-<fieldset disabled="@(_busy||_pending is not null)">
-<label for="clienteBusca">Localizar cliente pelo início do nome ou documento</label><input id="clienteBusca" @bind="_clientSearch" maxlength="150" /><button @onclick="ClientesAsync">Localizar clientes</button>
-<label for="cliente">Cliente ativo</label><select id="cliente" @bind="_cliente"><option value="">Selecione</option>@if(_cliente!=""&&!_clientes.Any(x=>x.Id.ToString()==_cliente)){<option value="@_cliente">Cliente atual — @_cliente</option>}@foreach(var c in _clientes){<option value="@c.Id">@c.Nome</option>}</select>
-<label for="produtoBusca">Localizar produto pelo início do nome ou SKU</label><input id="produtoBusca" @bind="_productSearch" maxlength="150" /><button @onclick="ProdutosAsync">Localizar produtos</button>
-<label for="produto">Produto ativo</label><select id="produto" @bind="_produto"><option value="">Selecione</option>@foreach(var p in _produtos){<option value="@p.Id">@p.Sku — @p.Nome · @p.Preco.ToString("C",Pt)</option>}</select>
-<label for="quantidade">Quantidade para adicionar (UN)</label><input id="quantidade" type="number" @bind="_quantidade" min="1" max="1000000" /><button @onclick="Adicionar">Adicionar item</button>
-@foreach(var line in _lines){<div class="item-venda" @key="line.ProdutoId"><label for="@($"item-{line.ProdutoId}")">@line.Nome — quantidade (UN)</label><input id="@($"item-{line.ProdutoId}")" type="number" @bind="line.Quantidade" min="1" max="1000000" /><p>@line.Preco.ToString("C",Pt) por UN · prévia @((line.Preco*line.Quantidade).ToString("C",Pt))</p><button @onclick="()=>Remover(line)">Remover @line.Nome</button></div>}
-<p>Prévia do rascunho: @_lines.Sum(x=>x.Preco*x.Quantidade).ToString("C",Pt). O servidor verifica preços, quantidades e limites ao salvar.</p>
-<button @onclick="SalvarAsync">Salvar rascunho</button></fieldset>
+<div class="pdv-grid">
+<section class="pdv-catalogo" aria-label="Produtos para venda">
+<div class="pdv-panel-title"><div><p class="pdv-eyebrow">ATENDIMENTO</p><h2>@(Editavel?"Adicionar produtos":"Resumo do atendimento")</h2></div><span class="pdv-muted">Preços em reais · UN</span></div>
+@if(Editavel){
+<fieldset disabled="@Travado" class="pdv-fields">
+<form class="pdv-search" @onsubmit="BuscarProdutosAsync" @onsubmit:preventDefault>
+<label for="produtoBusca">Buscar por nome ou SKU</label><div class="pdv-search-row"><input id="produtoBusca" @ref="_buscaProduto" @bind="_productSearch" placeholder="Ex.: arroz ou TCC-DEMO-001" maxlength="150" autocomplete="off" /><button type="submit" disabled="@_buscando">@(_buscando?"Buscando…":"Buscar")</button></div>
+</form>
+<div class="pdv-catalog-tools"><p>Selecione um produto para incluir no cupom.</p><label for="quantidade">Quantidade <input id="quantidade" type="number" @bind="_quantidade" min="1" max="1000000" /> <span>UN</span></label></div>
+@if(_produtos.Count==0){<div class="pdv-empty"><span aria-hidden="true">⌕</span><h3>@(_productError?"Não foi possível buscar produtos":"Nenhum produto encontrado")</h3><p>@(_productError?"Tente buscar novamente.":"Busque pelo início do nome ou pelo SKU cadastrado.")</p></div>}
+else{<div class="pdv-product-head" aria-hidden="true"><span>Produto</span><span>SKU</span><span>Saldo</span><span>Preço</span><span></span></div><div class="pdv-products">
+@foreach(var p in _produtos){<button type="button" class="pdv-product" @key="p.Id" @onclick="()=>Adicionar(p)" disabled="@(p.Saldo<=0||_buscando)" aria-label="@($"Adicionar {p.Nome}, SKU {p.Sku}, preço {p.Preco.ToString("C",Pt)}, saldo {p.Saldo} unidades")"><strong class="pdv-product-name" title="@p.Nome">@p.Nome</strong><small class="pdv-product-sku">@p.Sku</small><span class="@(p.Saldo>0?"pdv-stock":"pdv-stock pdv-stock-zero")">@p.Saldo UN</span><b class="pdv-product-price">@p.Preco.ToString("C",Pt)</b><span class="pdv-plus" aria-hidden="true">＋</span></button>}
+</div>}
+<nav class="pdv-pagination" aria-label="Páginas de produtos"><span>@_totalProdutos produtos · página @_productPage</span><div><button type="button" class="pdv-secondary" @onclick="AnteriorProdutosAsync" disabled="@(_productPage<=1||_buscando)">← Anterior</button><button type="button" class="pdv-secondary" @onclick="ProximosProdutosAsync" disabled="@((long)_productPage*_productPageSize>=_totalProdutos||_buscando)">Próximos →</button></div></nav>
+</fieldset>
+}else{
+<div class="pdv-completed"><span aria-hidden="true">✓</span><h2>@(_sale?.Status=="Confirmada"?"Venda concluída":"Venda encerrada")</h2><p>@(_sale?.Status=="Confirmada"?"Os itens foram registrados e o estoque foi atualizado.":"Consulte o cupom ao lado para ver os valores registrados.")</p><a href="/vendas/nova" class="botao" data-enhance-nav="false">＋ Atender próximo cliente</a><a href="/vendas">Consultar histórico</a></div>
+@if(_sale is {} registro){<details class="pdv-details"><summary>Dados da operação</summary><p>Venda @registro.Id · versão @registro.Versao</p><p>Criada em @Local(registro.CriadoEm) por @registro.Criador.Nome.</p>@foreach(var pair in new[]{("Confirmação",registro.Confirmacao),("Cancelamento",registro.Cancelamento),("Descarte",registro.Descarte)}){@if(pair.Item2 is {} e){<p>@pair.Item1: @Local(e.Data) · @e.Ator.Nome @e.Motivo</p>}}</details>}
 }
-@if(_sale is {} sale){
-@if(sale.Status is "Rascunho" or "Confirmada"){
-<h2>Ações da venda</h2><fieldset disabled="@(_busy||_pending is not null)">
-<label><input id="confirmarAcao" type="checkbox" @bind="_confirm" /> Revisei os itens, os valores e confirmo a ação escolhida.</label>
-@if(sale.Status=="Rascunho"){@if(Alterado){<p>Salve as alterações do rascunho e revise os valores registrados antes de confirmar.</p>}<button @onclick='()=>AcaoAsync("confirmacao")' disabled="@(!_confirm||sale.Itens.Count==0||Alterado)">Confirmar venda e baixar estoque</button>}
-<label for="motivo">Motivo do cancelamento ou descarte (10 a 500 caracteres)</label><textarea id="motivo" @bind="_motivo" minlength="10" maxlength="500"></textarea>
-@if(sale.Status=="Rascunho"){<button @onclick='()=>AcaoAsync("descarte")' disabled="@(!_confirm)">Descartar rascunho</button>}
-else{<AuthorizeView Policy="Vendas.Cancelar"><Authorized><button @onclick='()=>AcaoAsync("cancelamento")' disabled="@(!_confirm)">Cancelar venda e estornar estoque</button></Authorized></AuthorizeView>}
-</fieldset>}
-<button @onclick="CarregarAsync" disabled="@(_busy||_pending is not null)">Reler venda</button>}
+</section>
+<section class="pdv-receipt" aria-label="Cupom da venda">
+<div class="pdv-receipt-head"><div><p class="pdv-eyebrow">VENDA ATUAL</p><h2>Cupom de venda</h2></div><span class="pdv-item-count">@_lines.Count @(_lines.Count==1?"item":"itens")</span></div>
+<fieldset class="pdv-fields pdv-client" disabled="@Travado">
+@if(Editavel){<label for="cliente">Cliente <span>obrigatório</span></label><select id="cliente" @bind="_cliente"><option value="">Selecione o cliente</option>@if(_cliente!=""&&!_clientes.Any(x=>x.Id.ToString()==_cliente)){<option value="@_cliente">Cliente atual</option>}@foreach(var c in _clientes){<option value="@c.Id">@c.Nome</option>}</select><details><summary>Localizar outro cliente</summary><form @onsubmit="ClientesAsync" @onsubmit:preventDefault><label for="clienteBusca">Início do nome ou documento</label><div class="pdv-search-row"><input id="clienteBusca" @bind="_clientSearch" maxlength="150" /><button type="submit" class="pdv-secondary">Buscar</button></div></form></details>}
+else{<p class="pdv-client-name">@_sale?.ClienteSnapshot?.Nome</p><a href="@($"/clientes/{_sale?.ClienteId}")">Ver cliente</a>}
+</fieldset>
+<div class="pdv-cart" aria-label="Itens da venda">
+@if(_lines.Count==0){<div class="pdv-empty"><span aria-hidden="true">▤</span><h3>Seu cupom está vazio</h3><p>Busque ou selecione um produto para começar a venda.</p></div>}
+@foreach(var line in _lines){<div class="pdv-line" @key="line.ProdutoId"><div class="pdv-line-title"><strong title="@line.Nome">@line.Nome</strong>@if(Editavel){<button type="button" class="pdv-remove" @onclick="()=>Remover(line)" disabled="@Travado" aria-label="@($"Remover {line.Nome}")">×</button>}</div><div class="pdv-line-values">@if(Editavel){<div class="pdv-stepper"><button @onclick="()=>Diminuir(line)" disabled="@(Travado||line.Quantidade<=1)" aria-label="@($"Diminuir quantidade de {line.Nome}")">−</button><input id="@($"item-{line.ProdutoId}")" type="number" @bind="line.Quantidade" min="1" max="1000000" disabled="@Travado" aria-label="@($"Quantidade de {line.Nome}")" /><button @onclick="()=>Aumentar(line)" disabled="@(Travado||line.Quantidade>=1000000)" aria-label="@($"Aumentar quantidade de {line.Nome}")">＋</button></div>}else{<span>@line.Quantidade UN</span>}<span class="pdv-unit-price">× @line.Preco.ToString("C",Pt)</span><strong>@((line.Preco*line.Quantidade).ToString("C",Pt))</strong></div></div>}
+</div>
+<div class="pdv-checkout"><div class="pdv-total-row"><span>Total da venda<small>@_lines.Sum(x=>(long)x.Quantidade) unidades</small></span><strong>@_lines.Sum(x=>x.Preco*x.Quantidade).ToString("C",Pt)</strong></div>
+@if(Editavel){
+@if(_sale is {Status:"Rascunho"}&&!Alterado&&_lines.Count>0){<p class="pdv-reviewed">✓ Valores conferidos. Revise o cupom e conclua.</p><button class="pdv-finalize" @onclick="ConcluirAsync" disabled="@(Travado||_lines.Count==0)">Concluir venda <span aria-hidden="true">→</span></button><p class="pdv-checkout-note">Ao concluir, os itens serão baixados do estoque.</p>}
+else{<button class="pdv-finalize" @onclick="SalvarAsync" disabled="@(Travado||_lines.Count==0||string.IsNullOrEmpty(_cliente))">Revisar e finalizar <span aria-hidden="true">→</span></button><p class="pdv-checkout-note">Confira o cliente e os itens. Os preços serão validados antes de concluir.</p>}
+<button class="pdv-secondary pdv-save" @onclick="SalvarAsync" disabled="@(Travado||string.IsNullOrEmpty(_cliente))">Salvar rascunho para depois</button>
+}
+else{<p class="pdv-reviewed">@_sale?.Status · valores registrados</p>}
 @if(_busy){<p role="status">Processando operação…</p>}
-@if(_pending is not null&&!_busy){<p>Resultado ainda não confirmado. Preserve esta página para resolver a mesma operação.</p><button @onclick="ExecutarAsync">Reconsultar / repetir mesma operação</button>}
+@if(_pending is not null&&!_busy){<p role="alert">Resultado ainda não confirmado. Repita a mesma operação para consultar o resultado com segurança.</p><button @onclick="ExecutarAsync">Reconsultar / repetir mesma operação</button>}
+</div>
+</section>
+</div>
+@if(_sale is {} sale){<div class="pdv-bottom"><button class="pdv-secondary" @onclick="CarregarAsync" disabled="@Travado">Atualizar venda</button>
+@if(sale.Status is "Rascunho" or "Confirmada"){<details class="pdv-details pdv-danger"><summary>@(sale.Status=="Rascunho"?"Descartar rascunho":"Cancelar venda")</summary><fieldset disabled="@Travado"><label for="motivo">Motivo (10 a 500 caracteres)</label><textarea id="motivo" @bind="_motivo" minlength="10" maxlength="500"></textarea><label><input id="confirmarAcao" type="checkbox" @bind="_confirm" /> Confirmo esta ação.</label>@if(sale.Status=="Rascunho"){<button class="pdv-danger-confirm" @onclick='()=>AcaoAsync("descarte")' disabled="@(!_confirm)">Descartar rascunho</button>}else{<AuthorizeView Policy="Vendas.Cancelar"><Authorized><button class="pdv-danger-confirm" @onclick='()=>AcaoAsync("cancelamento")' disabled="@(!_confirm)">Cancelar venda e estornar estoque</button></Authorized></AuthorizeView>}</fieldset></details>}
+</div>}
 }else{<button @onclick="CarregarAsync">Repetir consulta</button>}
+</div>
 @code{
     [Parameter]public Guid? Id{get;set;}
     private static readonly System.Globalization.CultureInfo Pt=System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
     private readonly CancellationTokenSource _cts=new();private VendaResponse? _sale;private IReadOnlyList<ClienteResponse> _clientes=[];private IReadOnlyList<ProdutoResponse> _produtos=[];private List<Linha> _lines=[];
-    private string _cliente="",_produto="",_clientSearch="",_productSearch="",_motivo="";private int _quantidade=1;private bool _busy,_loading,_loaded,_confirm,_focus;private string? _message;private ElementReference _alert;private Intent? _pending;
+    private string _cliente="",_clientSearch="",_productSearch="",_motivo="";private int _quantidade=1;private bool _busy,_loading,_loaded,_confirm,_focus;private string? _message;private ElementReference _alert;private Intent? _pending;
+    private bool Editavel=>_sale is null||_sale.Status=="Rascunho";
+    private bool _interactive;
+    private bool Travado=>!_interactive||_busy||_pending is not null;
+    private bool _buscando,_productError,_focusProduct;private int _productPage=1,_productPageSize=20;private long _totalProdutos;private ElementReference _buscaProduto;
     private sealed class Linha(Guid id,string nome,int quantidade,decimal preco){public Guid ProdutoId{get;}=id;public string Nome{get;}=nome;public int Quantidade{get;set;}=quantidade;public decimal Preco{get;}=preco;}
     private sealed record Intent(Guid Key,string Acao,Guid? Id,Guid ClienteId,IReadOnlyList<ItemVendaRequest> Itens,long Versao,string? Motivo);
     private bool Alterado=>_sale is {Status:"Rascunho"} v&&(_cliente!=v.ClienteId.ToString()||_lines.Count!=v.Itens.Count||_lines.Any(l=>!v.Itens.Any(i=>i.ProdutoId==l.ProdutoId&&i.Quantidade==l.Quantidade)));
     private string Local(DateTimeOffset date)=>TimeZoneInfo.ConvertTime(date,TimeZoneInfo.FindSystemTimeZoneById(Configuration["APP_TIME_ZONE"]??"America/Cuiaba")).ToString("dd/MM/yyyy HH:mm");
     protected override Task OnParametersSetAsync()=>CarregarAsync();
-    protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
+    protected override async Task OnAfterRenderAsync(bool first){if(first){_interactive=true;_focusProduct=Editavel&&_loaded;StateHasChanged();}if(_focus){_focus=false;await _alert.FocusAsync();}else if(_focusProduct&&Editavel&&_loaded){_focusProduct=false;await _buscaProduto.FocusAsync();}}
     private void Message(string text){_message=text;_focus=true;}
     private void Fail(ApiFailure e){if(e.Status is 401 or 403)Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);else Message(e.Code switch{"ESTOQUE_INSUFICIENTE"=>"Estoque insuficiente. A venda permanece rascunho e nenhum item foi baixado.","PRECO_ALTERADO"=>"Preço alterado no cadastro. Salve o rascunho para atualizar os preços e revise antes de confirmar.","RECURSO_INATIVO"=>"Cliente ou produto inativo. Remova o produto ou selecione outro cliente.","SALDO_INEXISTENTE"=>"Saldo inconsistente. Solicite verificação ao administrador.","SALDO_EXCEDE_LIMITE"=>"O estorno excederia o limite de estoque. Nenhum item foi estornado.","ESTADO_INVALIDO"=>"A venda não permite esta ação. Releia seu estado atual.","CHAVE_REUTILIZADA"=>"Esta chave já foi utilizada com outros dados.",_=>e.Status==404?"Venda ou referência não localizada no seu acesso.":e.Status==409?"Conflito de versão. Releia a venda antes de continuar.":e.Status==400?"Confira cliente, produtos, quantidades e motivo.":"Serviço indisponível. Tente consultar novamente."});}
     private void Set(VendaResponse v){_sale=v;_cliente=v.ClienteId.ToString();_lines=v.Itens.Select(x=>new Linha(x.ProdutoId,x.NomeSnapshot,x.Quantidade,x.PrecoUnitario)).ToList();_confirm=false;_motivo="";}
     private async Task ClientesAsync(){try{_clientes=(await Sessao.UsarAsync((a,t,c)=>a.ClientesAsync(t,1,_clientSearch,"","true",c),_cts.Token)).Items;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
-    private async Task ProdutosAsync(){try{_produtos=(await Sessao.UsarAsync((a,t,c)=>a.ProdutosAsync(t,1,_productSearch,null,null,"true",c),_cts.Token)).Items;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}}
+    private async Task ProdutosAsync(){_buscando=true;_productError=false;try{var page=await Sessao.UsarAsync((a,t,c)=>a.ProdutosAsync(t,_productPage,_productSearch,null,null,"true",c),_cts.Token);_produtos=page.Items;_totalProdutos=page.TotalItems;_productPageSize=page.PageSize;}catch(ApiFailure e){_produtos=[];_totalProdutos=0;_productError=true;Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_buscando=false;}}
+    private async Task BuscarProdutosAsync(){if(Travado||_buscando)return;_productPage=1;await ProdutosAsync();var exact=_produtos.SingleOrDefault(p=>string.Equals(p.Sku,_productSearch.Trim(),StringComparison.OrdinalIgnoreCase));if(exact is not null&&exact.Saldo>0){Adicionar(exact);_productSearch="";_focusProduct=true;}}
+    private async Task AnteriorProdutosAsync(){if(Travado||_buscando||_productPage<=1)return;_productPage--;await ProdutosAsync();}
+    private async Task ProximosProdutosAsync(){if(Travado||_buscando||(long)_productPage*_productPageSize>=_totalProdutos)return;_productPage++;await ProdutosAsync();}
     private async Task CarregarAsync(){if(_pending is not null)return;_loading=true;_loaded=false;try{if(Id is {} id)Set(await Sessao.UsarAsync((a,t,c)=>a.VendaAsync(t,id,c),_cts.Token));else{_sale=null;_lines=[];}if(_sale is null||_sale.Status=="Rascunho"){await ClientesAsync();await ProdutosAsync();}_loaded=true;}catch(ApiFailure e){Fail(e);}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_loading=false;}}
-    private void Adicionar(){if(_busy||_pending is not null)return;var p=_produtos.SingleOrDefault(x=>x.Id.ToString()==_produto);if(p is null||_quantidade is <1 or >1000000||_lines.Count>=100||_lines.Any(x=>x.ProdutoId==p.Id)){Message("Selecione um produto distinto e quantidade de 1 a 1.000.000, até 100 itens.");return;}_lines.Add(new(p.Id,p.Nome,_quantidade,p.Preco));}
+    private void Adicionar(ProdutoResponse p){if(Travado||_buscando)return;if(p.Saldo<=0){Message("Produto sem estoque disponível.");return;}var existing=_lines.SingleOrDefault(x=>x.ProdutoId==p.Id);if(_quantidade is <1 or >1000000||(existing is not null&&(long)existing.Quantidade+_quantidade>1000000)||existing is null&&_lines.Count>=100){Message("Informe quantidade de 1 a 1.000.000, até 100 produtos distintos.");return;}if(existing is null)_lines.Add(new(p.Id,p.Nome,_quantidade,p.Preco));else existing.Quantidade+=_quantidade;_quantidade=1;_message=null;}
+    private void Diminuir(Linha line){if(!Travado&&line.Quantidade>1)line.Quantidade--;}
+    private void Aumentar(Linha line){if(!Travado&&line.Quantidade<1000000)line.Quantidade++;}
+    private async Task ConcluirAsync(){if(Travado||Alterado||_sale is not {Status:"Rascunho"}||_lines.Count==0)return;_confirm=true;try{await AcaoAsync("confirmacao");}finally{_confirm=false;}}
     private void Remover(Linha line){if(!_busy&&_pending is null)_lines.Remove(line);}
     private async Task SalvarAsync(){if(_busy||_pending is not null)return;if(!Guid.TryParse(_cliente,out var customer)||_lines.Any(x=>x.Quantidade is <1 or >1000000)){Message("Selecione cliente e quantidades válidas.");return;}_pending=new(Guid.NewGuid(),"salvar",Id,customer,_lines.Select(x=>new ItemVendaRequest(x.ProdutoId,x.Quantidade)).ToArray(),_sale?.Versao??0,null);await ExecutarAsync();}
     private async Task AcaoAsync(string action){if(_busy||_pending is not null||!_confirm||_sale is not {} sale)return;if(action=="confirmacao"&&Alterado){Message("Salve as alterações e revise os valores antes de confirmar.");return;}if(action!="confirmacao"&&_motivo.Trim().Length is <10 or >500){Message("Informe motivo de 10 a 500 caracteres.");return;}_pending=new(Guid.NewGuid(),action,sale.Id,sale.ClienteId,[],sale.Versao,action=="confirmacao"?null:_motivo);await ExecutarAsync();}
-    private async Task ExecutarAsync(){if(_busy||_pending is not {} intent)return;_busy=true;try{var result=await Sessao.UsarAsync((a,t,c)=>intent.Acao=="salvar"?a.SalvarVendaAsync(t,intent.Id,intent.Key,intent.ClienteId,intent.Itens,intent.Versao,c):a.TransicionarVendaAsync(t,intent.Id!.Value,intent.Key,intent.Acao,intent.Versao,intent.Motivo,c),_cts.Token);_pending=null;Set(result);if(Id is null)Navigation.NavigateTo($"/vendas/{result.Id}");else{try{Set(await Sessao.UsarAsync((a,t,c)=>a.VendaAsync(t,result.Id,c),_cts.Token));}catch(ApiFailure){Message("Operação confirmada; não foi possível consultar o estado atual. Use Reler venda.");return;}Message("Operação registrada. Estado atual: "+_sale!.Status+".");}}catch(ApiFailure e){if(e.Status>=500||e.Code=="OPERACAO_EM_ANDAMENTO")Message("Resultado ainda não confirmado. Reconsulte / repita a mesma operação sem mudar os dados.");else{_pending=null;Fail(e);}}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
+    private async Task ExecutarAsync(){if(_busy||_pending is not {} intent)return;_busy=true;try{var result=await Sessao.UsarAsync((a,t,c)=>intent.Acao=="salvar"?a.SalvarVendaAsync(t,intent.Id,intent.Key,intent.ClienteId,intent.Itens,intent.Versao,c):a.TransicionarVendaAsync(t,intent.Id!.Value,intent.Key,intent.Acao,intent.Versao,intent.Motivo,c),_cts.Token);_pending=null;Set(result);if(Id is null)Navigation.NavigateTo($"/vendas/{result.Id}");else{try{Set(await Sessao.UsarAsync((a,t,c)=>a.VendaAsync(t,result.Id,c),_cts.Token));}catch(ApiFailure){Message("Operação confirmada; não foi possível consultar o estado atual. Use Atualizar venda.");return;}Message("Operação registrada. Estado atual: "+_sale!.Status+".");}}catch(ApiFailure e){if(e.Status>=500||e.Code=="OPERACAO_EM_ANDAMENTO")Message("Resultado ainda não confirmado. Reconsulte / repita a mesma operação sem mudar os dados.");else{_pending=null;Fail(e);}}catch(OperationCanceledException)when(_cts.IsCancellationRequested){}finally{_busy=false;}}
     public void Dispose(){_cts.Cancel();_cts.Dispose();}
 }

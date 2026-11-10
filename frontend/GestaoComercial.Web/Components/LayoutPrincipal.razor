@@ -6,8 +6,9 @@
 <aside class="sidebar"><details open><summary>Menu de navegação</summary><div class="sidebar-links">
 <AuthorizeView Policy="Dashboard.Ler"><Authorized Context="menuUser"><nav aria-label="Painel"><a href="/dashboard">Dashboard</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Clientes.Gerenciar"><Authorized Context="menuUser"><nav aria-label="Clientes"><a href="/clientes">Clientes</a></nav></Authorized></AuthorizeView>
-<AuthorizeView Policy="Produtos.Ler"><Authorized Context="menuUser"><nav aria-label="Produtos"><a href="/produtos">Produtos</a><a href="/categorias">Categorias</a><a href="/marcas">Marcas</a><a href="/estoque">Estoque</a></nav></Authorized></AuthorizeView>
-<AuthorizeView Policy="Vendas.Ler"><Authorized Context="menuUser"><nav aria-label="Vendas"><a href="/vendas">Vendas</a></nav></Authorized></AuthorizeView>
+<AuthorizeView Policy="Produtos.Ler"><Authorized Context="menuUser"><nav aria-label="Produtos"><a href="/produtos">Produtos</a><a href="/estoque">Estoque</a></nav></Authorized></AuthorizeView>
+<AuthorizeView Policy="Vendas.Criar"><Authorized Context="novaVenda"><nav aria-label="Nova venda"><a class="botao" href="/vendas/nova">＋ Nova venda</a></nav></Authorized></AuthorizeView>
+<AuthorizeView Policy="Vendas.Ler"><Authorized Context="menuUser"><nav aria-label="Vendas"><a href="/vendas">Histórico de vendas</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Relatorios.Vendas"><Authorized Context="menuUser"><nav aria-label="Relatórios comerciais" data-enhance-nav="false"><a href="/relatorios/vendas">Relatório de vendas</a><a href="/relatorios/operadores">Por funcionário / operador</a><a href="/relatorios/produtos">Mais vendidos</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Relatorios.Estoque"><Authorized Context="menuUser"><nav aria-label="Relatórios de estoque" data-enhance-nav="false"><a href="/relatorios/estoque">Relatório de estoque</a><a href="/relatorios/movimentos">Relatório de movimentos</a></nav></Authorized></AuthorizeView>
 <AuthorizeView Policy="Funcionarios.Gerenciar"><Authorized Context="menuUser"><nav aria-label="Cadastros"><a href="/funcionarios">Funcionários</a> <a href="/usuarios">Usuários</a></nav></Authorized></AuthorizeView>

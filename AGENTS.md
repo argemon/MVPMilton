@@ -1,6 +1,7 @@
 # GestaoComercial — instruções para agentes
 
 - Leia [o índice](docs/README.md), [o estado](docs/execution/03-ESTADO-PROJETO.md), o bloco liberado e seus documentos normativos antes de alterar arquivos.
+- Exceção atual ADR-39: autorizado implementar limpeza explícita na demonstração, preservando administrador executor/vínculo/sessão e estrutura técnica; exclui histórico/manual somente nessa ação confirmada. Não acionar a limpeza do banco de apresentação durante implementação. Integração somente em bancos descartáveis das fixtures no Atlas existente, conforme ADR-28.
 - A solicitação atual autoriza somente10 — Homologação final e acabamento visual no único banco Atlas existente (.env intacto), commit/push/PR e CI; não realizar deploy ou merge automático. ADR-37 prevalece no escopo acadêmico; manter Administrador, Vendedor e Estoquista.
 - Na implementação futura, execute somente um bloco liberado por vez, na ordem de [execução](docs/execution/00-PLANO-EXECUCAO.md). Não antecipar catálogo ou pedidos.
 - Use .NET 10 LTS, ASP.NET Core API, Blazor Web App Interactive Server, MongoDB, MongoDB.Driver oficial, xUnit, Testcontainers e Docker Compose com replica set. Frontend e backend ficam fisicamente separados.

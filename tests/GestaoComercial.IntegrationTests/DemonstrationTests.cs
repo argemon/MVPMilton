@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Xunit;
 
+[Collection("CargaDemonstracao")]
 public sealed class DemonstrationTests(SalesFixture fixture) : IClassFixture<SalesFixture>
 {
     private AuthFixture F=>fixture.Auth;
@@ -46,7 +47,20 @@ public sealed class DemonstrationTests(SalesFixture fixture) : IClassFixture<Sal
         var loading=Generate();
         using(var barrier=new CancellationTokenSource(TimeSpan.FromSeconds(30))){while(!await Col("stock_movements").Find(new BsonDocument()).AnyAsync(barrier.Token))await Task.Delay(25,barrier.Token);}
         using(var concurrent=await c.PostAsync(Path+"gerar",null))Assert.Equal(HttpStatusCode.Conflict,concurrent.StatusCode);
-        await loading;var first=await Check();await Generate();Assert.Equal(first,await Check());
+        await loading;var first=await Check();
+        var arroz=await Col("products").Find(new BsonDocument("sku","TCC-DEMO-001")).SingleAsync();
+        Assert.Equal("Arroz branco Camil 500 g",arroz["nome"].AsString);
+        var historico=await Col("sales").Find(new BsonDocument()).ToListAsync();
+        // Simulate a persisted legacy label, without changing the historical snapshots.
+        var precoLegado=new Random(902026).Next(500,50001);
+        await Col("products").UpdateOneAsync(new BsonDocument("_id",arroz["_id"]),new BsonDocument("$set",new BsonDocument{{"nome","Produto fictício 1"},{"precoCentavos",(long)precoLegado}}));
+        await Generate();
+        var atualizado=await Col("products").Find(new BsonDocument("_id",arroz["_id"])).SingleAsync();
+        Assert.Equal("Arroz branco Camil 500 g",atualizado["nome"].AsString);
+        Assert.Equal(arroz["saldo"],atualizado["saldo"]);
+        Assert.Equal(arroz["precoCentavos"],atualizado["precoCentavos"]);
+        foreach(var venda in historico)Assert.Equal(venda,await Col("sales").Find(new BsonDocument("_id",venda["_id"])).SingleAsync());
+        Assert.Equal(first,await Check());await Generate();Assert.Equal(first,await Check());
         using(var no=await c.PostAsJsonAsync(Path+"restaurar",new RestaurarCargaRequest(false)))Assert.Equal(HttpStatusCode.BadRequest,no.StatusCode);
         using(var cols=await db.ListCollectionsAsync(new ListCollectionsOptions{Filter=new BsonDocument("name","audit_events")})){var validator=(await cols.SingleAsync())["options"]["validator"].AsBsonDocument;try{await db.RunCommandAsync<BsonDocument>(new BsonDocument{{"collMod","audit_events"},{"validator",new BsonDocument("$and",new BsonArray{validator,new BsonDocument("acao",new BsonDocument("$ne","DemoRestaurada"))})}});using var failed=await c.PostAsJsonAsync(Path+"restaurar",new RestaurarCargaRequest(true));Assert.Equal(HttpStatusCode.ServiceUnavailable,failed.StatusCode);}finally{await db.RunCommandAsync<BsonDocument>(new BsonDocument{{"collMod","audit_events"},{"validator",validator}});}Assert.Equal(first,await Check());}
         await Generate(true);Assert.Equal(first,await Check());

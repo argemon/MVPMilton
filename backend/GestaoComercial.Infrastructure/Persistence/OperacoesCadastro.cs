@@ -29,7 +29,13 @@ public sealed class OperacoesCadastro(IMongoClient client, MongoConfiguration co
             s.StartTransaction(new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority));
             try
             {
-                await ExigirAsync(actor, roles, token, s); var result = await body(s, token);
+                await ExigirAsync(actor, roles, token, s);
+                // Coordinate business writes with administrative deletion of the actor.
+                var guard = await Db.GetCollection<UsuarioIdentity>("users").UpdateOneAsync(s,
+                    x => x.Id == actor.Usuario.Id && x.SecurityStamp == actor.Stamp && x.Ativo,
+                    Builders<UsuarioIdentity>.Update.Inc(x => x.GuardVersion, 1), cancellationToken: token);
+                if (guard.ModifiedCount != 1) throw new AcessoException(FalhaAcesso.Credenciais);
+                var result = await body(s, token);
                 while (true)
                 {
                     try { await s.CommitTransactionAsync(token); return result; }

@@ -57,3 +57,5 @@ Para cada endpoint sensível, testar anônimo (401), perfil negado (403), perfil
 ## Aplicação com MongoDB
 
 A matriz e seus resultados 401/403/404 permanecem iguais. Sessão e conta/stamp atuais são conferidos no backend/primary, sem cache ou perfil do navegador como autoridade. Referências de funcionário/usuário e proteção do último Admin usam a mesma transação e controle administrativo efetivamente atualizado; login/revogação seguem arquitetura07. Credencial MongoDB do Web só acessa armazenamento técnico, sem acesso às coleções comerciais. Nenhuma role de banco equivale automaticamente a perfil de aplicação.
+
+ADR-39: POST administracao/dados-demonstracao/limpar usa Funcionarios.Gerenciar, apenas Administrador com troca concluída. Corpo com confirmação textual exata e UUID; Vendedor/Estoquista403 e anônimo401. Limpeza revoga demais sessões e preserva a atual do executor.

@@ -6,4 +6,5 @@ public interface IDadosDemonstracao
 {
     Task<EstadoCarga> ConsultarAsync(SessaoAtual ator,CancellationToken ct);
     Task<ResultadoCarga> ExecutarAsync(SessaoAtual ator,bool restaurar,bool confirmar,CancellationToken ct);
+    Task LimparAsync(SessaoAtual ator,Guid operacaoId,string confirmacao,CancellationToken ct);
 }

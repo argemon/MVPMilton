@@ -11,3 +11,5 @@ artifacts/
 **/secrets.json
 **/data-protection-keys/
 *.dump
+
+.vs/

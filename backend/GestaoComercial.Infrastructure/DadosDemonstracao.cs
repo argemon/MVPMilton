@@ -53,25 +53,25 @@ public sealed class DadosDemonstracao(OperacoesCadastro operations,IHttpContextA
             for(var i=0;i<5;i++)
             {
                 var n=i;
-                categories[i]=await Step("categoria/"+i,async()=>(await products.SalvarReferenciaAsync(ator,false,null,"Demonstração categoria "+(n+1),true,0,ct)).Id);
-                brands[i]=await Step("marca/"+i,async()=>(await products.SalvarReferenciaAsync(ator,true,null,"Demonstração marca "+(n+1),true,0,ct)).Id);
+                categories[i]=await Step("categoria/"+i,async()=>(await products.SalvarReferenciaAsync(ator,false,null,CenarioMercado.Categorias[n],true,0,ct)).Id);
+                brands[i]=await Step("marca/"+i,async()=>(await products.SalvarReferenciaAsync(ator,true,null,CenarioMercado.Marcas[n],true,0,ct)).Id);
             }
             var workers=new Guid[12];
             for(var i=0;i<12;i++)
             {
                 var n=i;var email=$"tcc.demo.{n+1}@example.invalid";
-                var employee=await Step("funcionario/"+i,async()=>(await employees.CriarFuncionarioAsync(ator,new("Funcionário fictício "+(n+1),email,null),ct)).Id);
+                var employee=await Step("funcionario/"+i,async()=>(await employees.CriarFuncionarioAsync(ator,new(CenarioMercado.Pessoa(n),email,null),ct)).Id);
                 workers[i]=employee;
                 await Step("usuario/"+i,async()=>(await employees.CriarContaAsync(ator,employee,email,Convert.ToBase64String(RandomNumberGenerator.GetBytes(24))+"aA1!",new[]{"Administrador","Vendedor","Estoquista"}[n%3],ct)).Id);
             }
             var clients=new Guid[40];
-            for(var i=0;i<40;i++){var n=i;clients[i]=await Step("cliente/"+i,async()=>(await customers.SalvarAsync(ator,null,new("Cliente fictício "+(n+1),"PF",null,$"cliente.demo.{n+1}@example.invalid",null),true,0,ct)).Id);}
+            for(var i=0;i<40;i++){var n=i;clients[i]=await Step("cliente/"+i,async()=>(await customers.SalvarAsync(ator,null,new(CenarioMercado.Pessoa(n+12),"PF",null,$"cliente.demo.{n+1}@example.invalid",null),true,0,ct)).Id);}
             operations.DemonstrationInstant=new DateTime(2026,8,1,12,0,0,DateTimeKind.Utc);
             var items=new Guid[100];var random=new Random(902026);
             for(var i=0;i<100;i++)
             {
-                var n=i;var price=random.Next(500,50001);var quantity=100+random.Next(0,301);if(n>=90)quantity=7;
-                items[i]=await Step("produto/"+i,async()=>(await products.SalvarAsync(ator,null,DadosProduto.Criar($"TCC-DEMO-{n+1:D3}","Produto fictício "+(n+1),"Carga acadêmica reproduzível",categories[n%5],brands[n%5],price,20),true,0,ct)).Id);
+                var n=i;var price=CenarioMercado.Preco(n);random.Next(500,50001);var quantity=100+random.Next(0,301);if(n>=90)quantity=7;
+                items[i]=await Step("produto/"+i,async()=>(await products.SalvarAsync(ator,null,DadosProduto.Criar($"TCC-DEMO-{n+1:D3}",CenarioMercado.Produto(n),"Produto ilustrativo de supermercado — demonstração acadêmica",categories[n/20],brands[n/20],price,20),true,0,ct)).Id);
                 foreach(var (kind,amount) in new[]{("Entrada",quantity),("SaidaManual",5),("Ajuste",-2)})
                 {var step=$"estoque/{i}/{kind}";await Step(step,async()=>(await stock.MovimentarAsync(ator,Key(run+step),items[n],kind,amount,"Cenário fictício de demonstração",ct)).Id);}
             }
@@ -86,12 +86,76 @@ public sealed class DadosDemonstracao(OperacoesCadastro operations,IHttpContextA
                 if(i%10==0){current=await sales.ConsultarAsync(ator,id,ct);if(current.Status=="Confirmada")await Step("cancelamento/"+i,async()=>(await sales.TransicionarAsync(ator,id,Key(run+"cancelamento/"+n),"cancelamento",current.Versao,"Cancelamento fictício de demonstração",ct)).Id);}
             }
             operations.DemonstrationInstant=null;
+            // Upgrade only untouched generic labels owned by this audited generation.
+            for(var i=0;i<5;i++)
+            {
+                var n=i;
+                foreach(var marca in new[]{false,true})
+                {
+                    var id=marca?brands[n]:categories[n];
+                    var p=await products.ReferenciaAsync(ator,marca,id,ct);
+                    if(p.Nome=="Demonstração "+(marca?"marca ":"categoria ")+(n+1))
+                        await Step("mercado/"+(marca?"marca/":"categoria/")+n,async()=>(await products.SalvarReferenciaAsync(ator,marca,id,marca?CenarioMercado.Marcas[n]:CenarioMercado.Categorias[n],p.Ativo,p.Versao,ct)).Id);
+                }
+            }
+            for(var i=0;i<12;i++)
+            {
+                var n=i;var p=await employees.ConsultarFuncionarioAsync(ator,workers[n],ct);
+                if(p.Nome=="Funcionário fictício "+(n+1))await Step("mercado/funcionario/"+n,async()=>(await employees.AtualizarFuncionarioAsync(ator,p.Id,new(CenarioMercado.Pessoa(n),p.Email,p.Telefone),p.Ativo,p.Versao,ct)).Id);
+            }
+            for(var i=0;i<40;i++)
+            {
+                var n=i;var p=await customers.ConsultarAsync(ator,clients[n],ct);
+                if(p.Nome=="Cliente fictício "+(n+1))await Step("mercado/cliente/"+n,async()=>(await customers.SalvarAsync(ator,p.Id,new(CenarioMercado.Pessoa(n+12),p.Tipo,p.Documento,p.Email,p.Telefone),p.Ativo,p.Versao,ct)).Id);
+            }
+            var legacyPrices=new Random(902026);
+            for(var i=0;i<100;i++)
+            {
+                var originalPrice=legacyPrices.Next(500,50001);legacyPrices.Next(0,301);
+                var n=i;var p=await products.ConsultarAsync(ator,items[n],ct);
+                if(p.Nome=="Produto fictício "+(n+1))await Step("mercado/produto/"+n,async()=>(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,CenarioMercado.Produto(n),"Produto ilustrativo de supermercado — demonstração acadêmica",categories[n/20],brands[n/20],p.PrecoCentavos,p.EstoqueMinimo),p.Ativo,p.Versao,ct)).Id);
+                // Only the original generated price is eligible; manual price changes survive.
+                p=await products.ConsultarAsync(ator,items[n],ct);
+                if(p.Nome==CenarioMercado.Produto(n)&&(p.PrecoCentavos==originalPrice||p.PrecoCentavos==199+originalPrice%4000))
+                    await Step("mercado/preco-embalagem/"+n,async()=>(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,p.Nome,p.Descricao,p.CategoriaId,p.MarcaId,CenarioMercado.Preco(n),p.EstoqueMinimo),p.Ativo,p.Versao,ct)).Id);
+            }
             for(var i=95;i<100;i++){var n=i;await Step("inativar-produto/"+i,async()=>{var p=await products.ConsultarAsync(ator,items[n],ct);return(await products.SalvarAsync(ator,p.Id,DadosProduto.Criar(p.Sku,p.Nome,p.Descricao,p.CategoriaId,p.MarcaId,p.PrecoCentavos,p.EstoqueMinimo),false,p.Versao,ct)).Id;});}
             for(var i=9;i<12;i++){var n=i;await Step("inativar-funcionario/"+i,async()=>{var e=await employees.ConsultarFuncionarioAsync(ator,workers[n],ct);return(await employees.AtualizarFuncionarioAsync(ator,e.Id,new(e.Nome,e.Email,e.Telefone),false,e.Versao,ct)).Id;});}
             await Step("concluida",()=>operations.ExecutarAsync(ator,Admin,async(s,token)=>{var id=Guid.NewGuid();await operations.AuditarAsync(s,ator,"DemoConcluida","CargaDemo",id,token);return id;},ct));
             return new(12,12,40,100,250,25);
         }
         finally{operations.DemonstrationInstant=null;context.TraceIdentifier=original;Gate.Release();}
+    }
+    public async Task LimparAsync(SessaoAtual ator,Guid operacaoId,string confirmacao,CancellationToken ct)
+    {
+        await operations.ExigirAsync(ator,Admin,ct);
+        if(operacaoId==Guid.Empty||confirmacao!="APAGAR DADOS")throw new CadastroException("CONFIRMACAO_OBRIGATORIA");
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        if(!await Gate.WaitAsync(0,ct))throw new CadastroException("CARGA_EM_ANDAMENTO",409);
+        try
+        {
+            await operations.ExecutarAsync(ator,Admin,async(s,token)=>
+            {
+                var guard=await Collection("administration_control").UpdateOneAsync(s,new BsonDocument("_id","administration"),new BsonDocument("$inc",new BsonDocument("guardVersion",1L)),cancellationToken:token);
+                if(guard.ModifiedCount!=1)throw new CadastroException("PERSISTENCIA_INDISPONIVEL",503);
+                var receipt=new BsonDocument{{"acao","DemoLimpa"},{"recursoId",new BsonBinaryData(operacaoId,GuidRepresentation.Standard)}};
+                if(await Collection("audit_events").Find(s,receipt).AnyAsync(token))return true;
+                await Collection("users").UpdateManyAsync(s,new BsonDocument(),new BsonDocument("$inc",new BsonDocument("guardVersion",1L)),cancellationToken:token);
+                var actorId=new BsonBinaryData(ator.Usuario.Id,GuidRepresentation.Standard);
+                var user=await Collection("users").Find(s,new BsonDocument("_id",actorId)).SingleAsync(token);
+                foreach(var name in new[]{"sales","stock_movements","idempotency_receipts","products","customers","categories","brands"})
+                    await Collection(name).DeleteManyAsync(s,new BsonDocument(),cancellationToken:token);
+                await Collection("api_sessions").DeleteManyAsync(s,new BsonDocument("_id",new BsonDocument("$ne",new BsonBinaryData(ator.Id,GuidRepresentation.Standard))),cancellationToken:token);
+                await Collection("users").DeleteManyAsync(s,new BsonDocument("_id",new BsonDocument("$ne",actorId)),cancellationToken:token);
+                var employee=user.GetValue("employeeId",BsonNull.Value);
+                var employeeFilter=employee.IsBsonNull?new BsonDocument():new BsonDocument("_id",new BsonDocument("$ne",employee));
+                await Collection("employees").DeleteManyAsync(s,employeeFilter,cancellationToken:token);
+                await Collection("audit_events").DeleteManyAsync(s,new BsonDocument("acao",new BsonDocument("$ne","DemoLimpa")),cancellationToken:token);
+                await operations.AuditarAsync(s,ator,"DemoLimpa","CargaDemo",operacaoId,token);
+                return true;
+            },ct);
+        }
+        finally{Gate.Release();}
     }
     private async Task Restaurar(SessaoAtual ator,string run,CancellationToken ct)
     {
