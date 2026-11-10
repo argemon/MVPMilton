@@ -2,6 +2,8 @@
 
 ## Encerramento e envio ao Git — 09/11/2026
 
+Publicados910b9fa (implementação) e cb3a782 (testes de carga/limpeza na mesma coleção xUnit, evitando disputa da trava estática entre fixtures). [PR6 atualizado](https://github.com/argemon/MVPMilton/pull/6). [CI do código cb3a782](https://github.com/argemon/MVPMilton/actions/runs/42739919924): arquitetura/restore/build aprovados; testes em execução no instante deste registro. Resultado integral e checks do último commit de documentação consultáveis no PR6; não atribuir os testes locais ao CI. Este complemento documental não altera código. Workspace sem alterações pendentes após commit; serviços fechados. Sem merge/deploy e sem limpeza do banco persistente.
+
 Responsável autorizou fechar tudo e publicar as alterações. Encerrados processos API/Web e navegadores headless de teste ligados ao workspace; portas7143/7243/8081/8082/9223 sem listeners após encerramento. Cupom em memória encerrado pela autorização atual. Nenhuma limpeza do banco persistente executada. .vs incluído no .gitignore, preservando arquivos locais; .env/.local/artifacts continuam ignorados.
 
 Publicação na branch existente codex/readme-update e no PR6 (main), que já contém PDV/cenário de mercado; incluir agora correções locais de login/home, cupom compacto, cancelamento destacado/Atualizar venda e limpeza explícita ADR39. Scanner candidato: node .local/scan-candidate.cjs artifacts/reset-git/gitleaks.json,247 arquivos/1328009 bytes, zero segredos. git diff --check aprovado. Validação local atual:128 unitários+30 integrações reais em bancos exclusivos de teste, conforme seção abaixo. Nenhum CI anterior transferido para o novo código; acompanhar checks do commit enviado. Sem merge/deploy ou bloco adicional.
