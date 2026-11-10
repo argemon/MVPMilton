@@ -317,3 +317,5 @@ O escopo é acadêmico, voltado à demonstração local. Não inclui:
 | [Carga demonstrativa](docs/modules/09-CARGA-DEMONSTRACAO.md) | Cenário fictício, repetição e restauração |
 
 Documentos antigos preservam o histórico e podem citar decisões superadas. Para o escopo atual, prevalecem o índice, o estado vigente e as ADRs mais recentes. Os blocos 00–10 encerram a entrega; não há um bloco posterior de publicação.
+
+Exceção autorizada ADR-39: Limpar dados do sistema remove também registros manuais e histórico, preservando administrador executor/vínculo/sessão, estrutura técnica e recibos de limpeza. Exige APAGAR DADOS e é independente de Restaurar carga. Após sucesso, gerar uma nova carga pelo botão existente. Sem exclusão automática de arquivos de imagens.

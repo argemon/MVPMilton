@@ -1,5 +1,42 @@
 # 03 — Estado do projeto
 
+## Encerramento e envio ao Git — 09/11/2026
+
+Responsável autorizou fechar tudo e publicar as alterações. Encerrados processos API/Web e navegadores headless de teste ligados ao workspace; portas7143/7243/8081/8082/9223 sem listeners após encerramento. Cupom em memória encerrado pela autorização atual. Nenhuma limpeza do banco persistente executada. .vs incluído no .gitignore, preservando arquivos locais; .env/.local/artifacts continuam ignorados.
+
+Publicação na branch existente codex/readme-update e no PR6 (main), que já contém PDV/cenário de mercado; incluir agora correções locais de login/home, cupom compacto, cancelamento destacado/Atualizar venda e limpeza explícita ADR39. Scanner candidato: node .local/scan-candidate.cjs artifacts/reset-git/gitleaks.json,247 arquivos/1328009 bytes, zero segredos. git diff --check aprovado. Validação local atual:128 unitários+30 integrações reais em bancos exclusivos de teste, conforme seção abaixo. Nenhum CI anterior transferido para o novo código; acompanhar checks do commit enviado. Sem merge/deploy ou bloco adicional.
+
+## Limpeza explícita da demonstração — 09/11/2026
+
+Responsável solicitou botão para apagar dados e escolheu preservar seu administrador. ADR-39 registrada antes da implementação. Página Dados de Demonstração ganha área destacada com confirmação APAGAR DADOS e exclusão de dados comerciais/histórico/manual e demais usuários/funcionários, preservando executor/vínculo/sessão atual. API administrativa revalida sessão/perfil, usa transação snapshot/majority/primary e operações sequenciais, mantém estrutura técnica e recibos DemoLimpa para repetição segura do UUID mesmo após nova carga. Guarda efetiva do ator nas transações comerciais e dos usuários no reset coordena concorrência com exclusão; mesma trava do gerador protege carga/limpeza. Nova carga continua sendo clique separado. Arquivos de imagem fora do banco não são apagados; tickets técnicos permanecem, mas sessões removidas negam acesso. Nenhuma limpeza executada no banco de apresentação e .env intacto.
+
+Arquivos: AGENTS/README; Application/DadosDemonstracao; Shared/DadosDemonstracao; Api/Acesso/EndpointsDemonstracao; Infrastructure/DadosDemonstracao e Persistence/OperacoesCadastro; Web/ApiClients/DemonstracaoApiClient, Pages/DadosDemonstracao e app.css; novos DemonstrationCleanupTests e ajuste de texto/assertivas em DemonstrationBffTests; ADR39, módulo09, arquitetura06/07, RF/RN/CA/permissões e este estado. Modificações locais anteriores de home/login/PDV e .vs preservadas, sem incorporá-las como autoria desta solicitação.
+
+Comandos reais (DOTNET_CLI_HOME=.local/dotnet):
+- dotnet test tests/GestaoComercial.IntegrationTests --configuration Release --filter FullyQualifiedName~DemonstrationCleanupTests -m:1 -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/reset-tests" --verbosity minimal: 3 aprovados, zero falhas/skips, 9m29s. Atlas real, bancos gc_m00_*_test descartáveis conforme fixture/ADR28/39; nenhum comando de limpeza no gestao_comercial_dev. Verificou confirmação inválida/UUID vazio sem efeito, rollback com falha forçada na auditoria, preservação de administrador/vínculo/sessão, revogação, nova carga250 vendas/100 produtos, repetição antiga preservando nova carga e segunda limpeza independente. Primeira tentativa --no-restore falhou por assets ausentes na pasta isolada; execução com restore concluiu.
+- dotnet test tests/GestaoComercial.IntegrationTests --configuration Release --filter 'FullyQualifiedName~SalesTests|FullyQualifiedName~StockTests|FullyQualifiedName~AdministrationTests|FullyQualifiedName~DemonstrationBffTests' -m:1 -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/reset-regression" --verbosity minimal: 27 aprovados, zero falhas/skips, 1m34s, em bancos exclusivos das fixtures no Atlas. Inclui concorrência, rollback e idempotência de vendas/estoque, último administrador e página restrita com confirmação.
+- dotnet test tests/GestaoComercial.UnitTests --configuration Release -m:1 -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/reset-unit" --verbosity minimal: 128 aprovados, zero falhas/skips. Total desta validação158 testes aprovados; não é CI.
+- Build final Web Release --no-restore -p:UseArtifactsOutput=true -p:ArtifactsPath="$pwd/.local/reset-regression" -m:1: zero avisos/erros. verify-architecture.ps1 aprovado com execução autorizada; primeira invocação sem Bypass foi recusada pela política local. git diff --check aprovado.
+- Node .local/demo-cleanup-layout.cjs: área estática isolada no Edge1366/768/390px, sem overflow e botão inicialmente desabilitado; captura artifacts/block10/screens/demo-cleanup-390.png inspecionada. Limite: não é jornada de clique destrutivo no banco atual. Evidência de layout em .local/demo-cleanup-layout.json. Docker não está instalado; utilizado o Atlas isolado permitido, sem simulação.
+
+Pendência operacional: aplicação aberta ainda usa binários anteriores; reiniciar API e Web após salvar o cupom aberto com1 produto. Não reiniciados para não perder o carrinho. Botão compilado e testes aprovados, nenhuma execução de limpeza solicitada/realizada no banco persistente. Sem commit/push/CI, deploy ou merge desta alteração; nenhum bloco seguinte.
+
+## Texto Atualizar venda — 09/11/2026
+
+A pedido do responsável, VendaDetalhe.razor substitui Reler venda por Atualizar venda no botão e na orientação após falha de consulta. Alteração apenas textual, handler preservado. Comando real dotnet build frontend/GestaoComercial.Web --configuration Release --no-restore -o .local/coupon-build -m:1 --verbosity quiet, DOTNET_CLI_HOME=.local/dotnet: sucesso0 avisos/erros. git diff --check aprovado. Sem testes novos para troca de rótulo, sem acesso Atlas/.env, reinício, commit/push/CI ou bloco adicional. Texto aplicado nas abas PDV abertas sem recarregar; código compilado em pasta isolada para próxima inicialização.
+
+## Destaque de Cancelar venda — 09/11/2026
+
+Solicitação: cancelamento difícil de localizar. VendaDetalhe.razor e pdv.css passam a destacar a área expansível com borda/texto vermelhos, fundo claro, fonte forte e alvo47,6px. Confirmação final recebe botão vermelho. Mantidos details nativo, motivo, checkbox, handlers e policies; abrir a área não executa operação. Complemento ADR-38 registrado antes da implementação. Nenhum contrato, cálculo, regra ou persistência alterado; .env/Atlas não acessados. Alterações locais anteriores preservadas.
+
+Comando real: dotnet build frontend/GestaoComercial.Web --configuration Release --no-restore -o .local/coupon-build -m:1 --verbosity quiet, DOTNET_CLI_HOME=.local/dotnet; sucesso0 avisos/erros. Node .local/cancel-layout.cjs verificou composição isolada em Edge1366/768/390px, sem overflow; expansão por clique e confirmação desabilitada conferidas. Primeira tentativa de teclado em alvo isolado não expandiu; não declarar navegação por teclado homologada. Captura artifacts/block10/screens/cancel-prominent-390.png inspecionada e resultados em .local/cancel-layout.json. Prévia CSS/classes aplicada às abas PDV abertas, sem recarregar nem cancelar venda. Nenhum teste de regra/integração novo, pois alteração somente visual. Sem reiniciar hosts, commit/push/CI; nenhum bloco seguinte/deploy/merge.
+
+## Cupom com um produto por linha — 09/11/2026
+
+Solicitação da captura: compactar cada item do cupom. pdv.css agora alinha nome, quantidade, unitário, subtotal e remoção em uma linha; wrappers usam display:contents, nome preserva texto acessível com reticências e title em VendaDetalhe.razor. Registrado complemento ADR-38 antes da edição de markup. Sem regras/contratos/cálculos/persistência alterados; .env/Atlas não acessados. Alterações anteriores preservadas.
+
+Verificações reais: dotnet build frontend/GestaoComercial.Web --configuration Release --no-restore -o .local/coupon-build -m:1 --verbosity quiet, com DOTNET_CLI_HOME=.local/dotnet, sucesso0 avisos/erros. Node .local/coupon-layout.cjs sobre cópia DOM de um cupom real no Edge/CDP: larguras430/368/358/326px, todos os elementos na mesma linha, sem sobreposição nem overflow do item; altura53,17px. Evidência .local/coupon-layout.json e capturas artifacts/block10/screens/coupon-single-row-{430,326}.png; captura326 inspecionada. Cópia estática não replica valores atuais de input; não usada para validar quantidade/cálculos. Sem novos testes de regra/integração: alteração somente visual. CSS aplicado também às abas PDV abertas via prévia local, sem recarregar/perder carrinho; title em markup estará na próxima compilação iniciada pelo responsável. Sem reiniciar hosts, commit/push/CI nesta correção. Nenhum bloco seguinte/deploy/merge.
+
 ## Ajuste da tela inicial — 09/11/2026
 
 A pedido do responsável após captura da home: rota / agora apresenta área de trabalho com atalhos de nova venda, clientes, estoque e produtos, consultas secundárias e destaque ao dashboard somente para Administrador. Cada atalho usa a policy existente; troca obrigatória de senha continua bloqueando atalhos. Removida consulta técnica de readiness da home, mantendo MeAsync e tratamento de falha de sessão. Sem regra/contrato/persistência novos; .env e Atlas não acessados/alterados nesta correção. Alterações locais anteriores de login e .vs preservadas.
@@ -262,6 +299,12 @@ Falhas intermediárias foram corrigidas e a suíte foi repetida: ordem dos POSTs
 ## Histórico preservado00 e auditorias anteriores
 
 # 03 — Estado do projeto
+
+## Cupom com um produto por linha — 09/11/2026
+
+Solicitação da captura: compactar cada item do cupom. pdv.css agora alinha nome, quantidade, unitário, subtotal e remoção em uma linha; wrappers usam display:contents, nome preserva texto acessível com reticências e title em VendaDetalhe.razor. Registrado complemento ADR-38 antes da edição de markup. Sem regras/contratos/cálculos/persistência alterados; .env/Atlas não acessados. Alterações anteriores preservadas.
+
+Verificações reais: dotnet build frontend/GestaoComercial.Web --configuration Release --no-restore -o .local/coupon-build -m:1 --verbosity quiet, com DOTNET_CLI_HOME=.local/dotnet, sucesso0 avisos/erros. Node .local/coupon-layout.cjs sobre cópia DOM de um cupom real no Edge/CDP: larguras430/368/358/326px, todos os elementos na mesma linha, sem sobreposição nem overflow do item; altura53,17px. Evidência .local/coupon-layout.json e capturas artifacts/block10/screens/coupon-single-row-{430,326}.png; captura326 inspecionada. Cópia estática não replica valores atuais de input; não usada para validar quantidade/cálculos. Sem novos testes de regra/integração: alteração somente visual. CSS aplicado também às abas PDV abertas via prévia local, sem recarregar/perder carrinho; title em markup estará na próxima compilação iniciada pelo responsável. Sem reiniciar hosts, commit/push/CI nesta correção. Nenhum bloco seguinte/deploy/merge.
 
 ## Ajuste da tela inicial — 09/11/2026
 

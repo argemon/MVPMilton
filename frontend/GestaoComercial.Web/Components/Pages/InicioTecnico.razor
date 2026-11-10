@@ -3,27 +3,54 @@
 @rendermode InteractiveServer
 @implements IDisposable
 @inject SessaoCircuito Sessao
-@inject GestaoComercial.Web.ApiClients.EstadoApiClient Api
 @inject NavigationManager Navigation
 <PageTitle>Início · Gestão Comercial</PageTitle>
 <AuthorizeView><Authorized>
-@if (_carregando) { <p role="status">Consultando sessão…</p> }
+@if (_carregando) { <p role="status">Preparando sua área de trabalho…</p> }
 else if (_erro) { <h1>Serviço indisponível</h1><p role="alert">Não foi possível validar o acesso. Tente novamente.</p><button @onclick="ConsultarAsync">Repetir</button> }
 else if (_usuario is not null) {
-    <h1>Olá, @_usuario.Nome</h1><p>Perfil: @_usuario.Perfil</p>
-    @if (_usuario.DeveAlterarSenha) { <p>Conclua a troca de senha para continuar.</p><a href="/conta/senha" data-enhance-nav="false">Alterar senha</a> }
-    else { <AuthorizeView Policy="Usuarios.Gerenciar" Context="admin"><Authorized><a class="botao" href="/usuarios">Gerenciar usuários</a></Authorized></AuthorizeView> }
-    <section><h2>Estado da API</h2><p role="status">@(_disponivel ? "API disponível" : "API indisponível. Tente novamente.")</p><button @onclick="ConsultarAsync">Repetir</button></section>
+    <div class="inicio">
+    <div class="inicio-cabecalho"><div><p class="inicio-sobre">ÁREA DE TRABALHO</p><h1>Olá, @_usuario.Nome</h1><p>O que vamos fazer hoje?</p></div><span class="inicio-perfil">@_usuario.Perfil</span></div>
+    @if (_usuario.DeveAlterarSenha) {
+        <section><h2>Proteja seu acesso</h2><p>Conclua a troca de senha para acessar sua área de trabalho.</p><a class="botao" href="/conta/senha" data-enhance-nav="false">Alterar senha</a></section>
+    }
+    else {
+        <AuthorizeView Policy="Dashboard.Ler" Context="painel"><Authorized>
+            <section class="inicio-destaque"><div><p class="inicio-sobre">VISÃO DO NEGÓCIO</p><h2>Suas vendas e seu estoque, em perspectiva.</h2><p>Acompanhe o faturamento, as vendas recentes e os produtos que precisam de reposição.</p><a class="botao" href="/dashboard">Abrir dashboard <span aria-hidden="true">↗</span></a></div><div class="inicio-selo" aria-hidden="true"><span>R$</span><i></i><i></i><i></i><i></i><i></i></div></section>
+        </Authorized></AuthorizeView>
+        <h2 class="inicio-titulo">Operação do dia a dia</h2><p class="inicio-descricao">Entre direto na tarefa que você precisa resolver.</p>
+        <div class="inicio-atalhos">
+        <AuthorizeView Policy="Vendas.Criar" Context="venda"><Authorized>
+            <a class="inicio-card" href="/vendas/nova"><span class="inicio-icone" aria-hidden="true">＋</span><h3>Nova venda</h3><p>Selecione o cliente, adicione produtos e conclua a venda.</p><span class="inicio-link">Iniciar venda →</span></a>
+        </Authorized></AuthorizeView>
+        <AuthorizeView Policy="Clientes.Gerenciar" Context="cliente"><Authorized>
+            <a class="inicio-card" href="/clientes"><span class="inicio-icone" aria-hidden="true">◎</span><h3>Clientes</h3><p>Encontre um cliente ou mantenha os dados do cadastro em dia.</p><span class="inicio-link">Consultar clientes →</span></a>
+        </Authorized></AuthorizeView>
+        <AuthorizeView Policy="Estoque.Ler" Context="estoque"><Authorized>
+            <a class="inicio-card" href="/estoque"><span class="inicio-icone" aria-hidden="true">▤</span><h3>Estoque</h3><p>Confira os saldos e identifique produtos abaixo do mínimo.</p><span class="inicio-link">Consultar estoque →</span></a>
+        </Authorized></AuthorizeView>
+        <AuthorizeView Policy="Produtos.Ler" Context="produto"><Authorized>
+            <a class="inicio-card" href="/produtos"><span class="inicio-icone" aria-hidden="true">◇</span><h3>Produtos</h3><p>Consulte os produtos, preços e informações de cada item.</p><span class="inicio-link">Explorar produtos →</span></a>
+        </Authorized></AuthorizeView>
+        </div>
+        <section class="inicio-consultas"><h2>Consultas e gestão</h2><div>
+        <AuthorizeView Policy="Vendas.Ler" Context="historico"><Authorized><a href="/vendas">Histórico de vendas <span aria-hidden="true">↗</span></a></Authorized></AuthorizeView>
+        <AuthorizeView Policy="Relatorios.Vendas" Context="relatorio"><Authorized><a href="/relatorios/vendas" data-enhance-nav="false">Relatório de vendas <span aria-hidden="true">↗</span></a></Authorized></AuthorizeView>
+        <AuthorizeView Policy="Relatorios.Estoque" Context="movimentos"><Authorized><a href="/relatorios/movimentos" data-enhance-nav="false">Movimentações de estoque <span aria-hidden="true">↗</span></a></Authorized></AuthorizeView>
+        <AuthorizeView Policy="Usuarios.Gerenciar" Context="usuarios"><Authorized><a href="/usuarios">Gerenciar usuários <span aria-hidden="true">↗</span></a></Authorized></AuthorizeView>
+        </div></section>
+    }
+    </div>
 }
 </Authorized><NotAuthorized><RedirecionarAcesso /></NotAuthorized></AuthorizeView>
 @code {
     private UsuarioAutenticado? _usuario;
-    private bool _carregando = true, _erro, _disponivel;
+    private bool _carregando = true, _erro;
     private readonly CancellationTokenSource _cts = new();
     protected override Task OnInitializedAsync() => ConsultarAsync();
     private async Task ConsultarAsync() {
         _carregando = true; _erro = false;
-        try { _usuario = (await Sessao.MeAsync(_cts.Token)).Usuario; _disponivel = await Api.ConsultarAsync(_cts.Token); }
+        try { _usuario = (await Sessao.MeAsync(_cts.Token)).Usuario; }
         catch (ApiFailure e) { if (e.Status is 401 or 403) Navigation.NavigateTo("/conta/entrar", true); else _erro = true; }
         catch (OperationCanceledException) when (_cts.IsCancellationRequested) { }
         finally { _carregando = false; }

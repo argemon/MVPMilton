@@ -8,20 +8,49 @@
 @if(_state is {} state){<p>Banco atual: @state.Banco · Última carga concluída: @(state.UltimaExecucao?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")??"nenhuma registrada")</p>}
 <p>Cenário de supermercado com Camil, Nestlé, Piracanjuba, Ypê e Colgate. Pessoas são fictícias e produtos são ilustrativos. Gerar carga também atualiza os nomes genéricos antigos, sem apagar vendas; o histórico anterior mantém os nomes da época.</p>
 <p>Cria 12 funcionários e usuários, 40 clientes, 100 produtos e 250 vendas fictícias no banco atual. A geração pode levar alguns minutos. Repetir retoma a mesma carga sem duplicações.</p>
-@if(_busy){<p role="status">Processando a carga. Aguarde…</p>}
+@if(_busy){<p role="status">Processando operação. Aguarde…</p>}
 @if(_message is not null){<p role="@(_success?"status":"alert")" tabindex="-1" @ref="_alert">@_message</p>}
-<button disabled="@_busy" @onclick="()=>Executar(false)">Gerar / atualizar cenário de mercado</button>
+<button disabled="@(_busy||_clearId is not null)" @onclick="()=>Executar(false)">Gerar / atualizar cenário de mercado</button>
 <p>A restauração substitui somente a carga anterior. Se houver alterações ou referências manuais, a restauração será recusada, preservando os dados.</p>
 <label><input type="checkbox" @bind="_confirm" disabled="@_busy" /> Confirmo remover a carga anterior e gerar novamente.</label>
-<button disabled="@(_busy||!_confirm)" @onclick="()=>Executar(true)">Restaurar carga</button>
+<button disabled="@(_busy||!_confirm||_clearId is not null)" @onclick="()=>Executar(true)">Restaurar carga</button>
+<section class="demo-clear" aria-labelledby="titulo-limpar">
+    <h2 id="titulo-limpar">Limpar dados do sistema</h2>
+    <p>Apaga definitivamente clientes, produtos, categorias, marcas, vendas, movimentos, histórico anterior e os demais usuários e funcionários, incluindo os registros cadastrados manualmente.</p>
+    <p><strong>Somente seu administrador, seu vínculo de funcionário e a sessão atual serão mantidos.</strong> As outras sessões perderão acesso. Depois da limpeza, use Gerar / atualizar cenário de mercado para criar uma nova carga.</p>
+    <p>Não há desfazer. Os arquivos de imagem armazenados fora do banco não serão apagados.</p>
+    <label for="confirmacao-limpeza">Para confirmar, digite APAGAR DADOS</label>
+    <input id="confirmacao-limpeza" @bind="_clearText" @bind:event="oninput" disabled="@(_busy||_clearId is not null)" autocomplete="off" spellcheck="false" />
+    <button class="demo-clear-button" disabled="@(_busy||_clearText!="APAGAR DADOS")" @onclick="Limpar">@(_clearId is null?"Apagar dados e manter meu administrador":"Reconsultar / repetir a mesma limpeza")</button>
+</section>
 @code{
+    private string _clearText="";private Guid? _clearId;
+    private async Task Limpar()
+    {
+        if(_busy||_clearText!="APAGAR DADOS")return;
+        _busy=true;_message=null;_success=false;_clearId??=Guid.NewGuid();
+        try
+        {
+            await Sessao.UsarAsync(async(a,t,c)=>{await a.LimparDadosAsync(t,_clearId.Value,_clearText,c);return true;},CancellationToken.None);
+            _clearId=null;_clearText="";_confirm=false;
+            if(_state is {} previous)_state=new(previous.Banco,null);
+            _success=true;_message="Dados apagados. Seu administrador foi mantido. Agora você pode gerar uma nova carga de demonstração.";
+        }
+        catch(ApiFailure e)
+        {
+            if(e.Status is 401 or 403){Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);return;}
+            if(e.Status<500){_clearId=null;_message=e.Code=="CARGA_EM_ANDAMENTO"?"Há outra carga ou limpeza em andamento. Aguarde antes de tentar novamente.":"Limpeza recusada. Confira a confirmação e tente novamente.";}
+            else _message="Não foi possível confirmar o resultado. Repita a mesma limpeza para consultar o resultado com segurança antes de gerar uma carga.";
+        }
+        finally{_busy=false;_focus=true;}
+    }
     private EstadoCargaResponse? _state;
     protected override async Task OnInitializedAsync(){try{_state=await Sessao.UsarAsync((a,t,c)=>a.EstadoCargaAsync(t,c),CancellationToken.None);}catch(ApiFailure){_message="Não foi possível consultar a última execução. Tente novamente.";}}
     private bool _busy,_confirm,_focus,_success;private string? _message;private ElementReference _alert;
     protected override async Task OnAfterRenderAsync(bool first){if(_focus){_focus=false;await _alert.FocusAsync();}}
     private async Task Executar(bool restaurar)
     {
-        if(_busy||(restaurar&&!_confirm))return;
+        if(_busy||_clearId is not null||(restaurar&&!_confirm))return;
         _busy=true;_message=null;_success=false;
         try{var r=await Sessao.UsarAsync((a,t,c)=>a.CargaAsync(t,restaurar,_confirm,c),CancellationToken.None);_state=await Sessao.UsarAsync((a,t,c)=>a.EstadoCargaAsync(t,c),CancellationToken.None);_success=true;_message=$"Carga concluída: {r.Funcionarios} funcionários, {r.Usuarios} usuários, {r.Clientes} clientes, {r.Produtos} produtos, {r.Vendas} vendas ({r.Canceladas} canceladas).";}
         catch(ApiFailure e){if(e.Status is 401 or 403){Navigation.NavigateTo(e.Status==401?"/conta/entrar":"/acesso-negado",true);return;}_message=e.Code switch{"CARGA_DEPENDENCIA_MANUAL"=>"Restauração recusada: registros da carga possuem uso ou alterações manuais. Nenhum registro foi removido.","CARGA_EM_ANDAMENTO"=>"Já existe uma carga em andamento. Aguarde antes de repetir.",_=>"Não foi possível concluir. A geração pode ser repetida para retomar. A restauração só remove dados após verificar as dependências."};}

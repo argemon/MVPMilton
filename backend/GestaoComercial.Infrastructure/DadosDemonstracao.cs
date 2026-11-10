@@ -126,6 +126,37 @@ public sealed class DadosDemonstracao(OperacoesCadastro operations,IHttpContextA
         }
         finally{operations.DemonstrationInstant=null;context.TraceIdentifier=original;Gate.Release();}
     }
+    public async Task LimparAsync(SessaoAtual ator,Guid operacaoId,string confirmacao,CancellationToken ct)
+    {
+        await operations.ExigirAsync(ator,Admin,ct);
+        if(operacaoId==Guid.Empty||confirmacao!="APAGAR DADOS")throw new CadastroException("CONFIRMACAO_OBRIGATORIA");
+        if(!await schema.IsReadyAsync(ct))throw new CadastroException("PERSISTENCIA_NAO_INICIALIZADA",503);
+        if(!await Gate.WaitAsync(0,ct))throw new CadastroException("CARGA_EM_ANDAMENTO",409);
+        try
+        {
+            await operations.ExecutarAsync(ator,Admin,async(s,token)=>
+            {
+                var guard=await Collection("administration_control").UpdateOneAsync(s,new BsonDocument("_id","administration"),new BsonDocument("$inc",new BsonDocument("guardVersion",1L)),cancellationToken:token);
+                if(guard.ModifiedCount!=1)throw new CadastroException("PERSISTENCIA_INDISPONIVEL",503);
+                var receipt=new BsonDocument{{"acao","DemoLimpa"},{"recursoId",new BsonBinaryData(operacaoId,GuidRepresentation.Standard)}};
+                if(await Collection("audit_events").Find(s,receipt).AnyAsync(token))return true;
+                await Collection("users").UpdateManyAsync(s,new BsonDocument(),new BsonDocument("$inc",new BsonDocument("guardVersion",1L)),cancellationToken:token);
+                var actorId=new BsonBinaryData(ator.Usuario.Id,GuidRepresentation.Standard);
+                var user=await Collection("users").Find(s,new BsonDocument("_id",actorId)).SingleAsync(token);
+                foreach(var name in new[]{"sales","stock_movements","idempotency_receipts","products","customers","categories","brands"})
+                    await Collection(name).DeleteManyAsync(s,new BsonDocument(),cancellationToken:token);
+                await Collection("api_sessions").DeleteManyAsync(s,new BsonDocument("_id",new BsonDocument("$ne",new BsonBinaryData(ator.Id,GuidRepresentation.Standard))),cancellationToken:token);
+                await Collection("users").DeleteManyAsync(s,new BsonDocument("_id",new BsonDocument("$ne",actorId)),cancellationToken:token);
+                var employee=user.GetValue("employeeId",BsonNull.Value);
+                var employeeFilter=employee.IsBsonNull?new BsonDocument():new BsonDocument("_id",new BsonDocument("$ne",employee));
+                await Collection("employees").DeleteManyAsync(s,employeeFilter,cancellationToken:token);
+                await Collection("audit_events").DeleteManyAsync(s,new BsonDocument("acao",new BsonDocument("$ne","DemoLimpa")),cancellationToken:token);
+                await operations.AuditarAsync(s,ator,"DemoLimpa","CargaDemo",operacaoId,token);
+                return true;
+            },ct);
+        }
+        finally{Gate.Release();}
+    }
     private async Task Restaurar(SessaoAtual ator,string run,CancellationToken ct)
     {
         await operations.ExecutarAsync(ator,Admin,async(s,token)=>

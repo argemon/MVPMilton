@@ -12,3 +12,27 @@ body:has(.pdv) .sidebar{display:none}body:has(.pdv) main{padding:1.5rem 2rem}bod
 
 @media(max-width:1150px){.pdv-product-head,.pdv .pdv-product{grid-template-columns:minmax(0,1fr) 5.6rem 3.5rem 4.8rem 1.5rem;gap:.4rem}.pdv-product-sku{font-size:.6rem}}
 @media(max-width:480px){.pdv-product-head,.pdv .pdv-product{grid-template-columns:minmax(0,1fr) 3rem 4.6rem 1.4rem;gap:.35rem;padding:.65rem .3rem}.pdv-product-head>span:nth-child(2),.pdv-product-sku{display:none}.pdv-product-name{font-size:.75rem}.pdv-stock{font-size:.65rem}.pdv-product-price{font-size:.75rem}.pdv-product-head{padding-right:1.25rem}}
+
+/* Cupom compacto: cada produto ocupa uma única linha. */
+.pdv-line{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto 1.4rem;align-items:center;gap:.4rem;padding:.65rem 0}
+.pdv-line-title,.pdv-line-values{display:contents}
+.pdv-line-title>strong{grid-column:1;grid-row:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem}
+.pdv-line-values>.pdv-stepper,.pdv-line-values>span:first-child{grid-column:2;grid-row:1}
+.pdv-line-values>.pdv-unit-price{grid-column:3;grid-row:1;white-space:nowrap;font-size:.65rem}
+.pdv-line-values>strong{grid-column:4;grid-row:1;margin:0;text-align:right;font-size:.78rem;font-variant-numeric:tabular-nums}
+.pdv-line-title>.pdv-remove{grid-column:5;grid-row:1;align-self:center}
+.pdv-line .pdv-stepper button{width:1.4rem;min-height:1.9rem}
+.pdv-line .pdv-stepper input{width:2.4rem}
+
+/* Cancelamento visível, com confirmação mantida na área expansível. */
+.pdv-bottom>.pdv-danger{width:min(100%,27rem);min-width:0}
+.pdv-danger>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:44px;padding:.75rem 1rem;border:1px solid #c44b43;border-radius:.55rem;background:#fff4f2;color:#a32e27;font-size:.9rem;font-weight:700;list-style:none}
+.pdv-danger>summary::-webkit-details-marker{display:none}
+.pdv-danger>summary::after{content:'+';font-size:1.25rem;line-height:1}
+.pdv-danger[open]>summary::after{content:'−'}
+.pdv-danger>summary:hover{background:#ffe7e3;border-color:#a32e27}
+.pdv-danger>summary:focus-visible{outline:3px solid #a32e27;outline-offset:3px}
+.pdv-danger>fieldset{padding:1rem;border:1px solid #e8c7c2;border-radius:.55rem}
+.pdv .pdv-danger-confirm{background:#a32e27;color:#fff;min-height:44px;width:100%;white-space:normal}
+.pdv .pdv-danger-confirm:hover:not(:disabled){background:#81221d}
+@media(max-width:600px){.pdv-bottom{flex-wrap:wrap}.pdv-bottom>.pdv-danger{width:100%}}

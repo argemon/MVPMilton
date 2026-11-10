@@ -17,7 +17,7 @@ public sealed class DemonstrationBffTests(BffFixture f):IClassFixture<BffFixture
         {
             var user=await f.Backend.SeedAsync(role);using var c=f.Client();using var login=await f.Login(c,user.Email,AuthFixture.Password);
             using var page=await c.GetAsync("/administracao/dados-demonstracao");
-            if(role=="Administrador"){Assert.Equal(HttpStatusCode.OK,page.StatusCode);var html=WebUtility.HtmlDecode(await page.Content.ReadAsStringAsync());Assert.Contains("Gerar carga",html);Assert.Contains("Restaurar carga",html);Assert.Contains("Confirmo remover",html);Assert.DoesNotContain("accessToken",html,StringComparison.OrdinalIgnoreCase);}
+            if(role=="Administrador"){Assert.Equal(HttpStatusCode.OK,page.StatusCode);var html=WebUtility.HtmlDecode(await page.Content.ReadAsStringAsync());Assert.Contains("Gerar / atualizar cenário de mercado",html);Assert.Contains("Apagar dados e manter meu administrador",html);Assert.Contains("APAGAR DADOS",html);Assert.Contains("id=\"confirmacao-limpeza\"",html);Assert.Contains("Restaurar carga",html);Assert.Contains("Confirmo remover",html);Assert.DoesNotContain("accessToken",html,StringComparison.OrdinalIgnoreCase);}
             else Assert.NotEqual(HttpStatusCode.OK,page.StatusCode);
         }
     });

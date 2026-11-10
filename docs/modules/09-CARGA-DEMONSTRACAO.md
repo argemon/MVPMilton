@@ -54,3 +54,7 @@ Usar dados evidentemente fictícios, e-mails de exemplo e imagens ilustrativas p
 ## Contrato da implementação (ADR-37)
 
 Página /administracao/dados-demonstracao. POST /api/v1/administracao/dados-demonstracao/gerar e /restaurar (confirmar=true). Policy administrativa também na API;409 para dependência/alteração manual e400 sem confirmação. Identificação pela auditoria transacional existente, sem coleção de controle adicional. Conciliação, reexecução, recuperação e rollback obrigatórios. Não iniciar10 nesta solicitação. Evidências no relatório12.
+
+## Exceção operacional autorizada — ADR-39
+
+A solicitação de09/11/2026 acrescenta Limpar dados do sistema, com confirmação textual APAGAR DADOS, para remover também cadastros manuais, histórico, vendas e movimentos. Preserva somente administrador executor, funcionário vinculado e sessão atual, além da estrutura/tickets técnicos e recibos de limpeza. Imagens físicas não são excluídas automaticamente. Esta ação é distinta de Restaurar carga e exige autorização administrativa real. Nova carga é executada depois, por outro botão. Implementação/testes nunca devem acionar essa limpeza no banco persistente sem pedido de execução explícito; pedido atual é construir o botão.
