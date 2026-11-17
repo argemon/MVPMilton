@@ -116,80 +116,227 @@ As dependências seguem **Domain ← Application ← Infrastructure**, com compo
 
 ## Como executar localmente
 
-### 1. Pré-requisitos
+Este guia acompanha uma **primeira execução no Windows, usando PowerShell**, desde o download até o login. Não é necessário saber programar nem instalar Visual Studio. Você vai iniciar dois programas no terminal: a **API**, que executa as regras e acessa o banco, e o **Web**, que apresenta as telas no navegador.
 
-- **SDK .NET 10.0.401**, versão fixada em [global.json](global.json), com `rollForward` desabilitado.
-- Navegador atualizado, como Microsoft Edge, Chrome ou Firefox.
-- Internet e acesso permitido ao cluster Atlas existente.
-- Arquivo `.env` privado na raiz, com a conexão já configurada.
-- Certificado HTTPS de desenvolvimento confiável na máquina.
+**Antes de começar:** o código é público, mas o banco Atlas e as contas de acesso são privados. Baixar o projeto não fornece a conexão nem uma senha de administrador. Solicite ao responsável a configuração do banco existente, a liberação do seu acesso de rede e uma conta do sistema. Sem isso, será possível baixar e compilar, mas não utilizar as funcionalidades que dependem do banco. Esta instalação usa internet e compartilha os dados do Atlas; alterações feitas por outro computador aparecem no mesmo banco.
 
-**Docker não é necessário para executar a apresentação com o Atlas.** Ele é utilizado pelo perfil técnico de testes de integração do CI. Node.js também não é necessário para iniciar a aplicação.
+### 1. Instalar o que será necessário
 
-Os comandos abaixo são para PowerShell, executados na raiz do repositório:
+| Item | Onde obter / o que fazer |
+| --- | --- |
+| SDK .NET **10.0.401** | Abra a [página oficial do .NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), localize **SDK 10.0.401** e escolha o instalador Windows compatível com o seu computador (normalmente x64; Arm64 para equipamentos ARM). Instale o **SDK**, que inclui as ferramentas para compilar e executar. |
+| Git, se escolher baixar pelo terminal | Instale pelo [site oficial do Git para Windows](https://git-scm.com/downloads/win). Quem baixar por ZIP pode pular essa instalação. |
+| Navegador | Use Edge, Chrome ou Firefox atualizado. |
+| Conexão e acesso ao banco | Obtenha com o responsável a URI privada do MongoDB Atlas e confirme a autorização do seu IP. |
+
+A versão exata do SDK é exigida pelo [global.json](global.json): `rollForward` está desabilitado. Ter somente outra versão, como 10.0.402, não atende essa configuração. Várias versões do SDK podem coexistir no computador.
+
+**Docker, Node.js, MongoDB instalado no PC e uma IDE não são necessários neste roteiro com Atlas.** Docker é usado no perfil de testes de integração, explicado mais adiante.
+
+Depois das instalações, feche e reabra o PowerShell para que ele reconheça os programas. Abra o menu Iniciar, procure **PowerShell** e execute:
 
 ```powershell
-cd D:\Projetos\MVPMilton
+dotnet --list-sdks
+git --version
+```
+
+O primeiro comando deve listar `10.0.401`. Execute o segundo apenas se instalou o Git. Se aparecer “não é reconhecido”, reabra o terminal e confira a instalação antes de continuar.
+
+### 2. Baixar o projeto
+
+Escolha **uma** das opções abaixo.
+
+#### Opção A — pelo Git
+
+No PowerShell, execute uma linha por vez:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\Projetos" | Out-Null
+Set-Location "$HOME\Projetos"
+git clone https://github.com/argemon/MVPMilton.git
+Set-Location MVPMilton
+```
+
+O projeto ficará em uma pasta como `C:\Users\SeuUsuario\Projetos\MVPMilton`. Se essa pasta já existir, utilize a cópia existente ou escolha outra pasta vazia para o clone.
+
+#### Opção B — pelo navegador, sem Git
+
+1. Abra [argemon/MVPMilton no GitHub](https://github.com/argemon/MVPMilton).
+2. Selecione a branch **main**, clique em **Code** e depois em **Download ZIP**.
+3. No arquivo baixado, clique com o botão direito e escolha **Extrair Tudo**.
+4. Abra a pasta extraída, normalmente chamada `MVPMilton-main`. Não execute o projeto dentro do ZIP.
+5. Clique na barra de endereço do Explorador de Arquivos, digite `powershell` e pressione Enter para abrir um terminal nessa pasta.
+
+**Confira a pasta antes de continuar:** ela deve conter `README.md`, `GestaoComercial.slnx`, `global.json`, `.env.example`, `backend` e `frontend`. É essa a **raiz do projeto**, mencionada no restante do guia.
+
+```powershell
+Get-Location
+Get-ChildItem
 dotnet --version
+```
+
+Na raiz, o último comando deve retornar `10.0.401`. Todos os comandos seguintes partem dessa pasta. Se você fechar o terminal, abra outro e volte a ela com `Set-Location "CAMINHO_COMPLETO_DA_PASTA"`, substituindo o texto pelo caminho real, entre aspas.
+
+### 3. Configurar o acesso ao MongoDB Atlas
+
+O arquivo privado **`.env` não acompanha o Git nem o ZIP**. Ele deve ficar na raiz, ao lado de `README.md`, e é lido automaticamente pelos dois programas no ambiente `Development`, definido pelo perfil `https`.
+
+1. Solicite ao responsável a URI de conexão do Atlas existente, o nome do banco e uma conta de login do sistema. A conta do banco e a conta de login da aplicação são diferentes.
+2. Peça a liberação do seu IP público na lista de acesso de rede do Atlas. O responsável deve seguir a [documentação oficial de acesso por IP](https://www.mongodb.com/docs/atlas/security/add-ip-address-to-list/). Ao trocar de rede, talvez seja necessário atualizar essa liberação.
+3. Se ainda não existir `.env`, crie uma cópia do exemplo com o comando abaixo. Ele preserva um arquivo que já exista:
+
+```powershell
+if (-not (Test-Path -LiteralPath '.env')) {
+    Copy-Item -LiteralPath '.env.example' -Destination '.env'
+}
+notepad .env
+```
+
+4. No Bloco de Notas, preencha a configuração com os valores fornecidos pelo responsável. O trecho abaixo mostra **somente o formato**; os textos em maiúsculas são marcadores e precisam ser substituídos:
+
+```dotenv
+MONGODB_URI="COLE_AQUI_A_URI_PRIVADA_COMPLETA_DO_ATLAS"
+Mongo__Database="gestao_comercial_dev"
+```
+
+Use a URI completa fornecida, com as credenciais e opções corretas; não monte uma conexão a partir de senhas copiadas sem o tratamento necessário para caracteres especiais. `MONGODB_USERNAME` e `MONGODB_PASSWORD` isolados **não** preenchem automaticamente a URI. Salve como `.env`, sem acrescentar `.txt`; no Explorador, habilite a exibição de extensões para conferir o nome.
+
+**API e Web devem usar o mesmo banco `gestao_comercial_dev`**, conforme a configuração vigente. O comentário antigo de `.env.example` sobre um banco Web separado é histórico. Não configure `gestao_web_dev` para este roteiro. Se o responsável indicar outra configuração autorizada, ela deve ser aplicada de maneira consistente aos dois hosts.
+
+Variáveis já definidas no processo têm prioridade sobre `.env`. Se você configurou `Mongo__ConnectionString` ou `Mongo__Database` anteriormente no terminal/sistema, confira se não estão apontando para outro destino. Preserve um `.env` já preparado e não envie seu conteúdo ao GitHub, em prints ou mensagens públicas.
+
+### 4. Preparar o HTTPS e compilar
+
+Na raiz do projeto, execute os comandos abaixo **na ordem**, aguardando cada um terminar:
+
+```powershell
 dotnet dev-certs https --trust
 dotnet restore --locked-mode
 dotnet build --configuration Release --no-restore
 ```
 
-Se o projeto estiver em outra pasta, ajuste apenas o caminho do primeiro comando.
+Aceite a confirmação do Windows para confiar no certificado local quando ela aparecer. O certificado permite abrir o site e a comunicação entre Web e API por HTTPS. O `restore` baixa as dependências e pode demorar na primeira vez; o `build` compila o projeto. Ambos precisam terminar com sucesso antes de continuar. Se houver erro, veja [Solução de problemas](#solução-de-problemas).
 
-### 2. Configuração do banco e dos arquivos
+### 5. Conferir a conexão com o banco
 
-Em `Development`, os hosts leem automaticamente o `.env` da raiz. **Não sobrescreva o arquivo existente nem copie suas credenciais para o README, comandos de linha ou Git.** A aplicação e os tickets Web utilizam o mesmo banco `gestao_comercial_dev`.
-
-| Configuração | Finalidade |
-| --- | --- |
-| `MONGODB_URI` | Conexão privada com o Atlas existente, lida do `.env` |
-| `Mongo__ConnectionString` | Sobrescrita opcional da conexão por variável de processo; não é necessária na configuração local atual |
-| `Mongo__Database` | Nome lógico do banco; o padrão atual é `gestao_comercial_dev` nos dois hosts |
-| `Images__RootPath` | Diretório privado e persistente das imagens; definido no terminal da API abaixo |
-| `Api__BaseUrl` | Endereço da API; o perfil `https` do frontend já configura `https://localhost:7143/` |
-| `Api__HealthBaseUrl` | Verificação interna da API; o perfil do frontend já configura `https://localhost:8081/` |
-| `DataProtection__KeysPath` | Diretório persistente das chaves que protegem as sessões Web; por padrão, `.local/keys` no diretório do projeto frontend |
-
-Variáveis de processo prevalecem sobre os valores do `.env`. Os nomes com `__` representam a configuração por variável de ambiente dos hosts.
-
-Para uma cópia nova do repositório, [.env.example](.env.example) é apenas uma referência de formato: os valores são ilustrativos e não permitem acesso ao banco. Obtenha a configuração privada do responsável pelo projeto e utilize o **Atlas existente**, mantendo o mesmo banco nos dois hosts. O comentário histórico sobre banco Web separado nesse exemplo não descreve a configuração vigente; prevalecem os padrões acima e a ADR-37.
-
-O banco e o administrador da instalação de apresentação **já foram inicializados**. A execução normal não exige repetir bootstrap, inicializadores ou restauração da carga. Preparação de uma instalação ainda não inicializada é uma tarefa explícita, descrita no [guia da fundação](docs/execution/07-EXECUCAO-LOCAL-FUNDACAO.md) e no [registro de decisões](docs/execution/04-DECISOES-TECNICAS.md); não ocorre automaticamente ao iniciar os hosts.
-
-### 3. Iniciar a API — terminal 1
+Este comando verifica conectividade e suporte a transações; não gera carga de demonstração nem inicializa a estrutura:
 
 ```powershell
-cd D:\Projetos\MVPMilton
+dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https -- --probe-mongo
+```
+
+O resultado esperado é **“MongoDB: conexão e topologia transacional disponíveis”**. O comando termina e devolve o controle ao terminal. Em caso de falha, confira URI, internet e liberação de IP com o responsável antes de avançar.
+
+### 6. Verificar se o banco já está preparado
+
+**Para utilizar a instalação existente da apresentação, pule para o passo 7.** O banco e o administrador dessa instalação já foram inicializados; baixar o código em outro computador não exige repetir essa preparação. Obtenha uma conta com o responsável.
+
+Os comandos a seguir são destinados **somente ao responsável pela preparação de uma instalação ainda não inicializada**, com o destino confirmado. Eles escrevem no banco indicado pelo `.env`. Não crie outro cluster ou banco para contornar erro de conexão ou de configuração.
+
+#### Preparar as coleções, índices e validadores
+
+Com os dois programas parados, na raiz, execute um comando por vez:
+
+```powershell
+dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https -- --initialize-persistence
+dotnet run --project frontend/GestaoComercial.Web --configuration Release --no-build --launch-profile https -- --initialize-persistence
+```
+
+Cada comando termina após a preparação e deve informar conexão/topologia disponíveis. A inicialização é explícita; iniciar o site normalmente não a executa. Se houver divergência de estrutura, solicite revisão ao responsável em vez de apagar coleções.
+
+#### Criar o primeiro administrador, somente se ainda não existir
+
+No `.env` privado, acrescente as linhas abaixo, substituindo os marcadores por nome, email e senha escolhidos para essa instalação:
+
+```dotenv
+Bootstrap__Nome="NOME_DO_ADMINISTRADOR"
+Bootstrap__Email="EMAIL_DO_ADMINISTRADOR"
+Bootstrap__Senha="SENHA_TEMPORARIA_ESCOLHIDA_POR_VOCE"
+```
+
+Escolha uma senha de **12 a 128 caracteres**, com maiúscula, minúscula, número e símbolo, diferente dos marcadores acima. Execute:
+
+```powershell
+dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https -- --bootstrap-admin
+```
+
+O resultado esperado é **“Administrador provisionado; troca de senha obrigatória.”** Se já existir administrador, o comando informa isso e não altera suas credenciais; ele não é um mecanismo de recuperação de senha. Após o provisionamento, remova as três linhas `Bootstrap__...` do `.env`, preservando as configurações do banco. A conta criada permanece salva no Atlas.
+
+### 7. Iniciar a API — primeiro terminal
+
+Abra um PowerShell na raiz do projeto e execute:
+
+```powershell
 $env:Images__RootPath = Join-Path (Get-Location) '.local/images'
 dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https
 ```
 
-Mantenha esse terminal aberto. Use sempre o mesmo diretório de imagens entre as execuções: os metadados ficam no MongoDB, mas os arquivos ficam nesse diretório local.
+Espere aparecer **`Now listening on`**, com as portas `7143` e `8081`. **Deixe esse terminal aberto.** Ele estará ocupado executando a API; isso é esperado. A pasta `.local/images` armazena os arquivos de imagens dos produtos neste computador. Use o mesmo caminho nas próximas execuções.
 
-### 4. Iniciar o Blazor — terminal 2
+### 8. Iniciar o site — segundo terminal
+
+Abra **outro** PowerShell na mesma raiz do projeto. No Windows Terminal, também pode abrir uma nova aba. Confira a pasta com `Get-Location` e execute:
 
 ```powershell
-cd D:\Projetos\MVPMilton
 dotnet run --project frontend/GestaoComercial.Web --configuration Release --no-build --launch-profile https
 ```
 
-Mantenha esse terminal aberto e acesse **[https://localhost:7243](https://localhost:7243)**.
+Espere aparecer **`Now listening on`**, com as portas `7243` e `8082`. **Deixe esse segundo terminal aberto também.** Não é preciso digitar outros comandos nesses terminais enquanto os programas estiverem rodando.
 
-| Serviço | Endereço local |
+### 9. Abrir o navegador e fazer login
+
+1. Abra **[https://localhost:7243](https://localhost:7243)** no mesmo computador em que iniciou os dois programas. O navegador não abre automaticamente.
+2. Use o email e a senha da conta fornecida pelo responsável, ou do administrador provisionado no passo 6.
+3. Se for solicitado, troque a senha temporária e entre novamente.
+4. Ao visualizar a área de trabalho e os atalhos permitidos para seu perfil, a execução está pronta para uso.
+
+Não existe senha padrão ou cadastro público. Os arquivos privados `.local/demo-access.json` e `.local/block10-roles.json` da máquina de apresentação não acompanham o download. Se você não recebeu uma conta e o banco já tem administrador, solicite acesso a ele.
+
+Se o banco autorizado acabou de ser preparado, os cadastros estarão vazios. É possível cadastrá-los manualmente ou entrar como Administrador em **Administração → Dados de Demonstração** e selecionar **Gerar carga**, conforme a [explicação da carga](#dados-de-demonstração). Na instalação compartilhada, confira com o responsável se a carga já existe antes de gerar ou restaurar dados.
+
+| Serviço | Endereço local / finalidade |
 | --- | --- |
-| Interface Blazor | [https://localhost:7243](https://localhost:7243) |
-| API | [https://localhost:7143](https://localhost:7143) — endpoints em `/api/v1` |
+| Site que você deve abrir | [https://localhost:7243](https://localhost:7243) |
+| API | [https://localhost:7143](https://localhost:7143) — endpoints em `/api/v1`; não é a interface de uso |
 | Processo da API ativo | [https://localhost:7143/health/live](https://localhost:7143/health/live) |
-| API pronta e persistência inicializada | [https://localhost:8081/health/ready](https://localhost:8081/health/ready) |
-| Web pronta e persistência técnica inicializada | [https://localhost:8082/health/ready](https://localhost:8082/health/ready) |
+| API pronta, com banco inicializado | [https://localhost:8081/health/ready](https://localhost:8081/health/ready) |
+| Web pronta, com persistência técnica inicializada | [https://localhost:8082/health/ready](https://localhost:8082/health/ready) |
 
-As portas 8081 e 8082 são destinadas às verificações internas de prontidão. `/health/live` confirma o processo ativo; `/health/ready` confere a prontidão da persistência. Consultar readiness na porta pública retorna 404 por projeto.
+As verificações de prontidão devem retornar HTTP **200**. As portas `8081` e `8082` são internas; consultar `/health/ready` nas portas públicas `7143` ou `7243` retorna **404** por projeto. `/health/live` confirma somente o processo ativo e não substitui a verificação do banco.
 
-### 5. Encerrar ou recompilar
+### 10. Parar e abrir novamente em outro dia
 
-Pressione **Ctrl+C nos dois terminais** para encerrar. Para atualizar o código e recompilar, pare os hosts, execute novamente o build e reinicie API e Blazor. Encerrar os processos não apaga os dados do Atlas nem as imagens.
+Para encerrar, pressione **Ctrl+C em cada um dos dois terminais** e espere os programas terminarem. Fechar o navegador não encerra API e Web.
+
+Para usar novamente, mantenha internet e acesso ao Atlas e repita somente os **passos 7, 8 e 9**. Não é necessário clonar, configurar `.env`, inicializar o banco ou gerar carga a cada execução. Os dados do Atlas permanecem salvos. Preserve também `.local/images` e as chaves Web: copiar somente o código para outro computador não transporta as imagens locais.
+
+### 11. Baixar futuras atualizações
+
+Se baixou pelo Git, pare os dois programas, abra um terminal na raiz e execute:
+
+```powershell
+git pull --ff-only
+dotnet restore --locked-mode
+dotnet build --configuration Release --no-restore
+```
+
+Depois repita os passos 7 a 9. Se o Git informar alterações locais ou conflito, preserve seus arquivos e resolva a situação antes de continuar; não apague configurações privadas para forçar a atualização.
+
+Se baixou por ZIP, extraia a nova versão em outra pasta, transfira com cuidado sua configuração privada e as imagens/chaves locais necessárias, e repita a preparação e a compilação. Não sobrescreva a instalação anterior sem guardar seus arquivos privados. Mudanças de estrutura do banco devem seguir as instruções da versão e a orientação do responsável; o `git pull` não aplica evoluções automaticamente.
+
+### Referência das configurações locais
+
+| Configuração | Uso |
+| --- | --- |
+| `MONGODB_URI` | URI privada completa do Atlas, lida do `.env` em `Development` |
+| `Mongo__ConnectionString` | Sobrescrita opcional da conexão; dispensa o alias `MONGODB_URI` quando definida |
+| `Mongo__Database` | Mesmo banco nos dois hosts; padrão `gestao_comercial_dev` |
+| `Images__RootPath` | Diretório persistente das imagens da API; definido no primeiro terminal |
+| `Api__BaseUrl` | O perfil `https` do Web define `https://localhost:7143/` |
+| `Api__HealthBaseUrl` | O perfil `https` do Web define `https://localhost:8081/` |
+| `DataProtection__KeysPath` | Chaves das sessões Web; padrão `.local/keys` dentro de `frontend/GestaoComercial.Web` |
+
+Este roteiro usa os perfis `https` versionados e o ambiente `Development`. Referências históricas do [guia da fundação](docs/execution/07-EXECUCAO-LOCAL-FUNDACAO.md) descrevem etapas anteriores; portas, funcionalidades e banco compartilhado atuais são os apresentados aqui e nos perfis do código.
 
 ## Login e contas de acesso
 
@@ -274,7 +421,13 @@ A homologação registrou 242 testes aprovados no [CI final](https://github.com/
 
 | Sintoma | O que conferir |
 | --- | --- |
+| `git` não é reconhecido | Instale o Git e reabra o PowerShell, ou escolha o download por ZIP |
+| `dotnet` não é reconhecido | Instale o SDK .NET e reabra o PowerShell; instalar somente o Runtime não fornece as ferramentas de compilação |
 | SDK solicitado não encontrado | Instale a versão exata de `global.json` e confira `dotnet --version` na raiz |
+| Projeto ou solução não encontrado | Volte à raiz que contém `GestaoComercial.slnx`, `backend` e `frontend`; confira se o ZIP foi extraído |
+| Configuração `Mongo:ConnectionString` ausente ou inválida | Confira se `.env` está na raiz, se não foi salvo como `.env.txt`, se a URI foi preenchida e se usou `--launch-profile https` |
+| Erro ao baixar pacotes no `restore` | Confira internet, proxy/firewall e acesso ao NuGet; repita o restore antes do build. Não prossiga com `--no-build` se a compilação ainda não terminou com sucesso |
+| Executável não encontrado ao iniciar com `--no-build` | Execute primeiro `dotnet restore --locked-mode` e `dotnet build --configuration Release --no-restore` com sucesso |
 | Aviso de certificado HTTPS | Execute `dotnet dev-certs https --trust`, conclua a confirmação do sistema operacional e reabra o navegador |
 | API indisponível na tela inicial | Confira se os dois terminais continuam abertos, se a API iniciou e se o endereço/portas correspondem ao perfil `https` |
 | Atlas inacessível | Confira internet, acesso de rede permitido no Atlas e validade da configuração privada existente; não publique a URI para diagnosticar |
@@ -282,6 +435,7 @@ A homologação registrou 242 testes aprovados no [CI final](https://github.com/
 | Readiness retorna 404 na porta 7143 ou 7243 | Use a porta interna correta: 8081 para API e 8082 para Web |
 | Porta já em uso ou build não substitui arquivos | Encerre os hosts anteriores com Ctrl+C antes de reiniciar ou recompilar |
 | Login falha ou sessão encerra | Confira a conta, troca obrigatória, estado ativo e eventual bloqueio; se a sessão expirou, entre novamente |
+| Baixei o projeto, mas não tenho email/senha para entrar | Solicite uma conta ao administrador da instalação; o clone/ZIP não inclui as contas privadas e o bootstrap não redefine senhas de administradores existentes |
 | Página ou operação negada | Verifique o perfil: nem todos os módulos estão disponíveis para Vendedor ou Estoquista |
 | Dashboard vazio apesar da carga | Aplique o período fixo de demonstração; o mês atual pode não conter vendas desse cenário |
 | Imagem cadastrada não aparece | Confira se a API está usando o mesmo `Images__RootPath` e se o arquivo privado continua disponível |
