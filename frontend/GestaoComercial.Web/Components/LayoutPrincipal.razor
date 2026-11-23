@@ -1,6 +1,15 @@
 @inherits LayoutComponentBase
 <a class="atalho" href="#conteudo">Ir para conteúdo</a>
-<header><a href="/">Gestão Comercial</a><AuthorizeView><Authorized><span>@context.User.Identity?.Name · @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span><a href="/conta/senha" data-enhance-nav="false">Alterar senha</a><form method="post" action="/conta/sair" data-enhance="false"><AntiforgeryToken /><button type="submit">Sair</button></form></Authorized></AuthorizeView></header>
+<header class="app-header">
+    <a class="app-brand" href="/"><img src="images/unigran-azul.svg" alt="Unigran" width="150" height="48" /><span>TCC Milton Paes</span></a>
+    <AuthorizeView><Authorized>
+        <div class="app-account">
+            <div class="app-user"><strong>@context.User.Identity?.Name</strong><small>@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</small></div>
+            <a href="/conta/senha" data-enhance-nav="false">Alterar senha</a>
+            <form method="post" action="/conta/sair" data-enhance="false"><AntiforgeryToken /><button type="submit">Sair</button></form>
+        </div>
+    </Authorized></AuthorizeView>
+</header>
 <div class="app-shell">
 <AuthorizeView><Authorized>
 <aside class="sidebar"><details open><summary>Menu de navegação</summary><div class="sidebar-links">
@@ -15,5 +24,5 @@
 <AuthorizeView Policy="Funcionarios.Gerenciar"><Authorized Context="menuUser"><nav aria-label="Administração"><a href="/administracao/dados-demonstracao">Dados de Demonstração</a></nav></Authorized></AuthorizeView>
 </div></details></aside>
 </Authorized></AuthorizeView>
-<div class="workspace"><main id="conteudo" tabindex="-1">@Body</main><footer>Gestão Comercial · Apresentação acadêmica</footer></div>
+<div class="workspace"><main id="conteudo" tabindex="-1">@Body</main><footer>Gestão Comercial · TCC Milton Paes</footer></div>
 </div>
