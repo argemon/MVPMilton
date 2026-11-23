@@ -116,6 +116,27 @@ As dependências seguem **Domain ← Application ← Infrastructure**, com compo
 
 ## Como executar localmente
 
+Com o **SDK .NET 10.0.401**, o **`.env` privado configurado**, acesso de rede ao Atlas existente e o **certificado HTTPS confiável**, abra **dois terminais na raiz do projeto** (a pasta que contém `GestaoComercial.slnx`). Na instalação da apresentação, o banco e a conta de acesso já estão preparados.
+
+**Backend — terminal 1:**
+
+```powershell
+dotnet run --project backend/GestaoComercial.Api --launch-profile https
+```
+
+**Frontend — terminal 2:**
+
+```powershell
+dotnet run --project frontend/GestaoComercial.Web --launch-profile https
+```
+
+Espere o backend iniciar antes de executar o frontend. Os comandos restauram as dependências e compilam automaticamente; não é necessário rodar `restore` e `build` separadamente para iniciar. Mantenha os dois terminais abertos e acesse **[https://localhost:7243](https://localhost:7243)**. Entre com a conta fornecida pelo responsável. Para encerrar, pressione **Ctrl+C** em cada terminal.
+
+**Imagens já cadastradas:** preserve a configuração `Images__RootPath` da instalação. Sem essa configuração, a API usa `backend/GestaoComercial.Api/.local/images`. Se as imagens existentes estiverem em outra pasta, configure seu caminho absoluto uma vez no `.env` privado; por exemplo, `Images__RootPath="D:/Projetos/MVPMilton/.local/images"` para a pasta utilizada no roteiro anterior. Ajuste o caminho ao seu computador.
+
+<details>
+<summary>Primeira instalação e configuração detalhada</summary>
+
 Este guia acompanha uma **primeira execução no Windows, usando PowerShell**, desde o download até o login. Não é necessário saber programar nem instalar Visual Studio. Você vai iniciar dois programas no terminal: a **API**, que executa as regras e acessa o banco, e o **Web**, que apresenta as telas no navegador.
 
 **Antes de começar:** o código é público, mas o banco Atlas e as contas de acesso são privados. Baixar o projeto não fornece a conexão nem uma senha de administrador. Solicite ao responsável a configuração do banco existente, a liberação do seu acesso de rede e uma conta do sistema. Sem isso, será possível baixar e compilar, mas não utilizar as funcionalidades que dependem do banco. Esta instalação usa internet e compartilha os dados do Atlas; alterações feitas por outro computador aparecem no mesmo banco.
@@ -267,18 +288,17 @@ O resultado esperado é **“Administrador provisionado; troca de senha obrigat�
 Abra um PowerShell na raiz do projeto e execute:
 
 ```powershell
-$env:Images__RootPath = Join-Path (Get-Location) '.local/images'
-dotnet run --project backend/GestaoComercial.Api --configuration Release --no-build --launch-profile https
+dotnet run --project backend/GestaoComercial.Api --launch-profile https
 ```
 
-Espere aparecer **`Now listening on`**, com as portas `7143` e `8081`. **Deixe esse terminal aberto.** Ele estará ocupado executando a API; isso é esperado. A pasta `.local/images` armazena os arquivos de imagens dos produtos neste computador. Use o mesmo caminho nas próximas execuções.
+Espere aparecer **`Now listening on`**, com as portas `7143` e `8081`. **Deixe esse terminal aberto.** Ele estará ocupado executando a API; isso é esperado. Preserve o caminho de imagens configurado conforme a orientação acima.
 
 ### 8. Iniciar o site — segundo terminal
 
 Abra **outro** PowerShell na mesma raiz do projeto. No Windows Terminal, também pode abrir uma nova aba. Confira a pasta com `Get-Location` e execute:
 
 ```powershell
-dotnet run --project frontend/GestaoComercial.Web --configuration Release --no-build --launch-profile https
+dotnet run --project frontend/GestaoComercial.Web --launch-profile https
 ```
 
 Espere aparecer **`Now listening on`**, com as portas `7243` e `8082`. **Deixe esse segundo terminal aberto também.** Não é preciso digitar outros comandos nesses terminais enquanto os programas estiverem rodando.
@@ -331,12 +351,14 @@ Se baixou por ZIP, extraia a nova versão em outra pasta, transfira com cuidado 
 | `MONGODB_URI` | URI privada completa do Atlas, lida do `.env` em `Development` |
 | `Mongo__ConnectionString` | Sobrescrita opcional da conexão; dispensa o alias `MONGODB_URI` quando definida |
 | `Mongo__Database` | Mesmo banco nos dois hosts; padrão `gestao_comercial_dev` |
-| `Images__RootPath` | Diretório persistente das imagens da API; definido no primeiro terminal |
+| `Images__RootPath` | Diretório persistente das imagens da API; pode ser definido uma vez no `.env` privado. Padrão: `backend/GestaoComercial.Api/.local/images` |
 | `Api__BaseUrl` | O perfil `https` do Web define `https://localhost:7143/` |
 | `Api__HealthBaseUrl` | O perfil `https` do Web define `https://localhost:8081/` |
 | `DataProtection__KeysPath` | Chaves das sessões Web; padrão `.local/keys` dentro de `frontend/GestaoComercial.Web` |
 
 Este roteiro usa os perfis `https` versionados e o ambiente `Development`. Referências históricas do [guia da fundação](docs/execution/07-EXECUCAO-LOCAL-FUNDACAO.md) descrevem etapas anteriores; portas, funcionalidades e banco compartilhado atuais são os apresentados aqui e nos perfis do código.
+
+</details>
 
 ## Login e contas de acesso
 

@@ -1,5 +1,11 @@
 # 03 — Estado do projeto
 
+## README com dois comandos de execução — 23/11/2026
+
+Solicitação: simplificar a execução para um comando de backend e outro de frontend. README destaca dotnet run --project backend/GestaoComercial.Api --launch-profile https e o equivalente frontend/GestaoComercial.Web, em dois terminais na raiz. Restore/build automáticos, endereço do site, encerramento e pré-requisitos ficam explícitos. Guia anterior de primeira instalação preservado em seção recolhível e comandos normais alinhados ao início rápido. Orientação de Images__RootPath preserva instalações que usam a pasta anterior na raiz; padrão real confirmado no Program da API. Nenhum código/configuração/.env alterado. Sem decisão arquitetural nova ou bloco adicional.
+
+Verificação documental real: parser PowerShell aprovou os blocos do README sem executar seus comandos; destinos dos links locais existentes; git diff --check aprovado. Conferidos global.json, perfis https dos hosts e seleção de pasta de imagens da API. Nenhum host, build ou teste de software executado nesta alteração exclusivamente documental; nenhum acesso ao Atlas. Arquivos: README.md e este estado. Publicação na main segue autorização anterior do responsável, com autor/committer idênticos e sem coautoria. Resultado de CI não atribuído a esta revisão. Próxima ação: usar os dois comandos com configuração privada existente; sem próximo bloco.
+
 ## Identidade Unigran e identificação do TCC — 23/11/2026
 
 Publicação autorizada pelo responsável diretamente na main em 23/11/2026. Novo commit usa autor e committer idênticos (Argemon, email noreply da conta GitHub já presente no histórico), sem trailer Co-authored-by; configuração limitada ao repositório. Commits publicados preservados. Compilação final Web Release --no-restore também aprovada, zero avisos/erros. Envio e checks serão conferidos pelo SHA do novo commit; resultado anterior não substitui o CI desta alteração.
