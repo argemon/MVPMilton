@@ -1,118 +1,76 @@
-# GestaoComercial
+# Gestão Comercial
 
-Sistema web de gestão comercial desenvolvido como Trabalho de Conclusão de Curso de Engenharia de Software. Reúne cadastros, estoque, vendas, indicadores e relatórios em uma aplicação administrativa em português do Brasil.
+Sistema web de gestão comercial desenvolvido como Trabalho de Conclusão de Curso de Engenharia de Software. Integra cadastros, controle de estoque, frente de caixa, vendas, indicadores e relatórios em uma interface em português do Brasil.
 
-A aplicação é executada **localmente na máquina do apresentador**, com conexão ao **MongoDB Atlas existente**. A demonstração depende de internet; não existe hospedagem pública, catálogo público ou pedidos online.
+O projeto acadêmico está concluído. A aplicação é executada localmente, com API e interface separadas e conexão ao MongoDB Atlas existente. Os dados de demonstração são fictícios e o acesso ao banco requer internet e configuração privada.
 
-> **Estado da entrega:** blocos 00 a 10 concluídos e homologados. O CI da entrega aprovou **242 testes: 126 unitários e 116 de integração**, sem falhas ou testes ignorados; build Release sem avisos ou erros. Esses números pertencem à homologação registrada, não a uma nova execução desta revisão documental. Consulte o [estado do projeto](docs/execution/03-ESTADO-PROJETO.md) e o [relatório de homologação](docs/execution/07-RELATORIO-HOMOLOGACAO.md).
-
-## Conteúdo
-
-- [Funcionalidades](#funcionalidades)
-- [Perfis de acesso](#perfis-de-acesso)
-- [Regras importantes](#regras-importantes)
-- [Tecnologias e organização](#tecnologias-e-organização)
-- [Como executar localmente](#como-executar-localmente)
-- [Login e contas de acesso](#login-e-contas-de-acesso)
-- [Dados de demonstração](#dados-de-demonstração)
-- [Fluxo sugerido para usar o sistema](#fluxo-sugerido-para-usar-o-sistema)
-- [Testes e validação](#testes-e-validação)
-- [Solução de problemas](#solução-de-problemas)
-- [Limites do projeto](#limites-do-projeto)
-- [Documentação](#documentação)
+**[Executar localmente](#como-executar-localmente)** · **[Documentação completa](Documentação/README.md)** · **[Manual do usuário](Documentação/entrega/manual-do-usuario.pdf)** · **[Baixar documentação](Documentação/Pacote-documentacao.zip)**
 
 ## Funcionalidades
 
-| Módulo | Recursos disponíveis |
+| Área | Recursos entregues |
 | --- | --- |
-| Autenticação | Login, logout, troca de senha, redefinição administrativa de senha, expiração e revogação de sessões |
-| Usuários | Contas vinculadas a funcionários, atribuição de perfil, ativação/desativação e troca obrigatória de senha temporária |
-| Funcionários | Cadastro, consulta, edição, pesquisa, paginação, desativação e reativação; vínculo opcional com conta de acesso |
-| Clientes | Cadastro de pessoa física ou jurídica, CPF/CNPJ opcional com validação quando informado, controle de duplicidade, contatos, pesquisa, edição, ativação/desativação e histórico de vendas |
-| Categorias e marcas | Cadastro, consulta, pesquisa, edição e ativação/desativação, com proteção das referências utilizadas por produtos ativos |
-| Produtos | SKU único, nome, descrição, categoria, marca opcional, preço de venda, estoque mínimo, imagem privada, pesquisa, paginação e ativação/desativação |
-| Estoque | Consulta de saldos, filtro de estoque baixo, entradas, saídas manuais, ajustes justificados e histórico de movimentações com responsável, data e saldos anterior/posterior |
-| Vendas | Rascunho com cliente e múltiplos produtos, quantidades, preços calculados no servidor, edição, confirmação com baixa de estoque, consulta, descarte de rascunho e cancelamento com estorno |
-| Dashboard | Faturamento líquido, vendas confirmadas e canceladas, ticket médio, produtos cadastrados/ativos, estoque baixo, evolução diária, produtos mais vendidos e vendas recentes |
-| Relatórios | Vendas por período, vendas por funcionário/operador, produtos mais vendidos, posição atual do estoque e movimentações; filtros, ordenação, paginação, totalizadores e exportação CSV |
-| Dados de demonstração | Geração, retomada, repetição sem duplicação e restauração confirmada da carga fictícia no banco existente |
+| Acesso e equipe | Login, logout, troca e redefinição de senha, sessões com expiração/revogação, funcionários e contas com três perfis de acesso |
+| Clientes | Pessoas físicas e jurídicas, validação de CPF/CNPJ quando informados, contatos, pesquisa, ativação e histórico de vendas |
+| Produtos | Categorias, marcas, SKU único, preço, estoque mínimo, imagens privadas, filtros e ativação/desativação |
+| Estoque | Saldos, alerta de estoque baixo, entradas, saídas, ajustes justificados e histórico de movimentações |
+| Frente de caixa e vendas | Seleção de cliente e produtos, cupom com múltiplos itens, rascunho, revisão de preços, confirmação, consultas, descarte e cancelamento com estorno |
+| Dashboard | Receita líquida, ticket médio, vendas, evolução diária, produtos mais vendidos, vendas recentes e estoque baixo |
+| Relatórios | Vendas por período e operador, produtos mais vendidos, posição do estoque e movimentos; filtros, paginação, totalizadores e CSV |
+| Demonstração | Geração e retomada de cenário fictício, restauração protegida da carga e limpeza explícita com confirmação |
 
-A navegação é organizada em menu lateral no desktop e menu recolhível em telas menores. As telas principais foram revisadas em 1920×1080, 1366×768, 768px e 390px. Tabelas extensas possuem rolagem própria quando necessário.
-
-### Imagens e exportações
-
-- Imagens de produtos: JPEG ou PNG, até **2 MiB** e **4096×4096 pixels**, validadas e reencodadas; acesso exige autenticação.
-- Relatórios: CSV UTF-8, separado por ponto e vírgula, com datas ISO e valores monetários em reais com ponto decimal no arquivo.
-- A exportação inclui **todo o filtro aplicado**, até **10.000 linhas**, e não apenas a página exibida. Acima desse limite, refine os filtros.
-- Relatórios de estoque mostram a posição atual, não o saldo de uma data passada.
+Imagens de produtos aceitam JPEG/PNG de até 2 MiB e 4096×4096 pixels, com validação e conversão para armazenamento privado. A exportação CSV usa UTF-8, separador ponto e vírgula e proteção de texto contra fórmulas; inclui o filtro completo, limitado a 10.000 linhas.
 
 ## Perfis de acesso
 
-Cada conta possui um dos três perfis fixos. As permissões são verificadas na API, inclusive em acessos diretos por URL.
+| Perfil | Responsabilidades |
+| --- | --- |
+| **Administrador** | Gerenciar equipe e contas, cadastros, estoque, todas as vendas, cancelamentos, dashboard, relatórios e demonstração |
+| **Vendedor** | Manter clientes, consultar produtos e saldos e criar, editar, confirmar, descartar e consultar as próprias vendas |
+| **Estoquista** | Manter categorias, marcas, produtos e imagens; registrar entradas/saídas e consultar histórico, saldos e relatórios de estoque/movimentos |
 
-| Operação | Administrador | Vendedor | Estoquista |
-| --- | --- | --- | --- |
-| Gerenciar funcionários e usuários | Sim | Não | Não |
-| Manter clientes | Sim | Sim | Não |
-| Consultar produtos, categorias, marcas e saldos | Sim | Sim | Sim |
-| Manter produtos, categorias, marcas e imagens | Sim | Não | Sim |
-| Registrar entradas e saídas manuais | Sim | Não | Sim |
-| Consultar histórico de movimentações | Sim | Não | Sim |
-| Ajustar estoque | Sim | Não | Não |
-| Criar, editar, confirmar e consultar vendas | Todas | Somente as próprias | Não |
-| Cancelar vendas | Sim | Não | Não |
-| Consultar Dashboard e relatórios comerciais | Sim | Não | Não |
-| Consultar/exportar relatórios de estoque e movimentos | Sim | Não | Sim |
-| Gerar ou restaurar carga demonstrativa | Sim | Não | Não |
+A API verifica as permissões em cada operação. Ajustes de estoque e cancelamentos de vendas são exclusivos do Administrador. A consulta do Vendedor permanece limitada às vendas que criou, inclusive no histórico de clientes. Consulte a [matriz de permissões](docs/requirements/05-MATRIZ-PERMISSOES.md).
 
-O histórico de vendas do cliente também respeita a propriedade das vendas para o Vendedor. Funcionário sem conta não tem acesso ao sistema. O último administrador ativo é protegido contra desativação ou rebaixamento. Detalhes na [matriz de permissões](docs/requirements/05-MATRIZ-PERMISSOES.md).
+## Consistência e segurança
 
-## Regras importantes
+- Valores monetários em BRL, calculados em centavos inteiros, com conversão exata e verificação de limites.
+- Estoque em unidades inteiras, sem saldo negativo. Produto novo começa com saldo zero; rascunho não reserva mercadoria.
+- Confirmação da venda, baixa de estoque, movimentos e registros associados na mesma transação; cancelamento com estorno integral.
+- Controle de concorrência e idempotência para impedir efeitos duplicados ao repetir operações.
+- Preservação de snapshots da venda e histórico de movimentações. No uso comercial normal, correções são novos registros; a limpeza administrativa da demonstração é uma exceção explícita, descrita abaixo.
+- Autorização por perfil e propriedade, sessões revogáveis, tokens mantidos nos servidores e proteção antifalsificação nos formulários de conta.
 
-- Uma empresa, um estoque e quantidades em unidades inteiras (`UN`); moeda **BRL**.
-- Produto novo começa com saldo zero. Use uma entrada para registrar mercadoria disponível.
-- Rascunho de venda **não reserva estoque**. A confirmação exige cliente e produtos ativos, preços válidos e saldo suficiente para todos os itens.
-- Confirmação e baixa ocorrem na mesma transação: uma falha não pode deixar uma venda parcialmente confirmada ou parte do estoque baixada.
-- Estoque nunca pode ficar negativo. Operações repetidas são protegidas contra efeitos duplicados.
-- Cancelamento exige Administrador e justificativa; mantém a venda e a baixa originais e registra o estorno uma única vez.
-- Movimentos e histórico comercial não são editados ou apagados. Cadastros com histórico são desativados.
-- Dinheiro é calculado internamente em centavos inteiros, com conversão exata na entrada/saída. Preço com fração de centavo é rejeitado.
-- Indicadores comerciais excluem a contribuição de vendas canceladas; o valor original continua visível no histórico.
-- Nos filtros de período, a data inicial é **inclusiva** e a final é **exclusiva**, com intervalo máximo de 366 dias e fuso `America/Cuiaba` na instalação atual.
-- Confirmar uma venda não representa recebimento de pagamento ou emissão de documento fiscal.
-
-## Tecnologias e organização
+## Tecnologias e arquitetura
 
 | Componente | Tecnologia |
 | --- | --- |
-| Plataforma | C# / .NET 10 LTS |
-| API | ASP.NET Core Web API |
+| Plataforma | C# e .NET 10 LTS |
+| Backend | ASP.NET Core Web API |
 | Interface | Blazor Web App com Interactive Server |
-| Persistência | MongoDB Atlas e MongoDB.Driver oficial; transações em topologia compatível |
-| Autenticação | ASP.NET Core Identity com armazenamento MongoDB e sessões opacas; Blazor atua como intermediário da API (BFF) |
+| Persistência | MongoDB Atlas e MongoDB.Driver oficial |
+| Autenticação | ASP.NET Core Identity com armazenamento MongoDB, sessões opacas e intermediação pelo servidor Web |
 | Testes | xUnit, MongoDB real e Testcontainers no perfil de integração do CI |
-| Integração contínua | GitHub Actions: arquitetura, restore, build, testes, auditoria de dependências e scanner de segredos |
+| Integração contínua | GitHub Actions: arquitetura, compilação, testes, auditoria de dependências e verificação de segredos |
 
 ```text
 GestaoComercial.slnx
 backend/
-  GestaoComercial.Domain/          # Entidades e regras de negócio
+  GestaoComercial.Domain/          # Regras e validações do domínio
   GestaoComercial.Application/     # Casos de uso e interfaces
   GestaoComercial.Infrastructure/  # MongoDB, Identity, transações e arquivos
   GestaoComercial.Api/             # Endpoints HTTP e composição
 frontend/
-  GestaoComercial.Web/             # Interface Blazor e comunicação com a API
+  GestaoComercial.Web/             # Interface Blazor e clientes da API
 shared/
   GestaoComercial.Contracts/       # DTOs e contratos HTTP
+tests/                            # Testes unitários e de integração
 build/                            # Configuração compartilhada dos hosts
 scripts/                          # Verificação de arquitetura
-tests/
-  GestaoComercial.UnitTests/
-  GestaoComercial.IntegrationTests/
-docs/                             # Requisitos, arquitetura e evidências
+docs/                             # Especificações e histórico técnico
+Documentação/                     # TCC, documentação técnica, manual e diagramas
 ```
 
-As dependências seguem **Domain ← Application ← Infrastructure**, com composição na API. O frontend referencia somente os contratos compartilhados; não acessa as coleções de negócio. Seu acesso MongoDB é restrito ao armazenamento técnico das sessões Web. Tokens da API permanecem nos servidores, e os formulários de conta usam proteção antifalsificação.
+As referências do backend seguem **Domain ← Application ← Infrastructure**, com composição na API. Entre os projetos da solução, o frontend referencia somente os contratos compartilhados. As operações de negócio passam pela API; o armazenamento técnico de sessões Web é separado das responsabilidades de negócio. O [documento de arquitetura](docs/architecture/02-ARQUITETURA.md) e os [diagramas](Documentação/diagramas/) detalham essa organização.
 
 ## Como executar localmente
 
@@ -362,136 +320,75 @@ Este roteiro usa os perfis `https` versionados e o ambiente `Development`. Refer
 
 ## Login e contas de acesso
 
-Não existe cadastro público nem senha padrão publicada. Use a conta administrativa já provisionada pelo responsável.
+Use uma conta fornecida pelo responsável pela instalação. O repositório não inclui credenciais privadas, cadastro público ou senha padrão publicada.
 
-Na máquina preparada para a apresentação, os dados privados de acesso estão em `.local/demo-access.json`; contas fictícias adicionais da homologação estão em `.local/block10-roles.json`. Esses arquivos são **locais e ignorados pelo Git**, portanto não acompanham um clone novo. Não exiba seu conteúdo durante a apresentação.
+O Administrador cadastra um funcionário ativo e cria sua conta, informando email, perfil e senha temporária. No primeiro acesso, o usuário conclui a troca obrigatória de senha. Funcionário sem conta não acessa o sistema; desativar o funcionário revoga o acesso vinculado. Reativação e manutenção da conta são operações administrativas próprias.
 
-Para conceder acesso a outra pessoa fictícia da demonstração:
-
-1. Entre como Administrador e cadastre um funcionário ativo.
-2. Na ficha, escolha **Criar conta de acesso**.
-3. Informe email de login, perfil e senha temporária.
-4. No primeiro login, conclua a troca obrigatória de senha e entre novamente.
-
-Senhas têm de 12 a 128 caracteres, com maiúscula, minúscula, número e símbolo. Após cinco tentativas incorretas, a conta é bloqueada por 15 minutos. A sessão expira após 30 minutos de inatividade ou 8 horas totais; nesse caso, faça login novamente.
-
-Desativar um funcionário também desativa a conta vinculada e revoga suas sessões. Reativar o funcionário **não reativa automaticamente a conta**; o Administrador faz isso separadamente em Usuários. Redefinição administrativa de senha é feita pelo sistema, sem envio automático de email.
+O [manual do usuário](Documentação/entrega/manual-do-usuario.pdf) descreve acesso, navegação e operações de cada perfil.
 
 ## Dados de demonstração
 
-Entre como Administrador e abra **Administração → Dados de Demonstração**. A tela informa o banco atual e a última carga concluída.
+A página **Administração → Dados de Demonstração** oferece três ações distintas, disponíveis ao Administrador:
 
-| Conjunto gerado | Quantidade da carga-base |
+| Ação | Efeito |
 | --- | --- |
-| Funcionários e respectivas contas | 12 de cada, com os três perfis e estados ativo/inativo |
-| Clientes fictícios | 40, dos quais 5 sem compras |
-| Produtos | 100, incluindo 5 inativos e 10 com saldo zero |
-| Categorias e marcas | 5 de cada |
-| Vendas com dois itens | 250: 225 confirmadas e 25 canceladas |
-| Movimentações de estoque | 850, incluindo baixas e estornos |
+| **Gerar carga** | Cria ou retoma o cenário fictício, sem duplicar registros já gerados |
+| **Restaurar carga** | Remove o conjunto demonstrativo identificado quando as verificações permitirem, protegendo alterações e dependências manuais; exige confirmação |
+| **Limpar dados do sistema** | Exclui também dados comerciais manuais, histórico e demais contas, preservando o administrador executor, vínculo, sessão atual e estrutura técnica; exige digitar **APAGAR DADOS** e confirmar |
 
-Essas são as quantidades **da carga**, não o total obrigatório do banco. O administrador inicial e os registros manuais de homologação, identificados com `HOMO10`, também permanecem na instalação.
+A carga-base define 12 funcionários com contas, 40 clientes, 100 produtos e 250 vendas, das quais 25 canceladas. Esses números descrevem o cenário gerado, não a contagem atual do banco. As datas do cenário são fixas; para consultar seu histórico completo, utilize **01/08/2026 a 08/11/2026**, com o fim exclusivo.
 
-- **Gerar carga:** cria ou retoma o cenário; repetir não duplica os registros já gerados.
-- **Restaurar carga:** exige confirmação, verifica a procedência dos dados e recria o cenário sintético. Alterações, dependências manuais ou sessões de usuários demonstrativos podem impedir a restauração; nesse caso, nenhum registro é removido pela etapa de restauração.
-- A geração/restauração pode levar vários minutos. Aguarde o resultado; não inicie outra execução para tentar acelerar.
-- As senhas dos usuários gerados são aleatórias e não são exibidas. Para usar essas contas, redefina a senha pelo fluxo administrativo.
-- Para conferir todo o histórico da carga, utilize **01/08/2026 a 08/11/2026**, com a data final exclusiva. As datas são fixas do cenário, não são atualizadas automaticamente para o mês corrente.
-
-Para a banca, utilize a carga já disponível e um produto de teste próprio nas movimentações. Alterar produtos demonstrativos pode impedir sua restauração posterior. Não é necessário restaurar o cenário a cada início da aplicação.
-
-## Fluxo sugerido para usar o sistema
-
-1. Entre como Administrador e confira funcionários e contas de acesso.
-2. Cadastre um cliente, uma categoria, uma marca e um produto de teste.
-3. Registre **entrada de 20 unidades** e confira o saldo.
-4. Crie uma venda de **3 unidades**, revise os valores e confirme.
-5. Confira o saldo **17** e a movimentação de baixa.
-6. Cancele a venda com justificativa e confirme o saldo **20**, com o histórico preservado.
-7. Abra Dashboard e Relatórios no mesmo período; compare os totalizadores.
-8. Exporte um CSV e confira os dados.
-
-O [relatório de homologação](docs/execution/07-RELATORIO-HOMOLOGACAO.md) contém o roteiro de apresentação de 12 minutos e o checklist para a banca: internet, Atlas, certificado, hosts iniciados, login válido, carga disponível e navegador preparado.
+A limpeza não gera uma nova carga automaticamente nem remove arquivos de imagens externos ao banco. Gerar, restaurar e limpar não são rotinas necessárias para iniciar a aplicação. Consulte o [manual](Documentação/entrega/manual-do-usuario.pdf) e a [especificação da demonstração](docs/modules/09-CARGA-DEMONSTRACAO.md) antes de operar esses recursos.
 
 ## Testes e validação
 
-Para executar apenas os testes unitários localmente, após o build:
+O [workflow de integração contínua](.github/workflows/fundacao.yml) verifica as dependências entre projetos, restaura e compila a solução, executa testes unitários e de integração, audita dependências e procura segredos. No CI, os testes transacionais usam MongoDB real em replica set com Docker/Testcontainers.
+
+Para executar os testes unitários após compilar em Release:
 
 ```powershell
 dotnet test tests/GestaoComercial.UnitTests --configuration Release --no-build
 ```
 
-Para verificar as dependências entre as camadas:
+A suíte de integração depende de seleção explícita do ambiente técnico e isolamento de bancos; seu procedimento está na [documentação técnica](Documentação/entrega/documentacao-tecnica.pdf). Executar a aplicação para uso local não exige Docker nem execução dos testes.
 
-```powershell
-./scripts/verify-architecture.ps1
-```
-
-A suíte completa inclui testes transacionais com **MongoDB real**, concorrência, idempotência, rollback, permissões e regras monetárias. O [workflow existente](.github/workflows/fundacao.yml) usa Docker/Testcontainers com replica set, separado do banco da apresentação, e executa:
-
-```powershell
-dotnet restore --locked-mode
-dotnet build --no-restore --configuration Release -warnaserror
-dotnet test --configuration Release --no-build --logger trx --results-directory artifacts/tests
-```
-
-Nesse workflow, `TEST_MONGO_CONTAINER=true` é definido antes dos comandos. **Não execute a suíte completa indiscriminadamente contra o Atlas da apresentação:** sem essa opção, as fixtures podem recorrer à URI do `.env` e criar bancos descartáveis no cluster. Para repetir o perfil completo localmente, é necessário Docker e a seleção explícita do perfil técnico; isso não é requisito para usar o sistema ou apresentá-lo.
-
-A homologação registrou 242 testes aprovados no [CI final](https://github.com/argemon/MVPMilton/actions/runs/42429804917), além das jornadas no navegador e da conferência real do Atlas. As evidências, os limites dos ensaios e as correções estão no [relatório](docs/execution/07-RELATORIO-HOMOLOGACAO.md). Nenhuma nova execução de testes é presumida por este README.
+Os resultados registrados de homologação conservam a data e a versão em que foram obtidos. O [estado do projeto](docs/execution/03-ESTADO-PROJETO.md) e o [relatório de homologação](docs/execution/07-RELATORIO-HOMOLOGACAO.md) apresentam evidências e limites; os resultados de cada commit estão no [GitHub Actions](https://github.com/argemon/MVPMilton/actions).
 
 ## Solução de problemas
 
-| Sintoma | O que conferir |
+| Situação | Orientação |
 | --- | --- |
-| `git` não é reconhecido | Instale o Git e reabra o PowerShell, ou escolha o download por ZIP |
-| `dotnet` não é reconhecido | Instale o SDK .NET e reabra o PowerShell; instalar somente o Runtime não fornece as ferramentas de compilação |
-| SDK solicitado não encontrado | Instale a versão exata de `global.json` e confira `dotnet --version` na raiz |
-| Projeto ou solução não encontrado | Volte à raiz que contém `GestaoComercial.slnx`, `backend` e `frontend`; confira se o ZIP foi extraído |
-| Configuração `Mongo:ConnectionString` ausente ou inválida | Confira se `.env` está na raiz, se não foi salvo como `.env.txt`, se a URI foi preenchida e se usou `--launch-profile https` |
-| Erro ao baixar pacotes no `restore` | Confira internet, proxy/firewall e acesso ao NuGet; repita o restore antes do build. Não prossiga com `--no-build` se a compilação ainda não terminou com sucesso |
-| Executável não encontrado ao iniciar com `--no-build` | Execute primeiro `dotnet restore --locked-mode` e `dotnet build --configuration Release --no-restore` com sucesso |
-| Aviso de certificado HTTPS | Execute `dotnet dev-certs https --trust`, conclua a confirmação do sistema operacional e reabra o navegador |
-| API indisponível na tela inicial | Confira se os dois terminais continuam abertos, se a API iniciou e se o endereço/portas correspondem ao perfil `https` |
-| Atlas inacessível | Confira internet, acesso de rede permitido no Atlas e validade da configuração privada existente; não publique a URI para diagnosticar |
-| Readiness retorna 503 | Verifique conexão e inicialização explícita da persistência; não gere outro banco nem aplique evoluções automaticamente para contornar |
-| Readiness retorna 404 na porta 7143 ou 7243 | Use a porta interna correta: 8081 para API e 8082 para Web |
-| Porta já em uso ou build não substitui arquivos | Encerre os hosts anteriores com Ctrl+C antes de reiniciar ou recompilar |
-| Login falha ou sessão encerra | Confira a conta, troca obrigatória, estado ativo e eventual bloqueio; se a sessão expirou, entre novamente |
-| Baixei o projeto, mas não tenho email/senha para entrar | Solicite uma conta ao administrador da instalação; o clone/ZIP não inclui as contas privadas e o bootstrap não redefine senhas de administradores existentes |
-| Página ou operação negada | Verifique o perfil: nem todos os módulos estão disponíveis para Vendedor ou Estoquista |
-| Dashboard vazio apesar da carga | Aplique o período fixo de demonstração; o mês atual pode não conter vendas desse cenário |
-| Imagem cadastrada não aparece | Confira se a API está usando o mesmo `Images__RootPath` e se o arquivo privado continua disponível |
-| Restauração recusada | Há uso/alteração manual ou sessão demonstrativa que impede remover a carga com segurança; preserve os dados e siga a mensagem da tela |
+| SDK ou projeto não encontrado | Confira a versão exigida em `global.json` e execute os comandos na raiz que contém `GestaoComercial.slnx` |
+| Falha ao baixar dependências | Confira internet e acesso ao NuGet; conclua a restauração e compilação antes de usar `--no-build` |
+| Configuração ou conexão MongoDB inválida | Confira `.env` privado, URI, nome do banco, internet e liberação de IP no Atlas com o responsável |
+| Aviso HTTPS | Confie no certificado de desenvolvimento conforme o guia de execução e reabra o navegador |
+| API indisponível ou porta ocupada | Confira os dois terminais e os perfis HTTPS; encerre processos anteriores com Ctrl+C antes de reiniciar |
+| Login recusado ou operação negada | Confira conta ativa, senha, troca obrigatória, bloqueio temporário e permissões do perfil |
+| Imagem não aparece | Preserve `Images__RootPath` e os arquivos privados usados pela instalação |
+| Dashboard sem dados da demonstração | Selecione o período fixo do cenário; relatórios usam data final exclusiva |
+| Restauração recusada | Leia o impedimento informado e preserve os dados; a limpeza explícita possui alcance diferente |
 
-Credenciais, `.env`, imagens privadas e chaves de sessão não são publicados no repositório. Preserve os diretórios locais usados pela apresentação; copiar apenas o código não transporta imagens, contas privadas ou chaves já existentes.
-
-## Limites do projeto
-
-O escopo é acadêmico, voltado à demonstração local. Não inclui:
-
-- Deploy público, hospedagem ou operação de produção.
-- Emissão fiscal, pagamentos online, caixa financeiro ou conciliação bancária.
-- Compras, fornecedores, comissões ou cálculo de lucro.
-- Múltiplas empresas, depósitos, estoque fracionado ou reserva de estoque.
-- Descontos, frete, devoluções parciais ou funcionamento offline.
-- Catálogo público, pedidos online, aplicativo móvel nativo ou integrações externas de comércio.
-- Exportação PDF, recuperação de senha por email ou edição arbitrária dos perfis de permissão.
+Outras mensagens e procedimentos estão no [manual do usuário](Documentação/entrega/manual-do-usuario.pdf). Código e documentação não transportam contas privadas, imagens existentes ou chaves de sessão da instalação.
 
 ## Documentação
 
-| Documento | Conteúdo |
-| --- | --- |
-| [Índice oficial](docs/README.md) | Módulos e referências normativas |
-| [Estado do projeto](docs/execution/03-ESTADO-PROJETO.md) | Entrega atual, comandos, resultados e histórico |
-| [Homologação e roteiro da banca](docs/execution/07-RELATORIO-HOMOLOGACAO.md) | Jornadas, correções, evidências, limites e apresentação |
-| [Requisitos funcionais](docs/requirements/02-REQUISITOS-FUNCIONAIS.md) | Funcionalidades RF-01 a RF-20 |
-| [Matriz de permissões](docs/requirements/05-MATRIZ-PERMISSOES.md) | Operações autorizadas por perfil |
-| [Arquitetura](docs/architecture/02-ARQUITETURA.md) | Camadas e referências permitidas |
-| [Banco de dados](docs/architecture/05-BANCO-DE-DADOS.md) | Documentos, índices, transações e integridade |
-| [Segurança](docs/architecture/07-AUTENTICACAO-SEGURANCA.md) | Login, sessões, autorização e proteção de dados |
-| [Decisões técnicas](docs/execution/04-DECISOES-TECNICAS.md) | Decisões vigentes e histórico de mudanças |
-| [Carga demonstrativa](docs/modules/09-CARGA-DEMONSTRACAO.md) | Cenário fictício, repetição e restauração |
+O pacote acadêmico contém monografia, documentação técnica e manual em Word/PDF, textos Markdown, 22 diagramas em PlantUML/SVG/PNG, referências consultadas e registros de verificação.
 
-Documentos antigos preservam o histórico e podem citar decisões superadas. Para o escopo atual, prevalecem o índice, o estado vigente e as ADRs mais recentes. Os blocos 00–10 encerram a entrega; não há um bloco posterior de publicação.
+| Material | PDF | Word |
+| --- | --- | --- |
+| Monografia | [Ler](Documentação/entrega/monografia.pdf) | [Editar](Documentação/entrega/monografia.docx) |
+| Documentação técnica | [Ler](Documentação/entrega/documentacao-tecnica.pdf) | [Editar](Documentação/entrega/documentacao-tecnica.docx) |
+| Manual do usuário | [Ler](Documentação/entrega/manual-do-usuario.pdf) | [Editar](Documentação/entrega/manual-do-usuario.docx) |
 
-Exceção autorizada ADR-39: Limpar dados do sistema remove também registros manuais e histórico, preservando administrador executor/vínculo/sessão, estrutura técnica e recibos de limpeza. Exige APAGAR DADOS e é independente de Restaurar carga. Após sucesso, gerar uma nova carga pelo botão existente. Sem exclusão automática de arquivos de imagens.
+- [Índice da entrega acadêmica](Documentação/README.md) e [pacote completo](Documentação/Pacote-documentacao.zip).
+- [Diagramas editáveis e exportados](Documentação/diagramas/), [fontes dos textos](Documentação/fontes/) e [referências verificadas](Documentação/fontes/referencias.json).
+- [Índice técnico do projeto](docs/README.md): requisitos, regras, permissões, arquitetura, persistência, segurança e decisões.
+- [Estado e evidências](docs/execution/03-ESTADO-PROJETO.md): registros de implementação, validação e publicação.
+
+A documentação acadêmica está identificada como versão para revisão: os dados pessoais/institucionais e a adequação às exigências do curso permanecem a preencher e conferir com o orientador. Isso não representa uma etapa de implementação pendente do sistema.
+
+## Escopo acadêmico
+
+O sistema atende uma empresa e um estoque, com quantidades inteiras e apresentação local conectada ao Atlas. Não inclui emissão fiscal, processamento de pagamentos, caixa financeiro, compras, fornecedores, múltiplos depósitos, reserva de estoque, devoluções parciais ou funcionamento offline. Catálogo público, pedidos online, aplicativo móvel e deploy de produção não integram a entrega.
+
+Confirmar uma venda registra a operação comercial e sua movimentação de estoque; não comprova recebimento de pagamento ou emissão de documento fiscal. A exportação de relatórios da aplicação é CSV; os PDFs deste repositório são os documentos acadêmicos.

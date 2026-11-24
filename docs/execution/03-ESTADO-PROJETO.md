@@ -1,5 +1,11 @@
 # 03 — Estado do projeto
 
+## README final do projeto — 24/11/2026
+
+Responsável solicitou uma versão final do README, preservando sem alteração apenas a parte de execução local. Reorganizado o restante para apresentar a entrega concluída: funcionalidades, três perfis, consistência/segurança, tecnologias, estrutura, contas, diferenças entre gerar/restaurar/limpar, validação, diagnóstico, documentação acadêmica e limites. Retirados o destaque de contagens históricas de testes, a organização por blocos e referências a arquivos privados de contas da apresentação. Acrescentados acessos diretos aos três Word/PDF, pacote e diagramas. A seção `Como executar localmente`, incluindo o guia recolhível completo, permaneceu idêntica byte a byte: 17.161 bytes; SHA-256 `3976f75a35fcd2746e3fab975d1b800e84205424cf42db0f07e04fc9b27da979`.
+
+Arquivos alterados: `README.md` e este estado. Verificações reais: Python do runtime executou `.local/check-readme-final.py`, confirmando igualdade do trecho, 29 links locais válidos, três âncoras internas válidas, 34 cercas pareadas e bloco recolhível preservado. `.local/check-readme-final.ps1` analisou 14 blocos PowerShell com o parser oficial: zero erros, sem executar os comandos documentados. `git diff --check` aprovado. Sem teste/build de software, inicialização de host, leitura de `.env` ou acesso ao Atlas; sem nova decisão arquitetural ou bloco. Publicação na MAIN segue a autorização anterior para enviar as alterações do projeto, com autor/committer preservados e sem coautoria. Próxima ação: utilizar o README final e revisar os campos acadêmicos pendentes; sem implementação adicional.
+
 ## Publicação da documentação na MAIN — 24/11/2026
 
 Preparação para versionamento: `Documentação/.gitattributes` preserva os bytes dos artefatos/fontes para manter os hashes após checkout, reconhecendo CRLF e linhas finais vazias dos geradores. Removidos espaços finais sem conteúdo em cinco legendas de fonte da especificação e corrigido o gerador para não repeti-los; sem mudança de texto, layout ou PDFs. Markdown exportado novamente, validação de 212 itens repetida com zero erros, manifesto/pacote atualizados e integridade reconferida. Conferência do índice Git verifica os bytes dos 102 arquivos documentais preparados contra os arquivos locais.
