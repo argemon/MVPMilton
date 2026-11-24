@@ -1,0 +1,34 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+left to right direction
+actor "Administrador" as A
+actor "Operador autenticado" as O
+rectangle "Gestão Comercial" {
+usecase "UC01 Entrar" as U1
+usecase "UC02 Sair" as U2
+usecase "UC03 Alterar senha" as U3
+usecase "UC04 Manter contas" as U4
+usecase "UC05 Manter funcionários" as U5
+}
+O --> U1
+O --> U2
+O --> U3
+A --> U1
+A --> U2
+A --> U3
+A --> U4
+A --> U5
+note bottom
+Operador representa os três perfis.
+Entrar é iniciado antes de haver sessão.
+Nenhuma conta é criada publicamente.
+end note
+@enduml

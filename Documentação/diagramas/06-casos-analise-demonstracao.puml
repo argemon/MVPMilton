@@ -1,0 +1,38 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+left to right direction
+actor "Administrador" as A
+actor "Estoquista" as E
+rectangle "Gestão Comercial" {
+usecase "UC23 Consultar dashboard" as U23
+usecase "UC24 Relatórios comerciais" as U24
+usecase "UC25 Relatórios de estoque\ne movimentos" as U25
+usecase "UC26 Exportar CSV" as U26
+usecase "UC27 Gerar ou retomar\ncarga" as U27
+usecase "UC28 Restaurar carga" as U28
+usecase "UC29 Limpar demonstração" as U29
+}
+A --> U23
+A --> U24
+A --> U25
+A --> U26
+A --> U27
+A --> U28
+A --> U29
+E --> U25
+E --> U26
+note bottom
+CSV respeita o perfil do relatório.
+Restaurar protege dependências manuais.
+Limpar exige APAGAR DADOS e preserva
+executor.
+end note
+@enduml

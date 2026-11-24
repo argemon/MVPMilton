@@ -1,0 +1,45 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+left to right direction
+actor "Administrador" as A
+actor "Vendedor" as V
+actor "Estoquista" as E
+rectangle "Gestão Comercial" {
+usecase "UC06 Manter clientes" as U6
+usecase "UC07 Consultar histórico\ndo cliente" as U7
+usecase "UC08 Manter categorias" as U8
+usecase "UC09 Manter marcas" as U9
+usecase "UC10 Manter produtos" as U10
+usecase "UC11 Gerenciar imagem" as U11
+usecase "UC12 Consultar produtos" as U12
+}
+A --> U6
+A --> U7
+A --> U8
+A --> U9
+A --> U10
+A --> U11
+A --> U12
+V --> U6
+V --> U7
+V --> U12
+E --> U8
+E --> U9
+E --> U10
+E --> U11
+E --> U12
+note bottom
+Histórico para Vendedor contém apenas suas
+vendas.
+Inativação preserva registros e
+referências.
+end note
+@enduml

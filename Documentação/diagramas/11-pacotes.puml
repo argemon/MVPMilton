@@ -1,0 +1,29 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+package "GestaoComercial.Api" as Api
+package "GestaoComercial.Application" as App
+package "GestaoComercial.Domain" as Dom
+package "GestaoComercial.Infrastructure" as Infra
+package "GestaoComercial.Web" as Web
+package "GestaoComercial.Contracts" as Contracts
+Api ..> App
+Api ..> Infra
+Api ..> Contracts
+Infra ..> App
+Infra ..> Dom
+App ..> Dom
+Web ..> Contracts
+note bottom
+Setas: referência entre projetos.
+Web contém adaptador próprio de tickets.
+Nenhuma referência Web para backend.
+end note
+@enduml

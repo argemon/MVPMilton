@@ -1,0 +1,52 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+interface IEstoque {
+ SaldosAsync(...)
+ HistoricoAsync(...)
+ ConsultarAsync(...)
+ MovimentarAsync(...)
+}
+class MongoEstoque
+class Movimentacao <<static Domain>> {
+ Delta(tipo, quantidade): int
+ Motivo(motivo): string
+ SaldoFinal(saldo, delta): int
+}
+class Movimento <<record Application>> {
+ Id: Guid
+ ProdutoId: Guid
+ Delta: int
+ SaldoAntes: int
+ SaldoDepois: int
+}
+class DadosProduto <<record Domain>> {
+ Sku: string
+ PrecoCentavos: long
+ Criar(...): DadosProduto
+}
+class OperacoesCadastro
+class OperacoesComerciais
+class EstoqueSchema
+IEstoque <|.. MongoEstoque
+IEstoque ..> Movimento
+MongoEstoque ..> Movimentacao
+MongoEstoque ..> OperacoesCadastro
+MongoEstoque ..> OperacoesComerciais
+MongoEstoque ..> EstoqueSchema
+note bottom of EstoqueSchema
+Recorte de tipos reais.
+DadosProduto valida cadastro;
+não representa um documento BSON.
+end note
+Movimentacao -[hidden]down-> OperacoesCadastro
+OperacoesCadastro -[hidden]down-> OperacoesComerciais
+OperacoesComerciais -[hidden]down-> EstoqueSchema
+@enduml

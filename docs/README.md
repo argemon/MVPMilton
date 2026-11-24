@@ -2,6 +2,10 @@
 
 **Versão do plano: 07/11/2026.** Aplicação apresentada localmente em um único ambiente e banco MongoDB Atlas. Sem deploy, catálogo ou pedidos online.
 
+## Entrega acadêmica para revisão — 24/11/2026
+
+[Índice da pasta Documentação](../Documentação/README.md): monografia, documentação técnica e manual em Word/PDF, textos editáveis, diagramas PlantUML/SVG/PNG, referências consultadas e evidências de validação documental. Versão do código analisado: `1940b83460ec93d8efa2011db9dc9177570b0586`. Dados de autoria/instituição e adequação às normas do curso permanecem pendentes. Os resultados históricos de software não representam testes executados nesta elaboração.
+
 ## Módulos
 
 | Bloco | Documento | Estado |

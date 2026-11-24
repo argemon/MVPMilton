@@ -1,0 +1,1197 @@
+{
+  "commit": "1940b83460ec93d8efa2011db9dc9177570b0586",
+  "data": "2026-11-24",
+  "natureza": "inspeção estática; sem execução da aplicação",
+  "arquivos": [
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/AutenticacaoHttp.cs",
+      "bytes": 3341,
+      "sha256": "342484421e504c18f14be242f17d4649a794906f425f6c7a2912a99a347be6cb"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/CsvSeguro.cs",
+      "bytes": 1055,
+      "sha256": "3afe62349c1c4dcd37af3c658b602c39a033e9d1df827c5ff624be9de925dcd3"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsAcesso.cs",
+      "bytes": 8337,
+      "sha256": "a59228fcc14bb81806ea5d57106eb32098b27c64cd9c303a00ad4a47ec4a7e12"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsClientes.cs",
+      "bytes": 2419,
+      "sha256": "1104095c7d92a4b691858b60517f473d9536f97f0394f4cbcb4003ba8a2b9578"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsDashboard.cs",
+      "bytes": 1564,
+      "sha256": "f77658d02ece1299f140d46f9bba84e94603fdc87f0c720897840204180ee19d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsDemonstracao.cs",
+      "bytes": 2113,
+      "sha256": "d63427cbd1b3f0a8223145e1edfc817ec00c8e0562b33b12a3b7c90434727193"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsEstoque.cs",
+      "bytes": 3408,
+      "sha256": "f972f6462a15ea849b1b5027c1925cc74f211c3800644f5a791cfa90c95c7e9d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsFuncionarios.cs",
+      "bytes": 2953,
+      "sha256": "a49d6fe098c5dbba927969a9350c0528a63a3a1d4f2b23ff3bdf0ff559ae7935"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsProdutos.cs",
+      "bytes": 6400,
+      "sha256": "8147c8649ade64abff63b6b9be94bbd61991c8aca33025ec0e2d2c240aae45d0"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsRelatorios.cs",
+      "bytes": 7308,
+      "sha256": "1b7822b729cdf55e9c2bb32e7337e99150b38510ec453eff4f0f6e6452a8b1da"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Acesso/EndpointsVendas.cs",
+      "bytes": 3692,
+      "sha256": "23224f5faa36537fdfaee879ca3add8ee7cca7809973605a58416cd86f222b1b"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Configuracao.cs",
+      "bytes": 443,
+      "sha256": "5d244a0273f1ceb42046ec3b747cff3674c3337a56024c3e3b403ef9d3c0b3bd"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/ErroSeguro.cs",
+      "bytes": 1081,
+      "sha256": "ae7f67cf76bdaacf305bea7e93638ee36e8e9abcfe8d4c0c9f9d5a676682d2eb"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/GestaoComercial.Api.csproj",
+      "bytes": 525,
+      "sha256": "01ac2d8a7dc94b73353e3538d5a6e2d1d165d8843c7fd0ff7a561ce77e5e3027"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/packages.lock.json",
+      "bytes": 4001,
+      "sha256": "e54c84f0aef610104db6d007d0839be61b45574c899f17b21793b382f3d277ef"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Program.cs",
+      "bytes": 11184,
+      "sha256": "d17049be767f2b00c0aae87d22412821b90eedb7d5e721a9b5fd2bfae59e98b8"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Api/Properties/launchSettings.json",
+      "bytes": 280,
+      "sha256": "97abb36cb1a94a4cbb8003345718d37f062357d2c572556824cbd61a2f212ceb"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Acesso/IAutenticacao.cs",
+      "bytes": 1881,
+      "sha256": "ee04fbf900d0a613c4fe14d07cf2db454ec001c8cd9c0cc2642dc1509f7e9e5c"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Clientes/CadastroException.cs",
+      "bytes": 251,
+      "sha256": "247350a65a95d3bda55c3f7973fd44cf1a5bda3771b4437ce3a26db3a5541a20"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Clientes/IClientes.cs",
+      "bytes": 1241,
+      "sha256": "c9c602d84c9d3d9ad607c5a60ebc66a31a657a5008b4122cc60c8af86e1887c1"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/DadosDemonstracao.cs",
+      "bytes": 625,
+      "sha256": "3316ab9bd644465cc0d92a779dbf582ebc1095169ffd476f34b2bb9e47cccc35"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Dashboard/IDashboard.cs",
+      "bytes": 1186,
+      "sha256": "47df0b688572c61bdb11aa986c89d2398a0f92c2a2c2f6b1ed8ba417e7d67a2d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Dashboard/Indicadores.cs",
+      "bytes": 1380,
+      "sha256": "f0101dc318dbe8674abda79b76c71650ee1898a786a64c8a5df9ac6935723a2f"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Estoque/IEstoque.cs",
+      "bytes": 1150,
+      "sha256": "b31769d14cafab399715c107b40af5efb7bae94490052cdfdb654fdd8a1a66ee"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Funcionarios/IFuncionarios.cs",
+      "bytes": 1136,
+      "sha256": "4d4d0f186637dcd62c3c17d6ed1554b520947b5fb348428e50185b70e446106a"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/GestaoComercial.Application.csproj",
+      "bytes": 154,
+      "sha256": "c5201f533cb91107fe2de5444ba7a626a66d2cac24cbf1e7ec71a1e586e65296"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/packages.lock.json",
+      "bytes": 145,
+      "sha256": "5e235bca6358cee41902c6a58d226c61bd3ac2f6679b735716964e347392415d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Produtos/IProdutos.cs",
+      "bytes": 1772,
+      "sha256": "c1414644f23751bf3f71f318b503a4a4678ba73b04a96943728274c1a17a9e7d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Relatorios/IRelatorios.cs",
+      "bytes": 2084,
+      "sha256": "673710ba1d7f905d2d358ba62a11776d74fc98e6d41491b8001c946fd1cbdabc"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Application/Vendas/IVendas.cs",
+      "bytes": 1649,
+      "sha256": "4725e9a4ebc877b5a66a8a81ecb042316379d0b08ba7b3ff9167e141ab514b40"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Acesso/Perfis.cs",
+      "bytes": 287,
+      "sha256": "d91e19bd4450d219ada889f33a751896f80ef430514128e7b2a3c87dd5106b45"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Cadastros/Contato.cs",
+      "bytes": 1191,
+      "sha256": "30766d6267ae8b5fd3f664a9e0d2bf6bcdfdafd1aa7684b2b1011a156a1b7d54"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Cadastros/DadosProduto.cs",
+      "bytes": 1172,
+      "sha256": "5877cecbe7f3f8e929fd277b06fb3e450450f547b5bcde3586ec29f209c1d0d2"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Cadastros/DocumentoCliente.cs",
+      "bytes": 1062,
+      "sha256": "9be3d1061ded500dbb5210e5ea4e9d2e8da9a75423b4291d5c2fe6d1eb897cfe"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Estoque/Movimentacao.cs",
+      "bytes": 1123,
+      "sha256": "4435b79c398ab9ef5597a4aa76473ee7e49c76c320212489d56d5211731a1ff9"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/GestaoComercial.Domain.csproj",
+      "bytes": 68,
+      "sha256": "9195ac8506107c73ab29639ea73c3c7211152718ac425febb1db7812ae942062"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/packages.lock.json",
+      "bytes": 68,
+      "sha256": "d4f861e0c251cf787da3930c7154368f6852bc1d86747c58406f44847579b029"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Domain/Vendas/RegrasVenda.cs",
+      "bytes": 1472,
+      "sha256": "679054a79640fc2b10ad67b0ec04178ec9fa58e3da1ce1b6fad8865692aa38e6"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/CenarioMercado.cs",
+      "bytes": 2630,
+      "sha256": "bb31412083c19397ed78907d9efb71d4a9e671064568924ea875cd8a28f86d98"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Clientes/ClienteDocumento.cs",
+      "bytes": 1137,
+      "sha256": "a2c9c8e2b7fd4f7d855feb5440e787123078395f7e73fc65aa2f2ecda595e8df"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Clientes/ClientesSchema.cs",
+      "bytes": 2353,
+      "sha256": "b0bd2fecaca70f91e2df9ff1f22c498952762eaaf2d53650256bc41310f345db"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Clientes/MongoClientes.cs",
+      "bytes": 5534,
+      "sha256": "fbfcc167dafff6c75d75cf4fe970eea61ac398889d5cd3bbf1d58ab50407023b"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs",
+      "bytes": 16686,
+      "sha256": "c4b6dc61c8412ebdf6b3e0c71e619a75dfeee19051f409dc574d22bc8b802eff"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Dashboard/MongoDashboard.cs",
+      "bytes": 6042,
+      "sha256": "3a2e59a1eabf309599363802530b836a1f8880785c1986a4eb1307534a55baf3"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Estoque/EstoqueSchema.cs",
+      "bytes": 5303,
+      "sha256": "b0b415b1bf7b01d50188bdb5291840615e221f4915f6d4c2f9eb0ba743486932"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs",
+      "bytes": 9527,
+      "sha256": "d86704a5535c33478c422949ffe782e170080aa29330b6905f28e836b20dca95"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Funcionarios/FuncionarioDocumento.cs",
+      "bytes": 1006,
+      "sha256": "94637c370156f40007dc6fed38d162f52b57ae30d784705d8907f1561e674fa5"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Funcionarios/FuncionariosSchema.cs",
+      "bytes": 5142,
+      "sha256": "3c858c7f2d5c18f4715eb6a7827d35859ffc77bd8fffe060af9a2f342707018d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/GestaoComercial.Infrastructure.csproj",
+      "bytes": 466,
+      "sha256": "d1893f63e7be6e3b74a6e52418514fd8be54e63ee6ab066fb411d4b71ca70de9"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/AuthSchema.cs",
+      "bytes": 7223,
+      "sha256": "8d278ce4eb3de85df7d2bc7a4f2660b1a7e6f4fa962d733e2c988021c01d9a70"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/Documentos.cs",
+      "bytes": 2458,
+      "sha256": "ea7a17b24e6187790a3a9f4d2f4e6ec9ef32ed8cef5a783e13a003df3c060cf5"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/MongoAutenticacao.cs",
+      "bytes": 16610,
+      "sha256": "53fd63e6e354a0cb10e51aeb9063a8b808dce708c05bb0b0f9ac1e128ca9ba75"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/MongoFuncionarios.cs",
+      "bytes": 7908,
+      "sha256": "8c2d4fd234772d737c068fc6059545ccf29e0a764eb5e4b58607222086988e7f"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/MongoUserStore.cs",
+      "bytes": 6255,
+      "sha256": "b6f8a3f1cafb9c50d4777b4aad2e8dd9e1f5f4851bce57140f6943fcd8e8e52f"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Identity/RegistroAcesso.cs",
+      "bytes": 1458,
+      "sha256": "36622ff2b6d66329b089bb54790aef3881066d4f804f2cee287eeb4f2e67025e"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/packages.lock.json",
+      "bytes": 2947,
+      "sha256": "92479f1981dbb1036104b62039c1f0e6188f1d36879d8ae0065a232bc1630b2d"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Persistence/MongoConfiguration.cs",
+      "bytes": 2510,
+      "sha256": "b2cffd028fb71da0b24922cd4fbe2ffa74fdcff8d76f2e8b5a7b4b8353239390"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Persistence/MongoFoundation.cs",
+      "bytes": 4593,
+      "sha256": "56d21a65448d49432dd1c0642eda94445b8e03f0308f696782eb37eeb2a77434"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Persistence/OperacoesCadastro.cs",
+      "bytes": 4743,
+      "sha256": "72c067eec057ef4aa696a688a1c4178b0e25492666045dadbd03781959b857b2"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Persistence/OperacoesComerciais.cs",
+      "bytes": 6040,
+      "sha256": "508a6514a1bda86ae957c246b61d03676f02435c5c2442adae7e8cbf9bed34c0"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Produtos/DocumentosProduto.cs",
+      "bytes": 2848,
+      "sha256": "f9a0c5a7e634ae585da95c3d6dd0a6c37af31aac9b47ca8b18b4ae8d16f775b4"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Produtos/ImagensPrivadas.cs",
+      "bytes": 2778,
+      "sha256": "db1c2af122dec2bf72cf61ed1f64f25aed19717e54bc082c60927c84b8f1403f"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs",
+      "bytes": 12663,
+      "sha256": "1008b968c08ea670a1778d56a38d478b569c948bb6d63770433f10578cec8839"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Produtos/ProdutosSchema.cs",
+      "bytes": 4699,
+      "sha256": "cede01a27266d268a8cc5b2c7607d128718aeb95e2b91ea0b9a12fc58a8712d9"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Properties/AssemblyInfo.cs",
+      "bytes": 101,
+      "sha256": "ea3fbd3dc79a9e41ca70e6e2c6ca4cbf3f29376c6ee4de4463e13eea306f4f7b"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Relatorios/MongoRelatorios.cs",
+      "bytes": 9718,
+      "sha256": "0f0dd4160cd92ab313488243b3ed4b7ba8ab029605d944793ec82c759b762c7f"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs",
+      "bytes": 13252,
+      "sha256": "76af3b1104a12254d27d995237e94e6e551493f9f1e55b24c9875b1cc813f4cb"
+    },
+    {
+      "arquivo": "backend/GestaoComercial.Infrastructure/Vendas/VendasSchema.cs",
+      "bytes": 10067,
+      "sha256": "f425d04271643b13493462e508a9cb2c65380bbf02948b6c9c1fefd235d8fc6c"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/AcessoApiClient.cs",
+      "bytes": 4319,
+      "sha256": "8ff482b1becf882d5fdb067e5583bf5fbf83ca483f0711c93573210ab41b674b"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/ClientesApiClient.cs",
+      "bytes": 1447,
+      "sha256": "64b81b9028d20ff41e60d927d1fb85f552396b4ad9c33849fd243fae911167eb"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/DashboardApiClient.cs",
+      "bytes": 353,
+      "sha256": "9c4da326136c46ba65c42f64f01abaa1ad63937d5231abaa60977cd6c8e295e7"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/DemonstracaoApiClient.cs",
+      "bytes": 1076,
+      "sha256": "c6dec465315341b8a7226b1df19eaf554abe30dae9aec941b8638dd569119457"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/EstadoApiClient.cs",
+      "bytes": 577,
+      "sha256": "2b9db1982f7abee79e43aa525199d16abdc826363bc58ab61986c581aee9781b"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/EstoqueApiClient.cs",
+      "bytes": 1449,
+      "sha256": "764f3b64f3e277270f7796c767acb9910387daf63d99ab871d349d2123db7fe4"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/FuncionariosApiClient.cs",
+      "bytes": 1661,
+      "sha256": "9aef84dd9c682d5bfe8b312e4ce330ddb8b4b1e694329db0e11cc1e0d22eb5ea"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/ProdutosApiClient.cs",
+      "bytes": 3559,
+      "sha256": "8d910b051749678e902a397adca58e879f67c020d28acba8c0aa28f75b8daf10"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/RelatoriosApiClient.cs",
+      "bytes": 1636,
+      "sha256": "b18efa44573b75997a5e49d05a5bfb5762e2926deefd6c4ed010dfe57e596adb"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ApiClients/VendasApiClient.cs",
+      "bytes": 1780,
+      "sha256": "2cb7ee24589277990731d51197cdd501190a745184c9bcab7fa267480c1f1b2a"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/_Imports.razor",
+      "bytes": 443,
+      "sha256": "0999609020f8117ef2304dcd1b929fd28fffef11f8c7f9b7e1cebc172f17bac6"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/App.razor",
+      "bytes": 364,
+      "sha256": "1f55ced93557ece83d955cbcdbc4c3896f27478e5af09557e437a84f0c0f290d"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/DocumentoConta.razor",
+      "bytes": 500,
+      "sha256": "9ff67301fe3bc03205b005a8305ed23cf5f635ae2e8ae4b8329eea37e3dcc4ae"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/FormularioConta.razor",
+      "bytes": 1742,
+      "sha256": "9102fb160cad7436adcb27a4d862d9ad8fa06beba8749805950fee27f3205f19"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/LayoutPrincipal.razor",
+      "bytes": 3094,
+      "sha256": "c42833d16f2f8e35d4ce8e0742a5e4b7d8b41f7f70fe65ac39a4dd3bd911ed52"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/AcessoNegado.razor",
+      "bytes": 375,
+      "sha256": "4bba91184b778c73f86046506c3b529de44bdd3a9bbd1f60357d7d81e16cae21"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/ClienteDetalhe.razor",
+      "bytes": 5853,
+      "sha256": "561cb24e5584990bee9fc114660196db0f902384a1cbc4f378892cca08105f4b"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Clientes.razor",
+      "bytes": 3031,
+      "sha256": "bf65bda3bcf833dfd4699927ddf2aee4aaeb9f9b5129f0592c027140ab754c83"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/DadosDemonstracao.razor",
+      "bytes": 5844,
+      "sha256": "42095910b557a13aab5eb2d93a92c158b9a51fcdf5371528cf4db9c1356aad8b"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Dashboard.razor",
+      "bytes": 6053,
+      "sha256": "d4030b186e7c5be25f373d0dd835b6c96244838c010d39b9935f4dfcd72f87e9"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Entrar.razor",
+      "bytes": 455,
+      "sha256": "435cd848e2e8de5bd5c3b53903e91fc086e7c486f1f710aa94d7bebb09c03125"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Estoque.razor",
+      "bytes": 3147,
+      "sha256": "70205e7eb8f3b51cf6c75fa81257e2b9c468a5362652b25f75acd9880287481c"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/FuncionarioDetalhe.razor",
+      "bytes": 4362,
+      "sha256": "442117c308bc39d920ee9ec630d98e951729880d9c18c55895003aab8c1b25c8"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Funcionarios.razor",
+      "bytes": 2858,
+      "sha256": "27931ead8cb831f5c23378467998fe4d28007b041881316cf67d0b00b211d699"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/InicioTecnico.razor",
+      "bytes": 5064,
+      "sha256": "1edc74704346ee9acada0743c548b8ea6b9ba521bb20bf1a85d6b8e4e5b88e9d"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/MovimentarEstoque.razor",
+      "bytes": 5962,
+      "sha256": "d48750dec7e69e39e7664d0c7693a9a2753d0cf5363135f6a4d34ca72d252f21"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Movimentos.razor",
+      "bytes": 4303,
+      "sha256": "d1e13fea9074b052ecaf68f4acf76bd32fded1752d473a0cfd77ad9971e27648"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/PaginaErro.razor",
+      "bytes": 378,
+      "sha256": "0a2c3c85825a2675e8ffecdc9e8455e85686b4629a05d853264a04932adb9a5c"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/PaginaIndisponivel.razor",
+      "bytes": 264,
+      "sha256": "7c51031487697509683115bffd5017260954e15785082c628edccb7f49ba38c8"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/ProdutoDetalhe.razor",
+      "bytes": 8436,
+      "sha256": "a7b294ba792904250a8433bd6c4332e614003d3f8007fb2cc4316f90cb4cd2e3"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Produtos.razor",
+      "bytes": 4184,
+      "sha256": "1d1aea73ceef70e19ff559f64dce0b66d600e25e4b1651dd623f7b271ed12ded"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Referencias.razor",
+      "bytes": 4614,
+      "sha256": "b1287acd9df7e1d9a27e5c87fbe029093c48b8790643055f3d766d81c9c9dd26"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Relatorios.razor",
+      "bytes": 14827,
+      "sha256": "ac49cc2201ff64832ea498a8ef84a97c5c6dda665d8f3701f3fd789d5c7f6b3a"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Senha.razor",
+      "bytes": 174,
+      "sha256": "1e2d8f3ecffda93965f1312d75171c27289ff050de331d6336cfc4416469bc48"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/UsuarioDetalhe.razor",
+      "bytes": 4094,
+      "sha256": "f7cfc5f2044d66f8c0675b700cb1834bfa878dcd5e483b9c2519aac82bfd4d22"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/UsuarioNovo.razor",
+      "bytes": 1531,
+      "sha256": "4df37075e50842e469d0a6fcd9f90e7fe63e08cbdfb4e743ae1f7af61ca725cb"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Usuarios.razor",
+      "bytes": 3044,
+      "sha256": "e7b8d3e3a6c11d4cdf5adbc11c2c34c74f67fed63368333c8462a0e65deca18e"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/VendaDetalhe.razor",
+      "bytes": 17481,
+      "sha256": "dcdea4e242e858422644657d6ef4bf735e49a57678cbc5fd6c3b747bc048f22d"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Pages/Vendas.razor",
+      "bytes": 4341,
+      "sha256": "7ac731f6765295467f3e88b01306f18047c536beae9918b539672c3fe5940419"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/RedirecionarAcesso.razor",
+      "bytes": 295,
+      "sha256": "f8ad54853683a786972a00ef4df7dfbc20cbc85aa104793a599e031004265094"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Components/Routes.razor",
+      "bytes": 549,
+      "sha256": "9e853e932b6078b7cafa2dc866124757f85860eb5a1e59c374d747826f8a2151"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Configuracao.cs",
+      "bytes": 1126,
+      "sha256": "301a84782aa66c5f334ab650bfe3d70ad6851172e4207bc3023b39ee4a36bf34"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/ErroSeguro.cs",
+      "bytes": 1081,
+      "sha256": "a2e10702183931e6aee129cf8cf08d001b9e4808cd1eddd89bbc2436ba021807"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/GestaoComercial.Web.csproj",
+      "bytes": 313,
+      "sha256": "acb36a5376e5877b0a76953740374699e1711e5078e886702ec362e57c258f53"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/packages.lock.json",
+      "bytes": 1935,
+      "sha256": "751a9035c02fdb5028207d3b35d2bc644983ca58d2337d0da4f857c306de1b73"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Persistence/MongoConfiguration.cs",
+      "bytes": 2488,
+      "sha256": "0979776a8364abb5b246626effe5b489f549633f31668aa61ac231c5469147b6"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Persistence/MongoFoundation.cs",
+      "bytes": 4582,
+      "sha256": "d4435d23fa1860f31df147bd9b8df16c2c39c078d3ce99adcf73196be42f9009"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Program.cs",
+      "bytes": 8001,
+      "sha256": "4a657d2af26d1ae4f2c19d45b5cb8e58c4360a050338585ae72684b4ff094be9"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Properties/launchSettings.json",
+      "bytes": 390,
+      "sha256": "c5d41c0a541f3507aa078243579386f8775c2a679e2535e3d19e8f23d8b5ecee"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Security/ContasHttp.cs",
+      "bytes": 12783,
+      "sha256": "5bf1f141ac2cc7de910d866b3e13eaab7d4cfc32d7ba006c5e8b8f6d8129daed"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Security/DownloadsRelatorios.cs",
+      "bytes": 2023,
+      "sha256": "26186df963d0772badba3f974202df4df441fd932145e9ec541614ca3ef88ffa"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Security/MongoTickets.cs",
+      "bytes": 7757,
+      "sha256": "effa543f1f0935476722a2e68c10428919c8100b175f500a361c18f7fb4440dd"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/Security/SessaoCircuito.cs",
+      "bytes": 1977,
+      "sha256": "c976686bb821e137796b724f48213fcc1b8d083a0b749c4c7a380e3d058f7390"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/wwwroot/app.css",
+      "bytes": 12265,
+      "sha256": "7fddde04bfdad7bfc0ca5a2ab269f0af2a88f4e164013053270d9d27536a7a7f"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/wwwroot/GestaoComercial.Web.lib.module.js",
+      "bytes": 393,
+      "sha256": "16c681a4b9abf0711edd57d37a8c148c6d7c66869403906ed9aeefc24829e018"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/wwwroot/pdv.css",
+      "bytes": 11799,
+      "sha256": "e46795df70e2b3a7013fc4e14695379d78863b84a4a8ffb9d3d607cdd94af8c2"
+    },
+    {
+      "arquivo": "frontend/GestaoComercial.Web/wwwroot/relatorios.js",
+      "bytes": 996,
+      "sha256": "38babb3f9cf60d5889c3fa151a52171e3c575d3754a22ad9e9a9a9f19ba28a75"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+      "bytes": 650,
+      "sha256": "c6338cbece560a0c8ddaa2a95aa658378c0369cb2ad90e004ae4323b7ea61b01"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+      "bytes": 835,
+      "sha256": "8dc00c2e6c4ab97506190fc05187a3dd8ae012ac6ba259d6e52ff961a6d73a03"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/DadosDemonstracao.cs",
+      "bytes": 398,
+      "sha256": "5ff499106f0cfa5ad3f5cbd866a7f2566e49c9ce4ce424e74faf800fffaff573"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+      "bytes": 1181,
+      "sha256": "367e356f7279469fb057669fe1863c6a586b96a45b2a1ce2fed4291730558156"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+      "bytes": 872,
+      "sha256": "0b8c622795df2a61733102562cc7e47c337b1eb379ee12cd55b82a6956b1091f"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Funcionarios.cs",
+      "bytes": 531,
+      "sha256": "a470bb32d61b2f87b30b365587fe2a56fec7b22a53f91374828561662aec3ba1"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/GestaoComercial.Contracts.csproj",
+      "bytes": 68,
+      "sha256": "9195ac8506107c73ab29639ea73c3c7211152718ac425febb1db7812ae942062"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/HealthResponse.cs",
+      "bytes": 93,
+      "sha256": "a00ab002d5f8b24a1f20f43ca14029bbd35243f195825743b734f8497dcbe910"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/packages.lock.json",
+      "bytes": 68,
+      "sha256": "d4f861e0c251cf787da3930c7154368f6852bc1d86747c58406f44847579b029"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+      "bytes": 1035,
+      "sha256": "8c6e261a60b1bde2ae99307fc71cdf3c80a173a7ce8c13da622d9818378245b1"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+      "bytes": 1547,
+      "sha256": "1342b039b022febfbb955193ca4e908765994b396c03d859df98d453acb1b9b6"
+    },
+    {
+      "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+      "bytes": 1495,
+      "sha256": "5c00cf33c4b8e592e78efc03ea46ea022b17110ebfd0adf6676840c1bb7f5b75"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/AdministrationTests.cs",
+      "bytes": 2932,
+      "sha256": "b0680c0f31ef5b5ee85431f7303e1a947711259c8844242ce61c3e56c3e84905"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/AnalyticsReadinessTests.cs",
+      "bytes": 1740,
+      "sha256": "6354ae50ea4d3916e30b3081a66b62c1cad0452702cfe1ea320ed3e4ab9f789b"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/AssemblySettings.cs",
+      "bytes": 229,
+      "sha256": "a908e19e602b77df035a4303172b5d03c44ce9f9e41d57d41d4551c3122ccd27"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/AuthAtomicityTests.cs",
+      "bytes": 1986,
+      "sha256": "dc0868f7eaaae77182fb6ce40f6b7804ea0c844afd8d450df2fb211808398fe1"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+      "bytes": 16630,
+      "sha256": "8ea67794c5b1deef4d70786abf888bb62a2477bcea5f7a05f611c893ea75c49f"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+      "bytes": 11615,
+      "sha256": "14d9afad7282f54ca08ec44512ae70352b89c7148b8a7cc340efa2bee9eccd35"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerBffTests.cs",
+      "bytes": 1414,
+      "sha256": "c17effbffcfdbedc57c281e4905eeff596d9f31d4689570d237e085aef4d5ac9"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+      "bytes": 8972,
+      "sha256": "c72437729ec010154953f6ae6eef3cf343ac8ad022f3c648d85f77d59942afc4"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardBffTests.cs",
+      "bytes": 1664,
+      "sha256": "b0fb4ce5ab813190aae30c8c88d58d7bfda5a597bf35de87f07f962fe1ba4118"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardTests.cs",
+      "bytes": 10149,
+      "sha256": "ecfa4da321cbb7c894ad0b95205106b354e29f6e5721e304fe4e59a828a53005"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationBffTests.cs",
+      "bytes": 1796,
+      "sha256": "aa661ff8f34925e49b646c17fb119be2f66ce26a8331921bbc463874971c078e"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationCleanupTests.cs",
+      "bytes": 5929,
+      "sha256": "1c5634eb926635957a39d4e7013334f8b6a0ac81c8a2f8f979608c43c1160b84"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationTests.cs",
+      "bytes": 9266,
+      "sha256": "94996ff19ff632c08f41f61ff917bce3061ce7e95ad33cf94eedb3471b6a5538"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationWebTests.cs",
+      "bytes": 1979,
+      "sha256": "f9df149fc5a57b5706b8faedf119a819f0347f3a649c480106cd62b44ed8fa29"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeBffTests.cs",
+      "bytes": 2214,
+      "sha256": "4ae113191c8a29c61aaaf421595e50d3d56cb752fae514c281754d7ab4f1807f"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+      "bytes": 13320,
+      "sha256": "2f4fee018a9b048c3e66e9530595ff777545d3ce02494d4e6632bf625132d10c"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/FoundationTests.cs",
+      "bytes": 10501,
+      "sha256": "2ba54000141138d60911d6dff542d06f9cc21be2f92114aa2af2488f56e6cb36"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/GestaoComercial.IntegrationTests.csproj",
+      "bytes": 767,
+      "sha256": "9baa86cf66cfa2d5a4bb13e7a79364141ea237f6baa1bb9316cf8df0041f77bd"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/packages.lock.json",
+      "bytes": 27530,
+      "sha256": "ae03e6083581776ced9045199eb24e71eb889b56934e6e93c2c07ba94fe7dd0a"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ProductBffTests.cs",
+      "bytes": 2163,
+      "sha256": "a3fa3845ccd5dbb726911637bfc5fb4545534a2a76c4b5c0a9731a9772e34271"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ProductsUpgradeTests.cs",
+      "bytes": 3430,
+      "sha256": "c8ed55ce156278e8fbe0be1654844d76e6e993d349189311942ec5baa8c96367"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+      "bytes": 16840,
+      "sha256": "4968a05a8b9d7d4d72cb2aae56c772fd9756cc19fc1fcac5b38f78651d241203"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsBffTests.cs",
+      "bytes": 3771,
+      "sha256": "7c268c0e3891a355c34468be49424a8e21a694a6191308d1e71a18c2f22cac1d"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsScaleTests.cs",
+      "bytes": 2378,
+      "sha256": "20a9f938307a7b458b80bd477876905ae0dfc222d9f7355b9a234d730e18b2e7"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsTests.cs",
+      "bytes": 11977,
+      "sha256": "a0f3a7f88a7b75e031691ce73eb448ffa696acfa99574dc97580578eec3530e1"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/SalesBffTests.cs",
+      "bytes": 2354,
+      "sha256": "e86f9d7f3b8dc5d4e8faf918fe9b7670b4861a021bcf4c8d6a3d40c818220ce5"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+      "bytes": 26378,
+      "sha256": "fbb5d7e441ac7a9befd1398c5f105d298412c6d7b1a5557eaa19f723ab836cb8"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/SalesUpgradeTests.cs",
+      "bytes": 3313,
+      "sha256": "5175f818b4366422052a53defee34f84396318568ddfc7aa090caf87bea9d399"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockBffTests.cs",
+      "bytes": 1727,
+      "sha256": "e34fc3201da13694dff96b920c42d392f3333d5ecb71b1074867308d854c8baf"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockCommitTests.cs",
+      "bytes": 5775,
+      "sha256": "e07d6735996c59c8dccb29d7ff01f271d6b3130b6cba99f4313e95a39690af14"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockQueryTests.cs",
+      "bytes": 1930,
+      "sha256": "b83e38add9253ab463d16c6a59d8e8f9547081311d7203d99b8d0c45dc21b1e1"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockRuntimeSecurityTests.cs",
+      "bytes": 3455,
+      "sha256": "c546bcba30190a8054d1150ab9e90fc8b32cc2fac91515dd561b1895c1b13253"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+      "bytes": 13710,
+      "sha256": "9ee43811b1392a87da880afb61140363fc7654f2ec8fdc72b3ad1902fa9dba34"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.IntegrationTests/StockUpgradeTests.cs",
+      "bytes": 2718,
+      "sha256": "17ca94d5086db50f317f30f2e5655fea82ab21679a72cd62e1fe0ce28674bc90"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/AccountDocumentTests.cs",
+      "bytes": 1276,
+      "sha256": "1fd355b6e60f2a0b21f5826d7ca8a801c7a8e2e5293be69f345c17995869bf18"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/AggregateMoneyTests.cs",
+      "bytes": 886,
+      "sha256": "7b1b0a9ae4328512151c7075baf1a144e6b51f28ddb58b3f57fa0a9c6490ffe7"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/AuthenticationRulesTests.cs",
+      "bytes": 2460,
+      "sha256": "7ec7a4f80ad89fd89e7aab8a50823c12333d93f52b34c6750b9613337c4d822f"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/CenarioMercadoTests.cs",
+      "bytes": 815,
+      "sha256": "a3a832d50d3c550b776d94a8fb6b1a7b5f26ab61f771122ef06b2351a86e0bb2"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+      "bytes": 3857,
+      "sha256": "6be57144266d0b652cbe7d8192fbfaed84792b97b0d580c944b5d83454ad697e"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/ContactTests.cs",
+      "bytes": 933,
+      "sha256": "a6165705c2c85f54824ca8ab6fbbbcf7a2580e4c8bff1dc3b2f4bded282198d4"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/CsvTests.cs",
+      "bytes": 999,
+      "sha256": "af23657e63ff3377e63f1004aed828588c547c640662a5f3229f8977fdd41255"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/CustomerDocumentTests.cs",
+      "bytes": 775,
+      "sha256": "9fcbe598ec9e9c6fc4cfa6b9458e13fcf7758a849aa1b5c7180a74df4c156957"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/DashboardRulesTests.cs",
+      "bytes": 1178,
+      "sha256": "608d5da48288b2ec19f0b63d2f3c8b5959d1b455ff6277fc55fac6cb52a31d05"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/GestaoComercial.UnitTests.csproj",
+      "bytes": 714,
+      "sha256": "ff23eb0096378ca6f99d74ebe497a1da06927773af4c11c2d6d72810f80058fc"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+      "bytes": 6942,
+      "sha256": "52240280bbff45fa99608ae52ae1fa8a9b23a4aeef2dba337cbabf6a4ce37985"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/packages.lock.json",
+      "bytes": 23300,
+      "sha256": "8d8b5feb570bae6bc4d28e508771f2dbc062bf9d125f790d0bd26619acf62fce"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+      "bytes": 3177,
+      "sha256": "79cc53dc616c1932b2119a64f646df15eba995a17172eaaded4faa10424ab4fe"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/SalesRulesTests.cs",
+      "bytes": 1777,
+      "sha256": "ff0f1156cd2910ccc33532dc8bca03c1e6646ee9879a8635549dfa75183fc239"
+    },
+    {
+      "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+      "bytes": 1618,
+      "sha256": "56839c3b23cbd4842fd1e20633b78faff1ce59e8f8ac44a46a02e0bedb1231fb"
+    },
+    {
+      "arquivo": "docs/architecture/01-VISAO-GERAL.md",
+      "bytes": 3394,
+      "sha256": "9123e1bf5134da928030d58c7e597c906c8ac7eb796fc7eecd64397e836a422b"
+    },
+    {
+      "arquivo": "docs/architecture/02-ARQUITETURA.md",
+      "bytes": 4490,
+      "sha256": "b1ebfd316eabce48d3abdf9a4d7576ab14b0da31c9ad74dfec17fc0da5b2accd"
+    },
+    {
+      "arquivo": "docs/architecture/03-ESTRUTURA-MONOREPO.md",
+      "bytes": 3294,
+      "sha256": "ed935262f814bf7817f1a7888253c054832561299cde210f79c90503181fd623"
+    },
+    {
+      "arquivo": "docs/architecture/04-MODELO-DE-DOMINIO.md",
+      "bytes": 6058,
+      "sha256": "9ac12537bc2505591b12e07d3bed7fdb446d2a71611fa26ad05b976d2e50ccbe"
+    },
+    {
+      "arquivo": "docs/architecture/05-BANCO-DE-DADOS.md",
+      "bytes": 29069,
+      "sha256": "a897d20811b829c7720ea53f73207f333add9dd5acbad26384a75c9b0f8904b5"
+    },
+    {
+      "arquivo": "docs/architecture/06-CONTRATOS-API.md",
+      "bytes": 21362,
+      "sha256": "43892e999bdfc37ba75e72327a90642c43d98163c66327f4c59a9967deb108af"
+    },
+    {
+      "arquivo": "docs/architecture/07-AUTENTICACAO-SEGURANCA.md",
+      "bytes": 17113,
+      "sha256": "1572b105859ceadc9259bcb5043663c1a048879c1bfff561e23ac5f0d805fdd9"
+    },
+    {
+      "arquivo": "docs/architecture/08-PADROES-CODIGO.md",
+      "bytes": 4183,
+      "sha256": "39d7c2fe3985db4c22a02e6377d9512618858009d86f0367afb3b6332fd63fd8"
+    },
+    {
+      "arquivo": "docs/architecture/09-TESTES-QUALIDADE.md",
+      "bytes": 9822,
+      "sha256": "89e21c01efe085f1a715340ac6cfabf04cf300e9bcd2ae08e6cdd1f0d8128996"
+    },
+    {
+      "arquivo": "docs/architecture/10-DEPLOY-AMBIENTES.md",
+      "bytes": 12990,
+      "sha256": "e07090eb45eced376c3cb0af9eb90bfd5aa061ec1a2fd8cd2c69d9308b9880d8"
+    },
+    {
+      "arquivo": "docs/execution/00-PLANO-EXECUCAO.md",
+      "bytes": 2900,
+      "sha256": "48871bbf122c77d6b099055eb025589fde61da18beb41e5344b73404c725a1b6"
+    },
+    {
+      "arquivo": "docs/execution/01-DEPENDENCIAS.md",
+      "bytes": 1783,
+      "sha256": "14394e7fdae36c0ceaac0ba7504d9ba7b806e1258fa771718f8939cdfc870693"
+    },
+    {
+      "arquivo": "docs/execution/02-DEFINITION-OF-DONE.md",
+      "bytes": 2770,
+      "sha256": "529cfdf5d98d346cd456d2da73416a06ac7f376cf1326a1451101c0eb6f6b009"
+    },
+    {
+      "arquivo": "docs/execution/03-ESTADO-PROJETO.md",
+      "bytes": 127633,
+      "sha256": "40f3118ea63875d86ad950e0b86704d6ed3e401912343ba0cff7c5c455170dea"
+    },
+    {
+      "arquivo": "docs/execution/04-DECISOES-TECNICAS.md",
+      "bytes": 46725,
+      "sha256": "cd42064795baf61bd926f97f5f50d79d8a29f34552d5a453b83899c18b0663f4"
+    },
+    {
+      "arquivo": "docs/execution/05-PROMPT-EXECUTOR.md",
+      "bytes": 4214,
+      "sha256": "e90487259239b2b73b17560dc835f2252af64d4849c917f081e455dc23fb6597"
+    },
+    {
+      "arquivo": "docs/execution/06-AUDITORIA-MONGODB.md",
+      "bytes": 17175,
+      "sha256": "ba4fdec71c6d9c6a661cc08f23315bc4660ca31329618eab5a7386c059c465c6"
+    },
+    {
+      "arquivo": "docs/execution/06-MATRIZ-MODULOS.md",
+      "bytes": 8148,
+      "sha256": "5f1a384f736d1930820d61aae4a511c2aeae4dadbefdf59ead1342705f08ffab"
+    },
+    {
+      "arquivo": "docs/execution/07-EXECUCAO-LOCAL-FUNDACAO.md",
+      "bytes": 4752,
+      "sha256": "2c8e879707cf25e867bad9db64c6ac71d9e22f2f0f4062eb2c5dda94381aab0f"
+    },
+    {
+      "arquivo": "docs/execution/07-RELATORIO-HOMOLOGACAO.md",
+      "bytes": 13395,
+      "sha256": "345f110e2c4cad4b4b05f7ae222626dc7536c8859f85bbfa2d5924035a250660"
+    },
+    {
+      "arquivo": "docs/execution/08-REVISAO-MONGODB.md",
+      "bytes": 11288,
+      "sha256": "9babbca3ac2e47c82a5a09a4c77528d47bca14940b53fa8f3f75721561f3a5fe"
+    },
+    {
+      "arquivo": "docs/execution/09-ENTREGA-CADASTROS.md",
+      "bytes": 14844,
+      "sha256": "382d7e1034dcd631cc3ceae4bb9c59eab26fbba2e32eee20f9e0b550085d3d91"
+    },
+    {
+      "arquivo": "docs/execution/10-ENTREGA-ESTOQUE-VENDAS.md",
+      "bytes": 22092,
+      "sha256": "c667af68e9df572140bc6ed7f664687fbcae10b6e58982bc48a0876cf867b035"
+    },
+    {
+      "arquivo": "docs/execution/11-ENTREGA-DASHBOARD-RELATORIOS.md",
+      "bytes": 13838,
+      "sha256": "3ec7913f7cbdc9d37165813b4022f90587cd9c849b544a15e28ce66ada76dcc0"
+    },
+    {
+      "arquivo": "docs/execution/12-ENTREGA-CARGA-DEMONSTRACAO.md",
+      "bytes": 11790,
+      "sha256": "216f233593fcf65b1c5107427e2dcea3bdff5682de63c24f823a3609cb9f94be"
+    },
+    {
+      "arquivo": "docs/execution/13-AJUSTE-PDV.md",
+      "bytes": 4734,
+      "sha256": "9f2717ccf80062d87484b0fe9eae8aaf3e5f314dc1dbb34c29840fc1ccaa7761"
+    },
+    {
+      "arquivo": "docs/modules/00-FUNDACAO.md",
+      "bytes": 8747,
+      "sha256": "5760812d06fb5f855e5f04d4d9b6a4494cf08c97753e17a9b35ab8a91f0a76c9"
+    },
+    {
+      "arquivo": "docs/modules/01-AUTENTICACAO.md",
+      "bytes": 11461,
+      "sha256": "2bb35938d4a013e1dd89a4135e8f5281d42cf0ac4fb73b3f1385a93fdec9932f"
+    },
+    {
+      "arquivo": "docs/modules/02-FUNCIONARIOS.md",
+      "bytes": 8575,
+      "sha256": "391eec7ede0e361a174c4cf6db047d021db078e400ee870073a69f8f24bc7bba"
+    },
+    {
+      "arquivo": "docs/modules/03-CLIENTES.md",
+      "bytes": 7802,
+      "sha256": "ff9a7dd85ea22513ff035cb6acaf328948906744b4ec8ab89a688534775459fb"
+    },
+    {
+      "arquivo": "docs/modules/04-PRODUTOS.md",
+      "bytes": 9308,
+      "sha256": "8b62889f9e111e1d0617ee1262022a99281dc4d17939c2fc099d3547f500da2d"
+    },
+    {
+      "arquivo": "docs/modules/05-ESTOQUE.md",
+      "bytes": 9467,
+      "sha256": "9683dd8fb6557b12f5f537fbf57845ad72b5936dee8be5f236dd5141793e9b43"
+    },
+    {
+      "arquivo": "docs/modules/06-VENDAS.md",
+      "bytes": 15413,
+      "sha256": "530922581b6a25c42a4e8ee1da37616f67ad420a9199080de83394dd9a723b8b"
+    },
+    {
+      "arquivo": "docs/modules/07-DASHBOARD.md",
+      "bytes": 8518,
+      "sha256": "01f106f3d5a19626d6bf6fb771355d901b9ea257196d9bb7d3a3af7d2e1c2116"
+    },
+    {
+      "arquivo": "docs/modules/08-RELATORIOS.md",
+      "bytes": 12654,
+      "sha256": "94b28c67ab0a4d5c0bf9252b99cb7ddb6de89119ae31bcee21194b105d7195f9"
+    },
+    {
+      "arquivo": "docs/modules/09-CARGA-DEMONSTRACAO.md",
+      "bytes": 4634,
+      "sha256": "ef75c6717ed403b8fc60809b5670184a18adcab3356ca2dad238878574d86e36"
+    },
+    {
+      "arquivo": "docs/modules/10-HOMOLOGACAO.md",
+      "bytes": 7121,
+      "sha256": "2c0a872ac2400a8ada911992d20370d058e9df9a178fab0c302dd67d286c67da"
+    },
+    {
+      "arquivo": "docs/README.md",
+      "bytes": 2013,
+      "sha256": "c65e4b947c3f9c71c28c4a4d03cf2e1b7d8268061b9f85b446531040ade8e5dd"
+    },
+    {
+      "arquivo": "docs/requirements/01-ESCOPO.md",
+      "bytes": 2084,
+      "sha256": "1f350c19e100d9a8c7cb998a6b81b98cb5b49823e1c49f156d174b2559f3d107"
+    },
+    {
+      "arquivo": "docs/requirements/02-REQUISITOS-FUNCIONAIS.md",
+      "bytes": 6067,
+      "sha256": "739a7f2b0dd3d825ad3050517505fb11e63e8c45cb5253f8ca43356c3e0df71e"
+    },
+    {
+      "arquivo": "docs/requirements/03-REQUISITOS-NAO-FUNCIONAIS.md",
+      "bytes": 3264,
+      "sha256": "05fccd984630a7129f000dde235bd2c1ae626641b179692f1a7a6f7384e8088b"
+    },
+    {
+      "arquivo": "docs/requirements/04-REGRAS-DE-NEGOCIO.md",
+      "bytes": 7307,
+      "sha256": "db5217ac1b7f07d7aa7e27b7d9c4134ea9b31dc4139d1f37ecfaf8ad1773318d"
+    },
+    {
+      "arquivo": "docs/requirements/05-MATRIZ-PERMISSOES.md",
+      "bytes": 5387,
+      "sha256": "df6b7b4f734af60186b1872e44ed86371236513dcfa9e95c67580bc014395084"
+    },
+    {
+      "arquivo": "docs/requirements/06-CRITERIOS-ACEITE.md",
+      "bytes": 7163,
+      "sha256": "2cc11bd1dff31e3bf23c48ed3122134e5292e9a293984e3fefe3d70fb429cdd3"
+    },
+    {
+      "arquivo": ".github/workflows/fundacao.yml",
+      "bytes": 1711,
+      "sha256": "635b3f330b7e8b7e5cbb90aacdd89dce5f71a13c330990f372d294c2349f5473"
+    },
+    {
+      "arquivo": "build/LocalEnvironment.cs",
+      "bytes": 2003,
+      "sha256": "1b72196045aec6ab834858237838b3e0df4f4fd9dc0bbf4f24208c4e23f9f24f"
+    },
+    {
+      "arquivo": "scripts/verify-architecture.ps1",
+      "bytes": 1125,
+      "sha256": "a9dd57eb08b79c7f04e98f3d305a6b45823095a876cf1c240e61f7c3ebd31a28"
+    },
+    {
+      "arquivo": "global.json",
+      "bytes": 56,
+      "sha256": "66bd9b8c6aec2fda63535753d2c416351fb0c422c9e4565a7fd0dbf47cd5838d"
+    },
+    {
+      "arquivo": "Directory.Packages.props",
+      "bytes": 829,
+      "sha256": "5111e7d9435c908b38ab7b985ed37ab02ba43301953c9f85daf21471ebe6261c"
+    },
+    {
+      "arquivo": "GestaoComercial.slnx",
+      "bytes": 913,
+      "sha256": "9d7f7727b13be431cf882507152e53e5e356b7eac043284ea486e87d9f8d9566"
+    },
+    {
+      "arquivo": "README.md",
+      "bytes": 37452,
+      "sha256": "c2d6d1d0bb739b9691ef9e09f1f388b31551424249c0a2e0a02af1440134eaef"
+    },
+    {
+      "arquivo": "AGENTS.md",
+      "bytes": 4924,
+      "sha256": "71baa9256fc6f9cbcb06a778f30a03c94416746de6ee6045e0ad8d75cbc41b3f"
+    }
+  ]
+}

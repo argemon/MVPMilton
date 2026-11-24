@@ -1,0 +1,32 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+actor Operador as O
+participant "Navegador" as N
+participant "Web / conta HTTP" as W
+participant "API / autenticação" as A
+database "Atlas" as D
+O -> N : informa email e senha
+N -> W : POST formulário + antiforgery
+W -> W : validar antiforgery e retorno\nlocal
+W -> A : POST /auth/login por HTTPS
+A -> D : consultar conta / verificar\nbloqueio
+A -> A : validar hash Identity e estado
+alt acesso permitido
+ A -> D : gravar sessão com hash do\ntoken
+ A --> W : token opaco e usuário
+ W -> D : gravar ticket e token\nprotegidos
+ W --> N : cookie de referência seguro
+ N --> O : home ou troca obrigatória
+else credenciais inválidas
+ A --> W : falha genérica
+ W --> N : documento de login com erro\nseguro
+end
+@enduml

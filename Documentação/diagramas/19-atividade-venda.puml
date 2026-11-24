@@ -1,0 +1,34 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+start
+:Selecionar cliente ativo;
+:Localizar produto e informar\nquantidade;
+:Salvar rascunho e revisar preços\ndo servidor;
+while (Adicionar ou alterar itens?) is (sim)
+ :Alterar cupom e salvar rascunho;
+endwhile (não)
+if (Descartar?) then (sim)
+ :Informar motivo e confirmar\ndescarte;
+ stop
+else (não)
+endif
+:Solicitar confirmação;
+if (Versão, referências e preços válidos?) then (sim)
+ if (Todos os saldos suficientes?) then (sim)
+  :Confirmar atomicamente venda,\nbaixas, histórico e recibo;
+ else (não)
+  :Rollback e mensagem de estoque\ninsuficiente;
+ endif
+else (não)
+ :Rejeitar sem efeitos; reler e\nrevisar rascunho;
+endif
+stop
+@enduml

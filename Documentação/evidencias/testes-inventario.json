@@ -1,0 +1,854 @@
+[
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AdministrationTests.cs",
+    "metodo": "BootstrapIsOneTimeAndNeverResetsPassword",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AdministrationTests.cs",
+    "metodo": "ConcurrentRemovalProtectsLastActiveAdministrator",
+    "categoria": "Fact",
+    "linha": 23
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AnalyticsReadinessTests.cs",
+    "metodo": "IncompletePersistenceCannotLookLikeValidEmptyDashboardOrCsv",
+    "categoria": "Fact",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthAtomicityTests.cs",
+    "metodo": "AuditFailureRollsBackProfileStampAndSessionRevocation",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "ValidLoginPersistsHashOnlyAndMeDoesNotRefreshIdle",
+    "categoria": "Fact",
+    "linha": 67
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "InvalidCredentialsAreIndistinguishable",
+    "categoria": "Theory",
+    "linha": 82
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "LogoutRevokesOnlyCurrentSession",
+    "categoria": "Fact",
+    "linha": 90
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "BackendEnforcesCurrentRole",
+    "categoria": "Theory",
+    "linha": 102
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "UniqueLoginIncludesInactiveAccountsAndInvalidProfilesAreRejected",
+    "categoria": "Fact",
+    "linha": 111
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "FiveFailedAttemptsLockAccountAndCounterIsNotLost",
+    "categoria": "Fact",
+    "linha": 119
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "PasswordChangeIsMandatoryAndRevokesEverySession",
+    "categoria": "Fact",
+    "linha": 127
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "ProfileChangeResetAndOptimisticVersionAreAtomic",
+    "categoria": "Fact",
+    "linha": 138
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "IdleAndAbsoluteExpirationFailClosedWithControlledClock",
+    "categoria": "Fact",
+    "linha": 151
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "IdentityStoreNormalizesEmailAndRejectsStaleWrites",
+    "categoria": "Fact",
+    "linha": 162
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "ConcurrentFailuresPreserveBothAttempts",
+    "categoria": "Fact",
+    "linha": 178
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "LoginIdentifierRateLimitReturns429",
+    "categoria": "Fact",
+    "linha": 188
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "DisablingAccountRevokesCurrentSessions",
+    "categoria": "Fact",
+    "linha": 195
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/AuthenticationTests.cs",
+    "metodo": "SchemaUpgradeIsIdempotentPreservesUsersAndRejectsDivergence",
+    "categoria": "Fact",
+    "linha": 204
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "RealBffLoginCookieSessionCsrfLogoutAndNoTokenInHtml",
+    "categoria": "Fact",
+    "linha": 54
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "MandatoryPasswordChangeUsesHttpAndRequiresNewLogin",
+    "categoria": "Fact",
+    "linha": 72
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "TwoUsersAreIsolatedAndSellerCannotOpenAdministration",
+    "categoria": "Fact",
+    "linha": 83
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "InvalidLoginReturnsGenericFormWithoutPasswordAndOfflineFailsClosed",
+    "categoria": "Fact",
+    "linha": 93
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "RevokedCookieCanLoginAgainAndRevalidationRejectsOldState",
+    "categoria": "Fact",
+    "linha": 102
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "CrossOriginCircuitIsRejected",
+    "categoria": "Fact",
+    "linha": 126
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/BffTests.cs",
+    "metodo": "LogoutOfflineRemovesLocalTicketAndCookie",
+    "categoria": "Fact",
+    "linha": 132
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerBffTests.cs",
+    "metodo": "CustomerPagesRespectPolicyAndRealApiFailure",
+    "categoria": "Fact",
+    "linha": 8
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+    "metodo": "CrudFiltersEmailDocumentPaginationVersionAndHistory",
+    "categoria": "Fact",
+    "linha": 18
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+    "metodo": "AuthorizationForEveryVerb",
+    "categoria": "Theory",
+    "linha": 38
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+    "metodo": "RejectsMalformedFieldsFiltersAndHistoryPeriods",
+    "categoria": "Fact",
+    "linha": 53
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+    "metodo": "ConcurrentDocumentAndConcurrentEditsHaveOneWinner",
+    "categoria": "Fact",
+    "linha": 62
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/CustomerTests.cs",
+    "metodo": "UpgradeIdempotentValidatorRejectsBadDataAndAuditFailureRollsBack",
+    "categoria": "Fact",
+    "linha": 71
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardBffTests.cs",
+    "metodo": "DashboardConsumesRealApiAndHidesMetricsFromOtherRoles",
+    "categoria": "Fact",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardTests.cs",
+    "metodo": "SnapshotSurvivesCancellationBetweenSummaryAndListsAndSumsBeyondDoublePrecision",
+    "categoria": "Fact",
+    "linha": 17
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardTests.cs",
+    "metodo": "ExactMetricsBoundariesRankingSnapshotsRecentAndLowStock",
+    "categoria": "Fact",
+    "linha": 43
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DashboardTests.cs",
+    "metodo": "BackendPolicyAndValidation",
+    "categoria": "Theory",
+    "linha": 74
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationBffTests.cs",
+    "metodo": "PageNavigationAndConfirmationAreAdministratorOnly",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationCleanupTests.cs",
+    "metodo": "CleanupPreservesActorAndEmployeeRevokesOthersRollsBackAndAllowsFreshLoad",
+    "categoria": "Fact",
+    "linha": 13
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationCleanupTests.cs",
+    "metodo": "OnlyAdministratorMayClear",
+    "categoria": "Theory",
+    "linha": 64
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationTests.cs",
+    "metodo": "LoadRepeatRestoreReconcileReportsAndPreserveManualDependencies",
+    "categoria": "Fact",
+    "linha": 14
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationTests.cs",
+    "metodo": "DenyNonAdministratorsAndAnonymous",
+    "categoria": "Theory",
+    "linha": 73
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/DemonstrationWebTests.cs",
+    "metodo": "SharedDatabaseTicketsUpgradeAndAdminPageAuthorization",
+    "categoria": "Fact",
+    "linha": 13
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeBffTests.cs",
+    "metodo": "EmployeePagesAndHttpAccountCreationRequireCookiePolicyAndAntiforgery",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "CrudPaginationVersionAndNoAutomaticAccount",
+    "categoria": "Fact",
+    "linha": 23
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "AllEmployeeRoutesDenyOtherRoles",
+    "categoria": "Theory",
+    "linha": 41
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "LinkedAccountMustChangePasswordAndDeactivationRevokesExistingSessions",
+    "categoria": "Fact",
+    "linha": 53
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "ConcurrentAccountsHaveExactlyOneWinnerAndUniqueIndexIncludesInactive",
+    "categoria": "Fact",
+    "linha": 73
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "CreateAccountVersusDeactivateNeverLeavesActiveLinkedAccount",
+    "categoria": "Fact",
+    "linha": 82
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "SchemaIdempotentAndAuditFailureRollsBackEmployeeAccountAndSession",
+    "categoria": "Fact",
+    "linha": 101
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/EmployeeTests.cs",
+    "metodo": "LastAdministratorCannotBeDisabledThroughEmployee",
+    "categoria": "Fact",
+    "linha": 115
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/FoundationTests.cs",
+    "metodo": "ExplicitInitializationIsIdempotentAndWebIndependent",
+    "categoria": "Fact",
+    "linha": 79
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/FoundationTests.cs",
+    "metodo": "TransactionCommitsAndAbortsDisposableDocuments",
+    "categoria": "Fact",
+    "linha": 94
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/FoundationTests.cs",
+    "metodo": "BaselineRejectsInvalidDocumentAndDoesNotOverwriteIncompatibleVersion",
+    "categoria": "Fact",
+    "linha": 122
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/FoundationTests.cs",
+    "metodo": "ApiHostReadsRealReadyAndWebUsesTypedHttpClient",
+    "categoria": "Fact",
+    "linha": 139
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductBffTests.cs",
+    "metodo": "PagesAndImageProxyUseRealSessionWithoutExposingApiToken",
+    "categoria": "Fact",
+    "linha": 8
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductsUpgradeTests.cs",
+    "metodo": "CleanInstallAndUpgradePreserveEarlierDataRejectBadBsonAndDivergence",
+    "categoria": "Fact",
+    "linha": 12
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "ProductCrudFiltersPreserveZeroBalanceAndStoreInt64",
+    "categoria": "Fact",
+    "linha": 20
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "ReferenceCrudUniqueIncludingInactiveAndInUseProtection",
+    "categoria": "Theory",
+    "linha": 32
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "RejectsInvalidPriceFieldsReferencesAndMassAssignment",
+    "categoria": "Fact",
+    "linha": 46
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "ConcurrentSkuAndReferenceInactivationHaveSafeOutcomes",
+    "categoria": "Fact",
+    "linha": 53
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "EnforcesPoliciesForEveryRoute",
+    "categoria": "Theory",
+    "linha": 67
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "ImagesArePrivateVersionedReencodedAndBadUploadsPreservePrevious",
+    "categoria": "Fact",
+    "linha": 86
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "ConcurrentImageReplacementsKeepCommittedFileAndCleanupNeverRemovesReferences",
+    "categoria": "Fact",
+    "linha": 100
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ProductTests.cs",
+    "metodo": "AuditFailureAbortsProductAndImageMetadataAndRetainsOldFile",
+    "categoria": "Fact",
+    "linha": 109
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsBffTests.cs",
+    "metodo": "PagesAndAuthenticatedDownloadUseRealApiProtectRolesAndKeepErrorsAsJson",
+    "categoria": "Fact",
+    "linha": 12
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsScaleTests.cs",
+    "metodo": "TenThousandRowsExportCompletelyAndTenThousandAndOneIsRejectedBeforeAttachment",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsTests.cs",
+    "metodo": "AllFiveReportsUseSnapshotsFiltersTotalsDeterministicPagesAndSafeCsv",
+    "categoria": "Fact",
+    "linha": 20
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsTests.cs",
+    "metodo": "EveryQueryAndExportEnforcesSameBackendPolicy",
+    "categoria": "Theory",
+    "linha": 63
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/ReportsTests.cs",
+    "metodo": "StockSnapshotKeepsTotalsAndRowsTogetherDuringCommittedMovement",
+    "categoria": "Fact",
+    "linha": 71
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesBffTests.cs",
+    "metodo": "SalesAndCustomerHistoryUseRealBffSessionAndProtectStockRole",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "FullLifecycleUsesExactServerPricesSnapshotsAndOneRestock",
+    "categoria": "Fact",
+    "linha": 31
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "DraftEditingRefreshesPricesPreservesItemIdsAndDiscardNeverMovesStock",
+    "categoria": "Fact",
+    "linha": 47
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "MultipleItemsInsufficientOrAuditFailureRollBackAllDocuments",
+    "categoria": "Fact",
+    "linha": 58
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "TwoSalesCompeteForLastUnitWithIndependentSessions",
+    "categoria": "Fact",
+    "linha": 71
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "CreateAndConfirmIdempotencyAreConcurrentAndBoundToRequest",
+    "categoria": "Fact",
+    "linha": 79
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "InvalidInactiveAndMissingReferencesNeverProduceBusinessEffects",
+    "categoria": "Fact",
+    "linha": 88
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "SellerOwnershipAppliesBeforePaginationCountsAndClientHistory",
+    "categoria": "Fact",
+    "linha": 101
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "CancellationOverflowAndAuditFailurePreserveConfirmedSaleUntilSuccessfulRetry",
+    "categoria": "Fact",
+    "linha": 117
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "MissingBalanceCannotBeRecreatedBySaleConfirmation",
+    "categoria": "Fact",
+    "linha": 129
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "ReferenceChangesAndConfirmationSerializeWithRealGuards",
+    "categoria": "Theory",
+    "linha": 136
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "ConfirmationControlFaultsUseSameStockTransactionAndReceipt",
+    "categoria": "Theory",
+    "linha": 144
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesTests.cs",
+    "metodo": "FiltersDatesPaginationAndServerValidatorsRejectInvalidHistory",
+    "categoria": "Fact",
+    "linha": 151
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/SalesUpgradeTests.cs",
+    "metodo": "UpgradePreservesManualMovementsAndReceiptsAndReinitializesWholeChain",
+    "categoria": "Fact",
+    "linha": 13
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockBffTests.cs",
+    "metodo": "StockPagesUseProtectedBffAndSellerOnlySeesBalances",
+    "categoria": "Fact",
+    "linha": 8
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockCommitTests.cs",
+    "metodo": "RealTransactionsResolveControlFaultsWithoutDuplicatingMovements",
+    "categoria": "Theory",
+    "linha": 62
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockQueryTests.cs",
+    "metodo": "LowStockPlanIsMeasuredWithTenThousandProducts",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockRuntimeSecurityTests.cs",
+    "metodo": "RuntimeCannotRewriteHistoryChangeSchemaOrReadAnotherDatabase",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "EntriesExitsAdjustmentsReconcileAndHistoryIsImmutable",
+    "categoria": "Fact",
+    "linha": 31
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "InvalidInsufficientInactiveAndOverflowHaveNoEffects",
+    "categoria": "Fact",
+    "linha": 43
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "IdempotencyIsConcurrentBodyBoundAndActorIsolated",
+    "categoria": "Fact",
+    "linha": 64
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "TwoIndependentExitsCompeteForLastUnit",
+    "categoria": "Fact",
+    "linha": 74
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "EveryRouteEnforcesPolicies",
+    "categoria": "Theory",
+    "linha": 83
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "ConcurrentProductInactivationAndEntrySerializeWithoutResurrectingProduct",
+    "categoria": "Fact",
+    "linha": 91
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "AuditFailureRollsBackBalanceMovementAndReceiptThenSameKeyWorks",
+    "categoria": "Fact",
+    "linha": 101
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockTests.cs",
+    "metodo": "FiltersPaginationAndServerValidatorsAreReal",
+    "categoria": "Fact",
+    "linha": 111
+  },
+  {
+    "arquivo": "tests/GestaoComercial.IntegrationTests/StockUpgradeTests.cs",
+    "metodo": "Upgrade04To05IsExplicitPreservesProductsAndRejectsDivergentCatalog",
+    "categoria": "Fact",
+    "linha": 13
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AccountDocumentTests.cs",
+    "metodo": "ErrorDocumentDisplaysSafeMessageAndPreservesLocalReturn",
+    "categoria": "Fact",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AggregateMoneyTests.cs",
+    "metodo": "IntegerCentavosRemainExactBeyondDoublePrecision",
+    "categoria": "Theory",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AggregateMoneyTests.cs",
+    "metodo": "AggregateOverflowOrFractionIsRejectedWithoutRounding",
+    "categoria": "Theory",
+    "linha": 11
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AuthenticationRulesTests.cs",
+    "metodo": "ReturnUrlIsStrictlyLocal",
+    "categoria": "Theory",
+    "linha": 17
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AuthenticationRulesTests.cs",
+    "metodo": "IdentityHashIsSaltedVerifiableAndSupportsRehash",
+    "categoria": "Fact",
+    "linha": 19
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AuthenticationRulesTests.cs",
+    "metodo": "ExpirationHasExactBoundaries",
+    "categoria": "Theory",
+    "linha": 33
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/AuthenticationRulesTests.cs",
+    "metodo": "OnlyApprovedRolesAreAccepted",
+    "categoria": "Theory",
+    "linha": 46
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/CenarioMercadoTests.cs",
+    "metodo": "EmbalagensMaioresCustamMaisEProdutosTemPrecoPositivo",
+    "categoria": "Fact",
+    "linha": 7
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+    "metodo": "InvalidConnectionHasSafeError",
+    "categoria": "Theory",
+    "linha": 15
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+    "metodo": "InvalidDatabaseRejected",
+    "categoria": "Theory",
+    "linha": 26
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+    "metodo": "ProductionDoesNotUseDevelopmentAlias",
+    "categoria": "Fact",
+    "linha": 29
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+    "metodo": "InvalidApiUrlRejected",
+    "categoria": "Theory",
+    "linha": 39
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ConfigurationTests.cs",
+    "metodo": "EnvironmentFilePreservesExistingVariablesAndDoesNotExpandValues",
+    "categoria": "Fact",
+    "linha": 47
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ContactTests.cs",
+    "metodo": "NormalizesContactWithoutCreatingCredentials",
+    "categoria": "Fact",
+    "linha": 6
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ContactTests.cs",
+    "metodo": "RejectsInvalidFields",
+    "categoria": "Theory",
+    "linha": 16
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/CsvTests.cs",
+    "metodo": "FormulaPrefixesAreNeutralized",
+    "categoria": "Theory",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/CsvTests.cs",
+    "metodo": "QuotesSeparatorsNewlinesAndUnicodeRemainOneCell",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/CustomerDocumentTests.cs",
+    "metodo": "AcceptsValidOptionalDocuments",
+    "categoria": "Theory",
+    "linha": 7
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/CustomerDocumentTests.cs",
+    "metodo": "RejectsInvalidTypeOrDocument",
+    "categoria": "Theory",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/DashboardRulesTests.cs",
+    "metodo": "TicketIsExactWithSingleRounding",
+    "categoria": "Theory",
+    "linha": 8
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/DashboardRulesTests.cs",
+    "metodo": "DefaultMonthUsesInstallationTimezoneAndEndIsExclusive",
+    "categoria": "Fact",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/DashboardRulesTests.cs",
+    "metodo": "InvalidAndOverlongPeriodsAreRejected",
+    "categoria": "Fact",
+    "linha": 14
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "LivePublicReadyPrivateAndFallbackDenied",
+    "categoria": "Fact",
+    "linha": 44
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "UnavailableMongoDoesNotAffectLiveness",
+    "categoria": "Fact",
+    "linha": 52
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "ExceptionIsSafeProblemDetails",
+    "categoria": "Fact",
+    "linha": 62
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "MissingConfigurationFailsAtStartupWithoutSecrets",
+    "categoria": "Fact",
+    "linha": 69
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "TechnicalPagesArePublicAndSafe",
+    "categoria": "Theory",
+    "linha": 78
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "OpenApiExposesCurrentContractsWithoutFutureModules",
+    "categoria": "Fact",
+    "linha": 85
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "LoginFailsClosedWhenMongoIsUnavailable",
+    "categoria": "Fact",
+    "linha": 103
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/HostTests.cs",
+    "metodo": "CssIsServed",
+    "categoria": "Fact",
+    "linha": 111
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "NormalizesSkuAndPlainTextAndExactMoney",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "RejectsInvalidPrice",
+    "categoria": "Theory",
+    "linha": 12
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "HttpRejectsInvalidScaleAndBounds",
+    "categoria": "Theory",
+    "linha": 14
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "RejectsInvalidFields",
+    "categoria": "Theory",
+    "linha": 16
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "RequiresCategoryAndValidOptionalBrand",
+    "categoria": "Fact",
+    "linha": 17
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "ReencodesOnlyDecodedPixels",
+    "categoria": "Theory",
+    "linha": 20
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "RejectsFakeOversizedCorruptAndLargeDimensions",
+    "categoria": "Fact",
+    "linha": 21
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/ProductRulesTests.cs",
+    "metodo": "RefusesClientPaths",
+    "categoria": "Theory",
+    "linha": 23
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/SalesRulesTests.cs",
+    "metodo": "MonetaryTotalsAreExactAndBounded",
+    "categoria": "Fact",
+    "linha": 6
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/SalesRulesTests.cs",
+    "metodo": "ItemsMustBeDistinctValidAndLimited",
+    "categoria": "Fact",
+    "linha": 12
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/SalesRulesTests.cs",
+    "metodo": "StateTransitionsPreserveLifecycle",
+    "categoria": "Theory",
+    "linha": 17
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/SalesRulesTests.cs",
+    "metodo": "InvalidStatesNeverTransition",
+    "categoria": "Theory",
+    "linha": 19
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+    "metodo": "DeltaPreservesExplicitOperationSign",
+    "categoria": "Theory",
+    "linha": 7
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+    "metodo": "InvalidMovementIsRejected",
+    "categoria": "Theory",
+    "linha": 9
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+    "metodo": "NegativeAndOverflowNeverProduceBalance",
+    "categoria": "Fact",
+    "linha": 10
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+    "metodo": "ReasonIsRequired",
+    "categoria": "Theory",
+    "linha": 18
+  },
+  {
+    "arquivo": "tests/GestaoComercial.UnitTests/StockRulesTests.cs",
+    "metodo": "ReasonIsTrimmedAndBounded",
+    "categoria": "Fact",
+    "linha": 19
+  }
+]

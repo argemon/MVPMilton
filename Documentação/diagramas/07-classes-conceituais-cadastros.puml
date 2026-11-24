@@ -1,0 +1,54 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+class Funcionario {
+ id: UUID
+ nome: texto
+ ativo: booleano
+}
+class Usuario {
+ id: UUID
+ perfil: Perfil
+ ativo: booleano
+}
+enum Perfil {
+ Administrador
+ Vendedor
+ Estoquista
+}
+class Cliente {
+ id: UUID
+ tipo: PF ou PJ
+ documento: texto opcional
+}
+class Categoria {
+ nome: texto
+}
+class Marca {
+ nome: texto
+}
+class Produto {
+ sku: texto
+ precoCentavos: inteiro longo
+ ativo: booleano
+}
+class SaldoEstoque {
+ quantidade: inteiro
+}
+Funcionario "0..1" -- "0..1" Usuario : vínculo único
+Usuario --> Perfil
+Categoria "1" -- "0..*" Produto
+Marca "0..1" -- "0..*" Produto
+Produto "1" *-- "1" SaldoEstoque
+note bottom of Usuario
+Conceitos de negócio, não classes C#.
+Bootstrap pode não ter funcionário.
+end note
+@enduml

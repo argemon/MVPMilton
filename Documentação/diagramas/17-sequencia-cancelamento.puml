@@ -1,0 +1,39 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+actor Administrador as O
+participant "Web / API" as A
+participant "MongoVendas" as V
+participant "OperacoesComerciais" as C
+database "Atlas" as D
+O -> A : confirmar cancelamento com\nmotivo
+A -> A : exigir Vendas.Cancelar
+A -> V : versão + motivo + chave
+V -> C : executar intenção idempotente
+C -> D : transação e recibo / guarda do\nator
+V -> D : guardar venda Confirmada e\nversão
+loop itens da venda
+ V -> D : guardar produto sem exigir\nativo
+ V -> D : somar quantidade e gravar\nEstornoVenda
+end
+V -> D : estado Cancelada + evento +\nauditoria
+C -> D : recibo e commit
+C --> V : resposta
+V --> A : venda cancelada
+A --> O : resultado
+note over C,D
+Mesma chave: recibo original, sem novo
+estorno.
+Chave nova após cancelamento: estado
+inválido.
+Qualquer erro de capacidade provoca
+rollback integral.
+end note
+@enduml

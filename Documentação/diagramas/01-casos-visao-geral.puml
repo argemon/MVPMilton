@@ -1,0 +1,50 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+left to right direction
+actor Administrador as A
+actor Vendedor as V
+actor Estoquista as E
+rectangle "Gestão Comercial" {
+ usecase "Acessar conta" as U1
+ usecase "Administrar equipe\ne contas" as U2
+ usecase "Manter clientes" as U3
+ usecase "Consultar produtos\ne saldo" as U4
+ usecase "Manter produtos\ne referências" as U5
+ usecase "Movimentar estoque" as U6
+ usecase "Operar vendas" as U7
+ usecase "Analisar indicadores\ne relatórios comerciais" as U8
+ usecase "Relatórios de\nestoque e movimentos" as U9
+ usecase "Administrar demonstração" as U10
+}
+A --> U1
+V --> U1
+E --> U1
+A --> U2
+A --> U3
+V --> U3
+A --> U4
+V --> U4
+E --> U4
+A --> U5
+E --> U5
+A --> U6
+E --> U6
+A --> U7
+V --> U7
+A --> U8
+A --> U9
+E --> U9
+A --> U10
+note bottom of U7
+Vendedor: somente vendas próprias.
+Cancelamento: somente Administrador.
+end note
+@enduml

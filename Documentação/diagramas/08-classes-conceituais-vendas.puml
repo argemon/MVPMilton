@@ -1,0 +1,49 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+class Cliente {
+ id: UUID
+}
+class Usuario {
+ id: UUID
+}
+class Venda {
+ status: EstadoVenda
+ totalCentavos: inteiro longo
+ versao: inteiro longo
+}
+class ItemVenda {
+ quantidade: inteiro
+ precoUnitarioCentavos: inteiro longo
+ nomeSnapshot: texto
+}
+class Produto {
+ id: UUID
+}
+class MovimentoEstoque {
+ delta: inteiro
+ saldoAntes: inteiro
+ saldoDepois: inteiro
+ tipo: texto
+}
+Cliente "1" -- "0..*" Venda
+Usuario "1" -- "0..*" Venda : criador
+Venda "1" *-- "0..100" ItemVenda
+Produto "1" -- "0..*" ItemVenda
+Produto "1" -- "0..*" MovimentoEstoque
+Venda "0..1" -- "0..*" MovimentoEstoque
+Usuario "1" -- "0..*" MovimentoEstoque : ator
+note bottom of Venda
+Confirmada ou Cancelada: 1 a 100 itens.
+Rascunho pode estar vazio.
+Conceitos não impõem coleção por classe.
+end note
+ItemVenda -[hidden]down-> MovimentoEstoque
+@enduml

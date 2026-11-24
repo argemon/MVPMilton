@@ -1,0 +1,29 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+state Rascunho
+state Confirmada
+state Cancelada
+state Descartada
+[*] --> Rascunho : criar
+Rascunho --> Rascunho : editar / versão esperada
+Rascunho --> Confirmada : confirmar [cliente e itens\nválidos]\n/ baixa atômica e snapshots
+Rascunho --> Descartada : descartar / motivo
+Confirmada --> Cancelada : cancelar [Administrador]\n/ estorno integral e motivo
+note bottom of Rascunho
+Sem reserva de estoque.
+0 a 100 itens; confirmação requer ao menos
+1.
+end note
+note bottom of Cancelada
+Histórico preservado.
+Sem transição para Confirmada.
+end note
+@enduml

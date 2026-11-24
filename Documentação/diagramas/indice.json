@@ -1,0 +1,90 @@
+{
+  "01-casos-visao-geral": {
+    "titulo": "Casos de uso gerais",
+    "fonte_codigo": "docs/requirements/05-MATRIZ-PERMISSOES.md; backend/GestaoComercial.Api/Acesso"
+  },
+  "02-casos-acesso-equipe": {
+    "titulo": "Casos de uso de acesso e equipe",
+    "fonte_codigo": "backend/GestaoComercial.Api/Acesso; docs/requirements/05-MATRIZ-PERMISSOES.md"
+  },
+  "03-casos-cadastros": {
+    "titulo": "Casos de uso de cadastros",
+    "fonte_codigo": "backend/GestaoComercial.Api/Acesso; docs/requirements/05-MATRIZ-PERMISSOES.md"
+  },
+  "04-casos-estoque": {
+    "titulo": "Casos de uso de estoque",
+    "fonte_codigo": "backend/GestaoComercial.Api/Acesso; docs/requirements/05-MATRIZ-PERMISSOES.md"
+  },
+  "05-casos-vendas": {
+    "titulo": "Casos de uso de vendas",
+    "fonte_codigo": "backend/GestaoComercial.Api/Acesso; docs/requirements/05-MATRIZ-PERMISSOES.md"
+  },
+  "06-casos-analise-demonstracao": {
+    "titulo": "Casos de uso de análise e demonstração",
+    "fonte_codigo": "backend/GestaoComercial.Api/Acesso; docs/requirements/05-MATRIZ-PERMISSOES.md"
+  },
+  "07-classes-conceituais-cadastros": {
+    "titulo": "Classes conceituais de cadastros",
+    "fonte_codigo": "docs/architecture/04-MODELO-DE-DOMINIO.md; schemas de cadastros"
+  },
+  "08-classes-conceituais-vendas": {
+    "titulo": "Classes conceituais de vendas e estoque",
+    "fonte_codigo": "IVendas.cs; VendasSchema.cs; EstoqueSchema.cs"
+  },
+  "09-classes-implementadas-vendas": {
+    "titulo": "Classes e interfaces implementadas em vendas",
+    "fonte_codigo": "backend/GestaoComercial.Application/Vendas/IVendas.cs; backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs"
+  },
+  "10-classes-implementadas-estoque": {
+    "titulo": "Classes e interfaces implementadas em estoque",
+    "fonte_codigo": "backend/GestaoComercial.Application/Estoque/IEstoque.cs; backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs"
+  },
+  "11-pacotes": {
+    "titulo": "Dependências entre projetos",
+    "fonte_codigo": "arquivos .csproj dos seis projetos de produção"
+  },
+  "12-componentes": {
+    "titulo": "Componentes e comunicação",
+    "fonte_codigo": "Program.cs de Api/Web; arquitetura02"
+  },
+  "13-modelo-documental-comercial": {
+    "titulo": "Modelo documental comercial MongoDB",
+    "fonte_codigo": "ClientesSchema; ProdutosSchema; EstoqueSchema; VendasSchema"
+  },
+  "14-modelo-documental-seguranca": {
+    "titulo": "Modelo documental de segurança e coordenação",
+    "fonte_codigo": "AuthSchema.cs; MongoTickets.cs; EstoqueSchema.cs; MongoFoundation.cs"
+  },
+  "15-sequencia-login": {
+    "titulo": "Sequência de autenticação",
+    "fonte_codigo": "EndpointsAcesso.cs; Security/ContasHttp.cs; MongoAutenticacao.cs; MongoTickets.cs"
+  },
+  "16-sequencia-confirmacao": {
+    "titulo": "Sequência de confirmação de venda",
+    "fonte_codigo": "MongoVendas.cs; OperacoesComerciais.cs; MongoEstoque.cs"
+  },
+  "17-sequencia-cancelamento": {
+    "titulo": "Sequência de cancelamento",
+    "fonte_codigo": "MongoVendas.TransicionarAsync; MongoEstoque.AplicarAsync"
+  },
+  "18-sequencia-estoque": {
+    "titulo": "Sequência de movimentação manual",
+    "fonte_codigo": "EndpointsEstoque.cs; MongoEstoque.cs; Movimentacao.cs"
+  },
+  "19-atividade-venda": {
+    "titulo": "Atividade de venda",
+    "fonte_codigo": "VendaDetalhe.razor; MongoVendas.cs"
+  },
+  "20-atividade-estoque": {
+    "titulo": "Atividade de manutenção de estoque",
+    "fonte_codigo": "Estoque.razor; Movimentacao.cs; MongoEstoque.cs"
+  },
+  "21-estados-venda": {
+    "titulo": "Estados da venda",
+    "fonte_codigo": "backend/GestaoComercial.Domain/Vendas/RegrasVenda.cs"
+  },
+  "22-execucao-local": {
+    "titulo": "Topologia da execução local",
+    "fonte_codigo": "launchSettings.json de Api/Web; Program.cs; ADR-37"
+  }
+}

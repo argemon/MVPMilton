@@ -1,0 +1,855 @@
+{
+  "data": "2026-11-24",
+  "natureza": "Validação documental local; nenhum teste de software executado",
+  "verificacoes": {
+    "01-casos-visao-geral.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "01-casos-visao-geral.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "01-casos-visao-geral.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "01-casos-visao-geral sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "02-casos-acesso-equipe.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "02-casos-acesso-equipe.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "02-casos-acesso-equipe.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "02-casos-acesso-equipe sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "03-casos-cadastros.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "03-casos-cadastros.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "03-casos-cadastros.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "03-casos-cadastros sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "04-casos-estoque.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "04-casos-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "04-casos-estoque.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "04-casos-estoque sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "05-casos-vendas.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "05-casos-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "05-casos-vendas.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "05-casos-vendas sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "06-casos-analise-demonstracao.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "06-casos-analise-demonstracao.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "06-casos-analise-demonstracao.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "06-casos-analise-demonstracao sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "07-classes-conceituais-cadastros.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "07-classes-conceituais-cadastros.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "07-classes-conceituais-cadastros.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "07-classes-conceituais-cadastros sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "08-classes-conceituais-vendas.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "08-classes-conceituais-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "08-classes-conceituais-vendas.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "08-classes-conceituais-vendas sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "09-classes-implementadas-vendas.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "09-classes-implementadas-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "09-classes-implementadas-vendas.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "09-classes-implementadas-vendas sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "10-classes-implementadas-estoque.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "10-classes-implementadas-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "10-classes-implementadas-estoque.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "10-classes-implementadas-estoque sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "11-pacotes.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "11-pacotes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "11-pacotes.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "11-pacotes sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "12-componentes.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "12-componentes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "12-componentes.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "12-componentes sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "13-modelo-documental-comercial.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "13-modelo-documental-comercial.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "13-modelo-documental-comercial.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "13-modelo-documental-comercial sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "14-modelo-documental-seguranca.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "14-modelo-documental-seguranca.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "14-modelo-documental-seguranca.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "14-modelo-documental-seguranca sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "15-sequencia-login.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "15-sequencia-login.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "15-sequencia-login.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "15-sequencia-login sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "16-sequencia-confirmacao.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "16-sequencia-confirmacao.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "16-sequencia-confirmacao.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "16-sequencia-confirmacao sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "17-sequencia-cancelamento.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "17-sequencia-cancelamento.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "17-sequencia-cancelamento.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "17-sequencia-cancelamento sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "18-sequencia-estoque.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "18-sequencia-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "18-sequencia-estoque.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "18-sequencia-estoque sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "19-atividade-venda.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "19-atividade-venda.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "19-atividade-venda.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "19-atividade-venda sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "20-atividade-estoque.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "20-atividade-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "20-atividade-estoque.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "20-atividade-estoque sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "21-estados-venda.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "21-estados-venda.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "21-estados-venda.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "21-estados-venda sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "22-execucao-local.puml": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "22-execucao-local.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "22-execucao-local.svg": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "22-execucao-local sintaxe": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia sem marcadores internos": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia sumario Word": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia sem borda de titulo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia referencias cruzadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia PDF A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia texto PDF": {
+      "aprovado": true,
+      "detalhe": "30 páginas"
+    },
+    "monografia sem glifo substituto": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "identificacao pendente explicita": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica sem marcadores internos": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica sumario Word": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica sem borda de titulo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica referencias cruzadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica PDF A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica texto PDF": {
+      "aprovado": true,
+      "detalhe": "109 páginas"
+    },
+    "documentacao-tecnica sem glifo substituto": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario sem marcadores internos": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario sumario Word": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario sem borda de titulo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario referencias cruzadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario PDF A4": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "manual-do-usuario texto PDF": {
+      "aprovado": true,
+      "detalhe": "19 páginas"
+    },
+    "manual-do-usuario sem glifo substituto": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "29 casos unicos": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC01 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC01 backend/GestaoComercial.Api/Acesso/EndpointsAcesso.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC01 frontend/GestaoComercial.Web/Security/ContasHttp.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC02 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC02 frontend/GestaoComercial.Web/Security/ContasHttp.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC03 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC03 backend/GestaoComercial.Infrastructure/Identity/MongoAutenticacao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC04 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC04 backend/GestaoComercial.Api/Acesso/EndpointsFuncionarios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC04 backend/GestaoComercial.Infrastructure/Identity/MongoAutenticacao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC05 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC05 backend/GestaoComercial.Infrastructure/Identity/MongoFuncionarios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC06 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC06 backend/GestaoComercial.Infrastructure/Clientes/MongoClientes.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC07 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC07 backend/GestaoComercial.Api/Acesso/EndpointsClientes.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC08 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC08 backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC09 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC09 backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC10 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC10 backend/GestaoComercial.Domain/Cadastros/DadosProduto.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC10 backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC11 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC11 backend/GestaoComercial.Api/Acesso/EndpointsProdutos.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC12 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC12 backend/GestaoComercial.Api/Acesso/EndpointsProdutos.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC13 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC13 frontend/GestaoComercial.Web/Components/Pages/Estoque.razor": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC14 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC14 backend/GestaoComercial.Api/Acesso/EndpointsEstoque.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC15 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC15 backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC16 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC16 backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC17 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC17 backend/GestaoComercial.Domain/Estoque/Movimentacao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC18 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC18 backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC18 frontend/GestaoComercial.Web/Components/Pages/VendaDetalhe.razor": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC19 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC19 backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC19 backend/GestaoComercial.Infrastructure/Persistence/OperacoesComerciais.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC20 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC20 backend/GestaoComercial.Api/Acesso/EndpointsVendas.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC21 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC21 backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC22 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC22 backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC23 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC23 backend/GestaoComercial.Infrastructure/Dashboard/MongoDashboard.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC24 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC24 backend/GestaoComercial.Api/Acesso/EndpointsRelatorios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC25 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC25 backend/GestaoComercial.Infrastructure/Relatorios/MongoRelatorios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC26 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC26 backend/GestaoComercial.Api/Acesso/EndpointsRelatorios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC26 frontend/GestaoComercial.Web/Security/DownloadsRelatorios.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC27 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC27 backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC28 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC28 backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC29 completo": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "UC29 backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "RF01 a20": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "RN01 a20": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "CA01 a18": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "referencias identificadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia referencias citadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica referencias citadas": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/01-casos-visao-geral.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/02-casos-acesso-equipe.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/03-casos-cadastros.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/04-casos-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/05-casos-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/06-casos-analise-demonstracao.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/07-classes-conceituais-cadastros.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/08-classes-conceituais-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/09-classes-implementadas-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/10-classes-implementadas-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/11-pacotes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/12-componentes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/13-modelo-documental-comercial.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/14-modelo-documental-seguranca.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/15-sequencia-login.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/16-sequencia-confirmacao.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/17-sequencia-cancelamento.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/18-sequencia-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/19-atividade-venda.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/20-atividade-estoque.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/21-estados-venda.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "documentacao-tecnica.md link ../diagramas/22-execucao-local.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/11-pacotes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/01-casos-visao-geral.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/12-componentes.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/08-classes-conceituais-vendas.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/21-estados-venda.png": {
+      "aprovado": true,
+      "detalhe": ""
+    },
+    "monografia.md link ../diagramas/16-sequencia-confirmacao.png": {
+      "aprovado": true,
+      "detalhe": ""
+    }
+  },
+  "erros": []
+}

@@ -1,0 +1,28 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+actor Operador
+component "Navegador" as Browser
+component "Blazor Web\nInteractive Server / BFF" as Web
+component "API ASP.NET Core\nAutorização e mapeamento" as Api
+component "Portas Application\ne regras Domain" as App
+component "Adaptadores Infrastructure\nMongoDB.Driver" as Infra
+database "MongoDB Atlas\nbanco único" as Db
+folder "Arquivos de imagens\ne chaves Data Protection" as Files
+Operador --> Browser
+Browser --> Web : HTTPS / circuito
+Web --> Api : HTTPS / bearer no servidor
+Api --> App
+Api --> Infra : composição DI
+Infra --> Db : dados de negócio
+Web --> Db : somente tickets técnicos
+Api --> Files : imagens privadas
+Web --> Files : chaves da sessão
+@enduml

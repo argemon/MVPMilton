@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+actor "Operador autorizado" as O
+participant "Web / API" as A
+participant "MongoEstoque" as E
+participant "OperacoesComerciais" as C
+database "Atlas" as D
+O -> A : produto, quantidade ou delta,\nmotivo
+A -> A : policy e chave UUID
+A -> E : MovimentarAsync
+E -> E : validar tipo, delta e motivo
+E -> C : executar intenção
+C -> D : transação / recibo / guarda do\nator
+E -> D : consultar e guardar produto\nativo
+E -> D : update condicional do saldo
+E -> D : movimento com saldo\nantes/depois
+E -> D : auditoria
+C -> D : recibo e commit
+C --> A : resultado
+A --> O : saldo e movimento
+note over E,D
+Sem saldo suficiente: nenhum movimento
+gravado.
+Ajuste é delta, nunca substituição do
+histórico.
+end note
+@enduml

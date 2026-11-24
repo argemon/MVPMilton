@@ -1,0 +1,33 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+node "Máquina do apresentador" {
+ artifact "Navegador" as N
+ node "Processo Web .NET 10\nHTTPS 7243" as W
+ node "Processo API .NET 10\nHTTPS 7143" as A
+ folder "Chaves Data Protection" as K
+ folder "Imagens privadas" as I
+ W --> K
+ A --> I
+ N --> W : HTTPS / SignalR
+ W --> A : HTTPS / bearer servidor
+}
+cloud "Atlas existente" {
+ database "Banco único\ncoleções comerciais e\ntécnicas" as D
+}
+A --> D : TLS / dados de negócio
+W --> D : TLS / tickets
+note bottom of D
+Conexão à internet necessária.
+Sem servidor público ou deploy no escopo.
+Diagrama não revela credenciais nem
+hostname privado.
+end note
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+class employees <<collection>> {
+ _id: UUID
+}
+class users <<collection>> {
+ _id: UUID
+ employeeId: UUID ou null
+ passwordHash: string
+ perfil: string
+ securityStamp: string
+}
+class api_sessions <<collection>> {
+ usuarioId: UUID
+ tokenHash: binData
+ expiraEm: date
+}
+class tickets <<collection técnica Web>> {
+ handleHash: binData
+ ticketProtegido: binData
+ tokenApiProtegido: binData
+}
+class audit_events <<collection>> {
+ acao: string
+ recursoId: UUID ou null
+ atorId: UUID ou null
+}
+class idempotency_receipts <<collection>> {
+ atorId: UUID
+ escopo: string
+ chave: UUID
+ hashRequest: binData
+ resposta: object
+}
+class administration_control <<collection>> {
+ guardVersion: Int64
+}
+class persistence_versions <<collection>> {
+ checksum: string
+}
+users ..> employees : employeeId
+api_sessions ..> users : usuarioId
+audit_events ..> users : atorId
+idempotency_receipts ..> users : atorId
+note bottom
+Todos no mesmo banco da apresentação.
+Tickets não contêm dados comerciais.
+Não há token bruto em api_sessions.
+end note
+idempotency_receipts -[hidden]down-> tickets
+tickets -[hidden]down-> administration_control
+administration_control -[hidden]down-> persistence_versions
+@enduml

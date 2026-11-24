@@ -1,0 +1,462 @@
+[
+  {
+    "arquivo": "entrega/documentacao-tecnica.docx",
+    "bytes": 1106140,
+    "sha256": "c7a3eb2b4df284dd6594caf03061cf6a6811040d927e513984021f0179f0a4b7"
+  },
+  {
+    "arquivo": "entrega/documentacao-tecnica.md",
+    "bytes": 122585,
+    "sha256": "68cc81ad5f64a34a3254983eee3f441116e7e64b0a8886657cebaec67b7a60d5"
+  },
+  {
+    "arquivo": "entrega/documentacao-tecnica.pdf",
+    "bytes": 2766186,
+    "sha256": "882bfec1ee5ff19cbd8ebd95a4c0d47dffa5b64befcfd8a4ecea5656c2a8a0a3"
+  },
+  {
+    "arquivo": "entrega/manual-do-usuario.docx",
+    "bytes": 50133,
+    "sha256": "8866d26d3b1bf303102db5b529bac048ede02610855deff9f2c158bf04be2051"
+  },
+  {
+    "arquivo": "entrega/manual-do-usuario.md",
+    "bytes": 23439,
+    "sha256": "809a1a6f8925c62d65ac1fd9bc11a6aef547698a1939940f9340bc5f03a2350e"
+  },
+  {
+    "arquivo": "entrega/manual-do-usuario.pdf",
+    "bytes": 250000,
+    "sha256": "653a5cfaee54d5d9f6a6c0116702db93d64f5b8fb0bd09e9e76f2d45a5cb1fbb"
+  },
+  {
+    "arquivo": "entrega/monografia.docx",
+    "bytes": 334665,
+    "sha256": "0cdef660506edf423704210324f03531fcd1e62e0da63688a1569eb58ac306a1"
+  },
+  {
+    "arquivo": "entrega/monografia.md",
+    "bytes": 38733,
+    "sha256": "bb1327c9684587199891b9b2a106b6cdde9a827b383b9b32e594400d2cf9e191"
+  },
+  {
+    "arquivo": "entrega/monografia.pdf",
+    "bytes": 563876,
+    "sha256": "7520fc41591d6f271a8d523042ca35a5e91b52f764d788ab5894c8df51db9151"
+  },
+  {
+    "arquivo": "diagramas/01-casos-visao-geral.png",
+    "bytes": 66125,
+    "sha256": "a96fc664f40cb1b5821d7502f74f637ff873afaa00c26a3250e15bf498047d97"
+  },
+  {
+    "arquivo": "diagramas/01-casos-visao-geral.puml",
+    "bytes": 1139,
+    "sha256": "8d077a945dfc8620af01eb92706a946647168f44ea84719103954ce838166cca"
+  },
+  {
+    "arquivo": "diagramas/01-casos-visao-geral.svg",
+    "bytes": 13649,
+    "sha256": "9178f323c7ec299800d6dd9c8b2983e2267ad5f409c360d8eab6e740e4acd97c"
+  },
+  {
+    "arquivo": "diagramas/02-casos-acesso-equipe.png",
+    "bytes": 33835,
+    "sha256": "c957835ea59782a0dfd733c1109ddb75bd8abfa2bc1646616ab447b97c193a58"
+  },
+  {
+    "arquivo": "diagramas/02-casos-acesso-equipe.puml",
+    "bytes": 788,
+    "sha256": "7f00d7de86e0c82caf85fed176e7233903155b887cef2f96b8a51363f332e049"
+  },
+  {
+    "arquivo": "diagramas/02-casos-acesso-equipe.svg",
+    "bytes": 7060,
+    "sha256": "6a7f5394cdd6779f60535379fa8902b1c5175ac99e1520eff9bf14b9f6de3e70"
+  },
+  {
+    "arquivo": "diagramas/03-casos-cadastros.png",
+    "bytes": 53750,
+    "sha256": "73b9fbe442fdd06f9c83506248fcc2ee23973c35eb8917c8438453d5237c7f09"
+  },
+  {
+    "arquivo": "diagramas/03-casos-cadastros.puml",
+    "bytes": 981,
+    "sha256": "c646c1bf928f39660ad679dec544dcb7546ae7816320684b3f6892fc5d283dc3"
+  },
+  {
+    "arquivo": "diagramas/03-casos-cadastros.svg",
+    "bytes": 11011,
+    "sha256": "11bc63f4c720d339a5e7cb58a0471db175ee6a524902adbc677216c7d6177aa0"
+  },
+  {
+    "arquivo": "diagramas/04-casos-estoque.png",
+    "bytes": 31480,
+    "sha256": "4690813d5e384b12f71b481c7d97aac2e47915246b1362c61074ea4a8508e782"
+  },
+  {
+    "arquivo": "diagramas/04-casos-estoque.puml",
+    "bytes": 730,
+    "sha256": "4b9ec2303eca8202402c02887257e6cdae5fe38c2fe784ce7288808ae8cf56d7"
+  },
+  {
+    "arquivo": "diagramas/04-casos-estoque.svg",
+    "bytes": 7402,
+    "sha256": "b6e1dec84c8551cb024a83b1135babf8deb4083c594b75b9ba4a29a7447c71e3"
+  },
+  {
+    "arquivo": "diagramas/05-casos-vendas.png",
+    "bytes": 37258,
+    "sha256": "1d16527019b5ef4de9f930690b25cb3d5d5c19fed107827fd636447d56067c0b"
+  },
+  {
+    "arquivo": "diagramas/05-casos-vendas.puml",
+    "bytes": 821,
+    "sha256": "2e543d6e4d318c26c6ac5e669d21c48a9467ec4e097d829e21151ec7e3a80408"
+  },
+  {
+    "arquivo": "diagramas/05-casos-vendas.svg",
+    "bytes": 7598,
+    "sha256": "a7391fa21dfeb9a77565367df316439aede5fd862f19b85418685f1eabf1a2e6"
+  },
+  {
+    "arquivo": "diagramas/06-casos-analise-demonstracao.png",
+    "bytes": 51484,
+    "sha256": "e7cc1e2e02ba66a8f9d09d61a33f7de7bc554962d86db1eeaf647d49dc5bfa39"
+  },
+  {
+    "arquivo": "diagramas/06-casos-analise-demonstracao.puml",
+    "bytes": 950,
+    "sha256": "80b6b866136093ee8fe8512f1d4be59b4292725f4506bbd0128a5ba19de1ae33"
+  },
+  {
+    "arquivo": "diagramas/06-casos-analise-demonstracao.svg",
+    "bytes": 8524,
+    "sha256": "30eef78b1d93370293f62ee79022bb64cafc11ce00239a2a544067890dc4cb59"
+  },
+  {
+    "arquivo": "diagramas/07-classes-conceituais-cadastros.png",
+    "bytes": 35639,
+    "sha256": "4dc5803b3338eaa876ecd8c738cc22296dc9451561363c1a07ede7f1f61c4d77"
+  },
+  {
+    "arquivo": "diagramas/07-classes-conceituais-cadastros.puml",
+    "bytes": 1022,
+    "sha256": "0ecf3cfab634e17fcbc1178a970a4f65ee4ef4644aa51f44ecfdbd4e2efef97b"
+  },
+  {
+    "arquivo": "diagramas/07-classes-conceituais-cadastros.svg",
+    "bytes": 20716,
+    "sha256": "6b3b4735f7c3a002f3c98413149a085cf9fd04bcbd4212e9e1ab308078beef5a"
+  },
+  {
+    "arquivo": "diagramas/08-classes-conceituais-vendas.png",
+    "bytes": 50063,
+    "sha256": "c69ccf0ba62da82a2fa4e24ed4867882fc7de250fb39ce771c312ae13b344f18"
+  },
+  {
+    "arquivo": "diagramas/08-classes-conceituais-vendas.puml",
+    "bytes": 1121,
+    "sha256": "1ce99e17d104c6f963306672e5ee901531ef9d50cd28a59f26e675029938a763"
+  },
+  {
+    "arquivo": "diagramas/08-classes-conceituais-vendas.svg",
+    "bytes": 18284,
+    "sha256": "95afb3226df5aa18aca9a3abcb17a8a33b6031887232348ab34f8f3b6c30c677"
+  },
+  {
+    "arquivo": "diagramas/09-classes-implementadas-vendas.png",
+    "bytes": 60332,
+    "sha256": "fc824e30a7b79f7d3d04462f7f0412dfffa74e98e133082c159cedc86ad6c4ee"
+  },
+  {
+    "arquivo": "diagramas/09-classes-implementadas-vendas.puml",
+    "bytes": 1375,
+    "sha256": "5f1f2e82de784940b90c1922bd4463ae8eb30d36e58dc4bd1191219b8d418ac7"
+  },
+  {
+    "arquivo": "diagramas/09-classes-implementadas-vendas.svg",
+    "bytes": 21280,
+    "sha256": "371b62b94f1abf32ddec29624f96b67fcd7b5f15ef720756ba39b61b60858d67"
+  },
+  {
+    "arquivo": "diagramas/10-classes-implementadas-estoque.png",
+    "bytes": 55156,
+    "sha256": "78cfd0817d28210dcba6df4c2d8d7e9e479f81b3f19b5c9adc02d98708573812"
+  },
+  {
+    "arquivo": "diagramas/10-classes-implementadas-estoque.puml",
+    "bytes": 1309,
+    "sha256": "a122a1d660bf36e80a0f02b62f35c95575dd6da172a99a0b630ec4da707affb7"
+  },
+  {
+    "arquivo": "diagramas/10-classes-implementadas-estoque.svg",
+    "bytes": 20457,
+    "sha256": "c1fc3a50ac1f0ece5fcb28c048ab02070e5e1b986060614b53f51a3496c33458"
+  },
+  {
+    "arquivo": "diagramas/11-pacotes.png",
+    "bytes": 26717,
+    "sha256": "db573caac7987f3dfb5146f65c2818701bee01521ade01f6a52be04e4d87b1da"
+  },
+  {
+    "arquivo": "diagramas/11-pacotes.puml",
+    "bytes": 784,
+    "sha256": "a65d437f32c4d5c61e64c7d2f8559686c48c39c692227ea23eae4ead09c82136"
+  },
+  {
+    "arquivo": "diagramas/11-pacotes.svg",
+    "bytes": 7633,
+    "sha256": "17668bbc06ca9ee943d3768b2d2e42aa4a5f9c0bb9b45f51a01f479729657d6a"
+  },
+  {
+    "arquivo": "diagramas/12-componentes.png",
+    "bytes": 42972,
+    "sha256": "cf66c5d3a8e15b826923afec8aca4ee0da08c8c162070907235f528b9511a78d"
+  },
+  {
+    "arquivo": "diagramas/12-componentes.puml",
+    "bytes": 962,
+    "sha256": "a6a50322a212683e13a9b143b5f311412a4e8790cc4714ee8964d672ad2f6fa9"
+  },
+  {
+    "arquivo": "diagramas/12-componentes.svg",
+    "bytes": 14080,
+    "sha256": "27ea92e89fc41ba6b4d4eb7f3430291f4e2a94005c5581f58872f3d4b3cb8c98"
+  },
+  {
+    "arquivo": "diagramas/13-modelo-documental-comercial.png",
+    "bytes": 62032,
+    "sha256": "fa6a2f5892688f7a52b43277cbeb143513fa62d50b5aad5a972d71c3d3912e89"
+  },
+  {
+    "arquivo": "diagramas/13-modelo-documental-comercial.puml",
+    "bytes": 1282,
+    "sha256": "038eae083c45d884ff9aac92183c960247379f59a441d2cdfa7dc89491c7f512"
+  },
+  {
+    "arquivo": "diagramas/13-modelo-documental-comercial.svg",
+    "bytes": 19849,
+    "sha256": "9168d165cb00ecdc4249789daf9f45fb74e53acccfd143120bc7f3652c39ba49"
+  },
+  {
+    "arquivo": "diagramas/14-modelo-documental-seguranca.png",
+    "bytes": 57943,
+    "sha256": "5cf48e290aebb056536938f34cd3bfcf0a16fe28c7555e34bd6d5dffa93e456f"
+  },
+  {
+    "arquivo": "diagramas/14-modelo-documental-seguranca.puml",
+    "bytes": 1497,
+    "sha256": "6e465fd82970407a9f2cbe95064e88fbfdd6965b5531fcdd7c5f818b68950672"
+  },
+  {
+    "arquivo": "diagramas/14-modelo-documental-seguranca.svg",
+    "bytes": 23062,
+    "sha256": "872aa16737126fd11c99d362cc55ad6ceea56cf36b44d53d52ea20b8c094bf7c"
+  },
+  {
+    "arquivo": "diagramas/15-sequencia-login.png",
+    "bytes": 56544,
+    "sha256": "b3b14c17437fa84d2e617220bbfcaff488f98fd96da723051216df1d352ec5cb"
+  },
+  {
+    "arquivo": "diagramas/15-sequencia-login.puml",
+    "bytes": 1004,
+    "sha256": "24b1e41f36533353a0810f4cc49a3956b9b8e4bd3e24ec492067b1e86615bcac"
+  },
+  {
+    "arquivo": "diagramas/15-sequencia-login.svg",
+    "bytes": 22661,
+    "sha256": "3247774bb1ed691059530c923a735629de476482b122bf386216d4ea63e56f42"
+  },
+  {
+    "arquivo": "diagramas/16-sequencia-confirmacao.png",
+    "bytes": 81006,
+    "sha256": "bba18490399238eddfe65e76893be5e3fdd00065b391ad115b61437f75d0ac56"
+  },
+  {
+    "arquivo": "diagramas/16-sequencia-confirmacao.puml",
+    "bytes": 1356,
+    "sha256": "ded550bc2173d4695908ff1c877285a9ce3508ea948daebd5eceb1afae4d3068"
+  },
+  {
+    "arquivo": "diagramas/16-sequencia-confirmacao.svg",
+    "bytes": 27738,
+    "sha256": "858a8a48f465065c7044638ac4076011c15f9d66eb48aa24d554c06af7575c67"
+  },
+  {
+    "arquivo": "diagramas/17-sequencia-cancelamento.png",
+    "bytes": 65184,
+    "sha256": "62e014c8f9e3f2b7f0aa1b6209d2ba71175c4a3e69b517c55d7fc17a7301d97e"
+  },
+  {
+    "arquivo": "diagramas/17-sequencia-cancelamento.puml",
+    "bytes": 1118,
+    "sha256": "188833aacb1ac61b20a6a6b2fc5c5b1dd4a4b8fd1683e0e0d8cb92a32e2d0bb6"
+  },
+  {
+    "arquivo": "diagramas/17-sequencia-cancelamento.svg",
+    "bytes": 20804,
+    "sha256": "23514131d1ff511120e39d1df92fdbbbfc5869156569873fa6a4d4822540c47c"
+  },
+  {
+    "arquivo": "diagramas/18-sequencia-estoque.png",
+    "bytes": 56038,
+    "sha256": "a2efd85854a6565a81d0035354b2fa73dc35978a57f68dcd589969a8e22eb07b"
+  },
+  {
+    "arquivo": "diagramas/18-sequencia-estoque.puml",
+    "bytes": 1004,
+    "sha256": "825fc6a68e989f8817b9bf1527c34044a8fd7106c0d1859fe2e41985e21a7a1b"
+  },
+  {
+    "arquivo": "diagramas/18-sequencia-estoque.svg",
+    "bytes": 19436,
+    "sha256": "550429587d8473008401e36f832552c611dcc274e041b43cec43584f5284d6ee"
+  },
+  {
+    "arquivo": "diagramas/19-atividade-venda.png",
+    "bytes": 45122,
+    "sha256": "1e44ba7b60f2f21f42411588f4eaf46f978acce30acfefb3835bc6f25ead2736"
+  },
+  {
+    "arquivo": "diagramas/19-atividade-venda.puml",
+    "bytes": 941,
+    "sha256": "84f052afe22d54160dbdd97ecae5b118a9e5a56d81aa97d72c8a948b846454ec"
+  },
+  {
+    "arquivo": "diagramas/19-atividade-venda.svg",
+    "bytes": 14880,
+    "sha256": "b4de2a73c410c649c93f4a76a01842a99bcd5df2ef288cc977d2b280ec0e71a8"
+  },
+  {
+    "arquivo": "diagramas/20-atividade-estoque.png",
+    "bytes": 34108,
+    "sha256": "607ba43c04d7c90b4ad68c9311a71e623b19ddfc46568505e63e0f513097ff8f"
+  },
+  {
+    "arquivo": "diagramas/20-atividade-estoque.puml",
+    "bytes": 813,
+    "sha256": "7260a4e03e6331045f04cde06556978f05edb95af48987b27563ac362bf4d119"
+  },
+  {
+    "arquivo": "diagramas/20-atividade-estoque.svg",
+    "bytes": 11681,
+    "sha256": "66fe5988834f6263a52daee47886bff348da3b800d1789bfb86e0a453cffcc25"
+  },
+  {
+    "arquivo": "diagramas/21-estados-venda.png",
+    "bytes": 32825,
+    "sha256": "f496b587f8a78eeb175389804629c2f1eb791a43caebd96bab187027a74c1b4b"
+  },
+  {
+    "arquivo": "diagramas/21-estados-venda.puml",
+    "bytes": 842,
+    "sha256": "13c1ec13b1518dc398120b554c62502a9f3bc4389ff86411edc43470fbc40304"
+  },
+  {
+    "arquivo": "diagramas/21-estados-venda.svg",
+    "bytes": 11114,
+    "sha256": "8a93aaacaf9b8ef14aa28068ef6ddc7fca05edaa4fae87089bd1d9a838ac70c4"
+  },
+  {
+    "arquivo": "diagramas/22-execucao-local.png",
+    "bytes": 47729,
+    "sha256": "939d09459f70902d9bce44e44e23e5df0872e672dd76afc0eef67939b48122e2"
+  },
+  {
+    "arquivo": "diagramas/22-execucao-local.puml",
+    "bytes": 906,
+    "sha256": "62faa07b9834387461a533b0535baaa69c5d84511568b4ae3ccda2a7cf3f7c00"
+  },
+  {
+    "arquivo": "diagramas/22-execucao-local.svg",
+    "bytes": 14486,
+    "sha256": "9829b1468574c4ac1eeed792944392a6d6359392efc92de7dce5cd2fbff12a44"
+  },
+  {
+    "arquivo": "diagramas/indice.json",
+    "bytes": 3890,
+    "sha256": "51cc94ed7c5bd9c7c1e532a504f47a5375dfff9819eccdf9880fada9248ea643"
+  },
+  {
+    "arquivo": "fontes/casos-de-uso.json",
+    "bytes": 24407,
+    "sha256": "1d8a54002cf7b26b01d474aa215885e9320e5795f09d141a4be79e5db00ece07"
+  },
+  {
+    "arquivo": "fontes/documentacao-tecnica-base.md",
+    "bytes": 24096,
+    "sha256": "6dae0ac0d702534ca391f668b9a1c6a2970adbcce95669eaa8142ffb1dc5384c"
+  },
+  {
+    "arquivo": "fontes/documentacao-tecnica.md",
+    "bytes": 117003,
+    "sha256": "63ca843b555687a9a737f675a3e4217cc3d21aa7844aae9933e2f4d9adc5e212"
+  },
+  {
+    "arquivo": "fontes/manual-do-usuario.md",
+    "bytes": 22093,
+    "sha256": "7ff551bd883402d85bf63dd7ca0c6c0a197d18aeb9d872645eb77d5c73b05a18"
+  },
+  {
+    "arquivo": "fontes/monografia.md",
+    "bytes": 33572,
+    "sha256": "5b639f3ee86e8bcd18b5f2a59bafdc6df0b27c82a8a0fb1f8a184257d2a2e7bc"
+  },
+  {
+    "arquivo": "fontes/referencias.json",
+    "bytes": 6537,
+    "sha256": "b5e3001ad691dc10736de15258c1dc05f106d79f9a2e536a8c596280bb8ce663"
+  },
+  {
+    "arquivo": "recursos/consolidar_fontes.py",
+    "bytes": 26347,
+    "sha256": "0299f5badefacbab74ca0c9e94d072184b6e826c18f677d75cfd7bb9016f1e1e"
+  },
+  {
+    "arquivo": "recursos/criar_diagramas.py",
+    "bytes": 21207,
+    "sha256": "ea2c8ee4fe20fa7da01d7dfbac692125fa75a7a74c98e064baf96c9164ad6fe2"
+  },
+  {
+    "arquivo": "recursos/empacotar.py",
+    "bytes": 644,
+    "sha256": "fa42aa843b1fffbe7b1a3a7c248efec5a5cdc6f62c4fa75b6a51b0a02170918c"
+  },
+  {
+    "arquivo": "recursos/exportar_textos.py",
+    "bytes": 1443,
+    "sha256": "789858f884b2aed702dd5e2f9cc1c9210b0aafd00f2adf527e03e2d6108a2847"
+  },
+  {
+    "arquivo": "recursos/gerar_documentos.py",
+    "bytes": 17468,
+    "sha256": "6106c398b80c55a0ec57997f3c57bacddbf74e37eb84dd4079504b26a0ca62d8"
+  },
+  {
+    "arquivo": "recursos/mapear_paginas.py",
+    "bytes": 2085,
+    "sha256": "cbb20bca5415c3c191324ae4cd0ba0c01e4a4ce5714576e6ee93ba8ade095e0c"
+  },
+  {
+    "arquivo": "recursos/preparar_ferramentas.py",
+    "bytes": 1214,
+    "sha256": "c291345ff8dc07eaa99e2e83aee869886439226cf99153c9a9a054a5c58c7f6f"
+  },
+  {
+    "arquivo": "recursos/preparar_revisao_visual.py",
+    "bytes": 1572,
+    "sha256": "e3f7b50ff15d0a6dbc402d7e74f7c72e93365dafc63f1f8526c0ebf0e1d6e28d"
+  },
+  {
+    "arquivo": "recursos/renderizar_documentos.py",
+    "bytes": 2888,
+    "sha256": "512581d5bcefc5a64f3541715c74b8afea08c72be2d6113559013b9f95b44180"
+  },
+  {
+    "arquivo": "recursos/validar_entrega.py",
+    "bytes": 5017,
+    "sha256": "755a2f190b7171e048fe161b23494ab163db2b85468b83a54158423f9638fe82"
+  }
+]

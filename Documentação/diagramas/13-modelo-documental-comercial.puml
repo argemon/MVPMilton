@@ -1,0 +1,56 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+class customers <<collection>> {
+ _id: UUID
+}
+class categories <<collection>> {
+ _id: UUID
+}
+class brands <<collection>> {
+ _id: UUID
+}
+class products <<collection>> {
+ _id: UUID
+ categoriaId: UUID
+ marcaId: UUID ou null
+ precoCentavos: Int64
+ saldo: objeto incorporado
+ imagem: objeto ou null
+}
+class sales <<collection>> {
+ _id: UUID
+ clienteId: UUID
+ criadorId: UUID
+ itens: array incorporado até 100
+ clienteSnapshot: objeto ou null
+ totalCentavos: Int64
+}
+class stock_movements <<collection>> {
+ produtoId: UUID
+ vendaId: UUID ou null
+ itemId: UUID ou null
+ delta: Int32
+}
+products ..> categories : categoriaId
+products ..> brands : marcaId
+sales ..> customers : clienteId
+sales ..> products : itens.produtoId
+stock_movements ..> products : produtoId
+stock_movements ..> sales : vendaId
+note bottom
+Representação documental, não diagrama
+relacional.
+Referências são UUID; integridade no
+backend.
+Movimentos não são arrays ilimitados em
+products.
+end note
+@enduml

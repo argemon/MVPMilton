@@ -1,0 +1,55 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+interface IVendas {
+ ListarAsync(...): Task<PaginaVendas>
+ ConsultarAsync(...): Task<Venda>
+ SalvarAsync(...): Task<Venda>
+ TransicionarAsync(...): Task<Venda>
+}
+class MongoVendas {
+ SalvarAsync(...)
+ TransicionarAsync(...)
+}
+class RegrasVenda <<static>> {
+ Total(itens): long
+ Itens(itens): void
+ Transicao(atual, acao, itens): string
+}
+class Venda <<record Application>> {
+ Id: Guid
+ Status: string
+ Itens: IReadOnlyList<ItemVenda>
+ TotalCentavos: long
+ Versao: long
+}
+class ItemVenda <<record Application>> {
+ ProdutoId: Guid
+ Quantidade: int
+ PrecoUnitarioCentavos: long
+}
+class OperacoesComerciais
+class MongoEstoque
+class EndpointsVendas <<static Api>>
+IVendas <|.. MongoVendas
+IVendas ..> Venda
+Venda *-- ItemVenda
+MongoVendas ..> RegrasVenda
+MongoVendas ..> MongoEstoque
+MongoVendas ..> OperacoesComerciais
+EndpointsVendas ..> IVendas
+note bottom of MongoEstoque
+Métodos abreviados por legibilidade.
+Tipos de resultado não são entidades
+Domain.
+end note
+RegrasVenda -[hidden]down-> OperacoesComerciais
+OperacoesComerciais -[hidden]down-> MongoEstoque
+@enduml

@@ -1,0 +1,747 @@
+[
+  {
+    "tipo": "UsuarioAutenticado",
+    "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome",
+      "string Perfil",
+      "bool DeveAlterarSenha"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "SessaoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+    "campos": [
+      "UsuarioAutenticado Usuario",
+      "DateTimeOffset ExpiraEm"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "UsuarioResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome",
+      "string Email",
+      "string Perfil",
+      "bool Ativo",
+      "long Versao",
+      "bool DeveAlterarSenha",
+      "Guid? FuncionarioId"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "UsuariosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+    "campos": [
+      "IReadOnlyList<UsuarioResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long Total"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "AtualizarUsuarioRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Autenticacao.cs",
+    "campos": [
+      "string Perfil",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "ClienteResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome",
+      "string Tipo",
+      "string? Documento",
+      "string? Email",
+      "string? Telefone",
+      "bool Ativo",
+      "long Versao",
+      "DateTimeOffset CreatedAt",
+      "DateTimeOffset UpdatedAt"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "ClientesResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "IReadOnlyList<ClienteResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "CriarClienteRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "string? Nome",
+      "string? Tipo",
+      "string? Documento",
+      "string? Email",
+      "string? Telefone"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "AtualizarClienteRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "string? Nome",
+      "string? Tipo",
+      "string? Documento",
+      "string? Email",
+      "string? Telefone",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "VendaClienteResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "Guid Id",
+      "DateTimeOffset CriadoEm",
+      "string Status",
+      "decimal Total"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "HistoricoClienteResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Clientes.cs",
+    "campos": [
+      "IReadOnlyList<VendaClienteResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "RestaurarCargaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/DadosDemonstracao.cs",
+    "campos": [
+      "bool Confirmar"
+    ],
+    "linha": 2
+  },
+  {
+    "tipo": "LimparDadosRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/DadosDemonstracao.cs",
+    "campos": [
+      "Guid OperacaoId",
+      "string Confirmacao"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "CargaDemonstracaoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/DadosDemonstracao.cs",
+    "campos": [
+      "int Funcionarios",
+      "int Usuarios",
+      "int Clientes",
+      "int Produtos",
+      "int Vendas",
+      "int Canceladas"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "EstadoCargaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/DadosDemonstracao.cs",
+    "campos": [
+      "string Banco",
+      "DateTimeOffset? UltimaExecucao"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "ResumoComercialResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "long QuantidadeConfirmada",
+      "long QuantidadeCancelada",
+      "decimal ReceitaLiquida",
+      "decimal TicketMedio"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "ProdutoBaixoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "string Sku",
+      "string Nome",
+      "int Saldo",
+      "int Minimo"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "EstoqueBaixoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "IReadOnlyList<ProdutoBaixoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "VendaRecenteResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "Guid VendaId",
+      "DateTimeOffset ConfirmadoEm",
+      "string ClienteNome",
+      "string OperadorNome",
+      "string Status",
+      "decimal TotalOriginal",
+      "decimal ContribuicaoLiquida"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "EvolucaoVendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "DateOnly Dia",
+      "long Quantidade",
+      "decimal ReceitaLiquida"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "ProdutoVendidoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "string Sku",
+      "string Nome",
+      "long Quantidade",
+      "decimal ReceitaLiquida"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "DashboardResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Dashboard.cs",
+    "campos": [
+      "DateOnly Inicio",
+      "DateOnly Fim",
+      "string Fuso",
+      "DateTimeOffset GeradoEm",
+      "ResumoComercialResponse Resumo",
+      "long ProdutosCadastrados",
+      "long ProdutosAtivos",
+      "EstoqueBaixoResponse EstoqueBaixo",
+      "IReadOnlyList<VendaRecenteResponse> Recentes",
+      "IReadOnlyList<EvolucaoVendaResponse> Evolucao",
+      "IReadOnlyList<ProdutoVendidoResponse> MaisVendidos"
+    ],
+    "linha": 9
+  },
+  {
+    "tipo": "SaldoProdutoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "string Sku",
+      "string Nome",
+      "int Saldo",
+      "int Minimo",
+      "bool Ativo"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "SaldosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "IReadOnlyList<SaldoProdutoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "AtorMovimentoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "MovimentoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "Guid Id",
+      "Guid ProdutoId",
+      "string Tipo",
+      "int Delta",
+      "int SaldoAntes",
+      "int SaldoDepois",
+      "string Motivo",
+      "AtorMovimentoResponse Ator",
+      "DateTimeOffset OcorridoEm",
+      "Guid? VendaId=null",
+      "Guid? ItemId=null"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "MovimentosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "IReadOnlyList<MovimentoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "MovimentoRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "int Quantidade",
+      "string? Motivo"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "AjusteRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Estoque.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "int Delta",
+      "string? Motivo"
+    ],
+    "linha": 9
+  },
+  {
+    "tipo": "FuncionarioResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Funcionarios.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome",
+      "string? Email",
+      "string? Telefone",
+      "bool Ativo",
+      "long Versao",
+      "DateTimeOffset CreatedAt",
+      "DateTimeOffset UpdatedAt"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "FuncionariosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Funcionarios.cs",
+    "campos": [
+      "IReadOnlyList<FuncionarioResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "CriarFuncionarioRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Funcionarios.cs",
+    "campos": [
+      "string? Nome",
+      "string? Email",
+      "string? Telefone"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "AtualizarFuncionarioRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Funcionarios.cs",
+    "campos": [
+      "string? Nome",
+      "string? Email",
+      "string? Telefone",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "HealthResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/HealthResponse.cs",
+    "campos": [
+      "string Status"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "ReferenciaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "ReferenciasResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "IReadOnlyList<ReferenciaResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "CriarReferenciaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "string? Nome"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "AtualizarReferenciaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "string? Nome",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "ProdutoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "Guid Id",
+      "string Sku",
+      "string Nome",
+      "string? Descricao",
+      "Guid CategoriaId",
+      "Guid? MarcaId",
+      "decimal Preco",
+      "int EstoqueMinimo",
+      "int Saldo",
+      "string? ImagemUrl",
+      "bool Ativo",
+      "long Versao",
+      "DateTimeOffset CreatedAt",
+      "DateTimeOffset UpdatedAt"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "ProdutosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "IReadOnlyList<ProdutoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "CriarProdutoRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "string? Sku",
+      "string? Nome",
+      "string? Descricao",
+      "Guid CategoriaId",
+      "Guid? MarcaId",
+      "decimal Preco",
+      "int EstoqueMinimo"
+    ],
+    "linha": 9
+  },
+  {
+    "tipo": "AtualizarProdutoRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Produtos.cs",
+    "campos": [
+      "string? Sku",
+      "string? Nome",
+      "string? Descricao",
+      "Guid CategoriaId",
+      "Guid? MarcaId",
+      "decimal Preco",
+      "int EstoqueMinimo",
+      "bool Ativo",
+      "long Versao"
+    ],
+    "linha": 10
+  },
+  {
+    "tipo": "FiltrosRelatorioResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "DateOnly? Inicio",
+      "DateOnly? Fim",
+      "string Fuso",
+      "DateTimeOffset GeradoEm",
+      "string Ordenacao",
+      "Guid? OperadorId",
+      "Guid? ProdutoId",
+      "string? Tipo",
+      "string? Search",
+      "bool? Ativo"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "OperadorRelatorioResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "Guid OperadorId",
+      "string Nome",
+      "long QuantidadeConfirmada",
+      "long QuantidadeCancelada",
+      "decimal ReceitaLiquida",
+      "decimal TicketMedio"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "TotaisEstoqueResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "long Saldo",
+      "long Baixos"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "TotaisMovimentosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "long Entradas",
+      "long Saidas",
+      "long Delta"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "RelatorioVendasResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "IReadOnlyList<VendaRecenteResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems",
+      "ResumoComercialResponse Totais",
+      "FiltrosRelatorioResponse Filtros"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "RelatorioOperadoresResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "IReadOnlyList<OperadorRelatorioResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems",
+      "ResumoComercialResponse Totais",
+      "FiltrosRelatorioResponse Filtros"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "RelatorioProdutosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "IReadOnlyList<ProdutoVendidoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems",
+      "ResumoComercialResponse Totais",
+      "FiltrosRelatorioResponse Filtros"
+    ],
+    "linha": 9
+  },
+  {
+    "tipo": "RelatorioEstoqueResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "IReadOnlyList<SaldoProdutoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems",
+      "TotaisEstoqueResponse Totais",
+      "FiltrosRelatorioResponse Filtros"
+    ],
+    "linha": 10
+  },
+  {
+    "tipo": "RelatorioMovimentosResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Relatorios.cs",
+    "campos": [
+      "IReadOnlyList<MovimentoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems",
+      "TotaisMovimentosResponse Totais",
+      "FiltrosRelatorioResponse Filtros"
+    ],
+    "linha": 11
+  },
+  {
+    "tipo": "ItemVendaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid ProdutoId",
+      "int Quantidade"
+    ],
+    "linha": 3
+  },
+  {
+    "tipo": "CriarVendaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid ClienteId",
+      "IReadOnlyList<ItemVendaRequest>? Itens"
+    ],
+    "linha": 4
+  },
+  {
+    "tipo": "AtualizarVendaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid ClienteId",
+      "IReadOnlyList<ItemVendaRequest>? Itens",
+      "long Versao"
+    ],
+    "linha": 5
+  },
+  {
+    "tipo": "ConfirmarVendaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "long VersaoEsperada"
+    ],
+    "linha": 6
+  },
+  {
+    "tipo": "EncerrarVendaRequest",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "long VersaoEsperada",
+      "string? Motivo"
+    ],
+    "linha": 7
+  },
+  {
+    "tipo": "OperadorVendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid Id",
+      "string Nome"
+    ],
+    "linha": 8
+  },
+  {
+    "tipo": "ClienteVendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "string Nome",
+      "string? Documento"
+    ],
+    "linha": 9
+  },
+  {
+    "tipo": "EventoVendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "OperadorVendaResponse Ator",
+      "DateTimeOffset Data",
+      "string? Motivo"
+    ],
+    "linha": 10
+  },
+  {
+    "tipo": "ItemVendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid Id",
+      "Guid ProdutoId",
+      "string SkuSnapshot",
+      "string NomeSnapshot",
+      "int Quantidade",
+      "decimal PrecoUnitario",
+      "decimal Total"
+    ],
+    "linha": 11
+  },
+  {
+    "tipo": "VendaResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid Id",
+      "Guid ClienteId",
+      "ClienteVendaResponse? ClienteSnapshot",
+      "OperadorVendaResponse Criador",
+      "string Status",
+      "IReadOnlyList<ItemVendaResponse> Itens",
+      "decimal Total",
+      "long Versao",
+      "DateTimeOffset CriadoEm",
+      "EventoVendaResponse? Confirmacao",
+      "EventoVendaResponse? Cancelamento",
+      "EventoVendaResponse? Descarte"
+    ],
+    "linha": 12
+  },
+  {
+    "tipo": "VendaResumoResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "Guid Id",
+      "Guid ClienteId",
+      "string? ClienteNome",
+      "OperadorVendaResponse Criador",
+      "string Status",
+      "decimal Total",
+      "long Versao",
+      "DateTimeOffset CriadoEm"
+    ],
+    "linha": 13
+  },
+  {
+    "tipo": "VendasResponse",
+    "arquivo": "shared/GestaoComercial.Contracts/Vendas.cs",
+    "campos": [
+      "IReadOnlyList<VendaResumoResponse> Items",
+      "int Page",
+      "int PageSize",
+      "long TotalItems"
+    ],
+    "linha": 14
+  }
+]

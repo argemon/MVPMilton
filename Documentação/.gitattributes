@@ -1,0 +1,2 @@
+# Preserva os bytes dos artefatos e fontes conferidos pelo manifesto SHA-256.
+* -text whitespace=cr-at-eol,-blank-at-eof

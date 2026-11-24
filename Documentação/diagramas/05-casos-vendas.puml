@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+left to right direction
+actor "Administrador" as A
+actor "Vendedor" as V
+rectangle "Gestão Comercial" {
+usecase "UC18 Criar e editar\nrascunho" as U18
+usecase "UC19 Confirmar venda" as U19
+usecase "UC20 Consultar venda" as U20
+usecase "UC21 Descartar rascunho" as U21
+usecase "UC22 Cancelar venda" as U22
+}
+A --> U18
+A --> U19
+A --> U20
+A --> U21
+A --> U22
+V --> U18
+V --> U19
+V --> U20
+V --> U21
+note bottom
+Vendedor atua somente nas próprias vendas.
+Rascunho não reserva saldo.
+Cancelamento estorna integralmente.
+end note
+@enduml

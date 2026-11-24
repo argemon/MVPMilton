@@ -1,0 +1,20 @@
+{
+  "monografia": {
+    "paginas": 30,
+    "titulos_pdf": 41,
+    "inicio_textual_folha_pdf": 8,
+    "paginas_sem_texto": []
+  },
+  "documentacao-tecnica": {
+    "paginas": 109,
+    "titulos_pdf": 229,
+    "inicio_textual_folha_pdf": 3,
+    "paginas_sem_texto": []
+  },
+  "manual-do-usuario": {
+    "paginas": 19,
+    "titulos_pdf": 37,
+    "inicio_textual_folha_pdf": 3,
+    "paginas_sem_texto": []
+  }
+}

@@ -1,0 +1,30 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+start
+:Consultar produto e saldo;
+:Escolher entrada, saída manual ou\najuste;
+if (Ajuste?) then (sim)
+ :Exigir Administrador e delta\nassinado;
+else (não)
+ :Exigir Administrador ou Estoquista;
+ :Informar quantidade positiva;
+endif
+:Informar motivo de 10 a 500\ncaracteres;
+:Validar intenção e produto ativo;
+if (Saldo final no intervalo permitido?) then (sim)
+ :Atualizar saldo e inserir\nmovimento, auditoria e recibo;
+ :Concluir transação;
+else (não)
+ :Rejeitar sem efeito parcial;
+endif
+:Consultar histórico;
+stop
+@enduml

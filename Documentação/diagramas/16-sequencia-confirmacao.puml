@@ -1,0 +1,46 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 17
+skinparam maxMessageSize 200
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam monochrome true
+hide empty members
+actor Operador as O
+participant "Web / BFF" as W
+participant "API" as A
+participant "MongoVendas" as V
+participant "OperacoesComerciais" as C
+database "Atlas" as D
+O -> W : confirmar rascunho revisado
+W -> A : versão esperada +\nIdempotency-Key
+A -> A : autenticar e autorizar
+A -> V : TransicionarAsync(confirmacao)
+V -> V : verificar propriedade
+V -> C : executar com mesma intenção
+C -> D : iniciar transação / consultar\nrecibo
+alt recibo concluído compatível
+ C --> V : resposta original
+else nova operação
+ C -> D : guarda efetiva do ator
+ V -> D : guarda de venda e cliente
+ loop itens em ordem determinística
+  V -> D : guarda de produto / validar\npreço
+  V -> D : baixa condicional + movimento
+ end
+ V -> D : venda confirmada + snapshots +\nauditoria
+ C -> D : recibo + commit majority
+ C --> V : resultado
+end
+V --> A : Venda
+A --> W : DTO em reais ou erro
+W --> O : resultado; reconsultar se\nnecessário
+note over C,D
+Falha antes do commit reverte todos os
+efeitos.
+Snapshot / majority / primary; chamadas
+sequenciais.
+end note
+@enduml

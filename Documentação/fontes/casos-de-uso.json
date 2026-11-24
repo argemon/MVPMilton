@@ -1,0 +1,464 @@
+[
+  {
+    "id": "UC01",
+    "titulo": "Entrar no sistema",
+    "atores": "Administrador, Vendedor, Estoquista",
+    "rastreio": "RF-01; RN-15/16; CA-01",
+    "pre": "Conta previamente criada; API e Web acessíveis.",
+    "fluxo": [
+      "Abrir /conta/entrar e informar email e senha.",
+      "Web valida antiforgery e envia credenciais à API por HTTPS.",
+      "API valida conta, senha e bloqueio e cria sessão.",
+      "Web cria ticket protegido e cookie de referência; direciona ao início ou à troca obrigatória."
+    ],
+    "alternativas": "Credencial inválida ou conta indisponível: erro genérico, sem sessão. Limite de tentativas: 429. Serviço indisponível: mensagem segura. Retorno de navegação deve ser local.",
+    "pos": "Sessão autenticada ou falha sem acesso concedido.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsAcesso.cs; frontend/GestaoComercial.Web/Security/ContasHttp.cs"
+  },
+  {
+    "id": "UC02",
+    "titulo": "Sair do sistema",
+    "atores": "Três perfis autenticados",
+    "rastreio": "RF-02; RN-16; CA-01/02",
+    "pre": "Sessão existente.",
+    "fluxo": [
+      "Acionar Sair por formulário HTTP.",
+      "Web verifica proteção antifalsificação e solicita revogação da sessão API.",
+      "Web remove ticket/cookie conforme fluxo e retorna ao acesso."
+    ],
+    "alternativas": "Sessão expirada: novo login necessário. Falha de comunicação não deve ser interpretada como comprovação de revogação remota; o fluxo apresenta o resultado seguro implementado.",
+    "pos": "Saída local processada; revogação remota quando concluída pela API.",
+    "codigo": "frontend/GestaoComercial.Web/Security/ContasHttp.cs"
+  },
+  {
+    "id": "UC03",
+    "titulo": "Alterar a própria senha",
+    "atores": "Três perfis autenticados",
+    "rastreio": "RF-02/03; RN-16; CA-02/17",
+    "pre": "Sessão reconhecida, inclusive com troca obrigatória pendente.",
+    "fluxo": [
+      "Informar senha atual e nova senha no formulário de conta.",
+      "API verifica senha e política Identity.",
+      "Atualizar hash e securityStamp e revogar sessões.",
+      "Solicitar novo acesso com a senha alterada."
+    ],
+    "alternativas": "Senha atual incorreta ou nova senha inválida: operação recusada. Não registrar senha em logs, respostas ou documentação.",
+    "pos": "Credencial alterada quando válida; sessões anteriores revogadas.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Identity/MongoAutenticacao.cs"
+  },
+  {
+    "id": "UC04",
+    "titulo": "Manter contas de acesso",
+    "atores": "Administrador",
+    "rastreio": "RF-03; RN-15/16/18; CA-02/17",
+    "pre": "Troca de senha concluída; funcionário ativo para criação humana.",
+    "fluxo": [
+      "Consultar usuários ou selecionar funcionário para nova conta.",
+      "Informar email de login, senha temporária e perfil fixo.",
+      "API valida vínculo único e registra conta/auditoria.",
+      "Para editar, enviar versão, perfil e ativo; para redefinir, senha temporária e versão esperada.",
+      "Revogar sessões quando a alteração exigir."
+    ],
+    "alternativas": "Email ou vínculo duplicado: conflito. Último Administrador não pode perder acesso. Versão antiga: reler. Senha temporária força troca e não é retornada.",
+    "pos": "Conta criada/alterada, vínculo preservado e auditoria consistente.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsFuncionarios.cs; backend/GestaoComercial.Infrastructure/Identity/MongoAutenticacao.cs"
+  },
+  {
+    "id": "UC05",
+    "titulo": "Manter funcionários",
+    "atores": "Administrador",
+    "rastreio": "RF-04; RN-08/16/18; CA-03",
+    "pre": "Sessão administrativa regular.",
+    "fluxo": [
+      "Pesquisar por início do nome e situação.",
+      "Cadastrar nome e contatos opcionais.",
+      "Editar com versão atual ou alterar situação.",
+      "Na inativação, revogar conta e sessões vinculadas na mesma transação."
+    ],
+    "alternativas": "Contatos inválidos: validação. Conflito de versão: reler. Proteção do último Administrador impede inativação incompatível.",
+    "pos": "Cadastro e vínculo de acesso coerentes; autoria histórica preservada.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Identity/MongoFuncionarios.cs"
+  },
+  {
+    "id": "UC06",
+    "titulo": "Manter clientes",
+    "atores": "Administrador, Vendedor",
+    "rastreio": "RF-05; RN-08/12; CA-04",
+    "pre": "Sessão e perfil permitidos.",
+    "fluxo": [
+      "Pesquisar por nome/documento ou abrir novo cliente.",
+      "Informar nome, PF/PJ e contatos/documento opcionais.",
+      "Validar documento informado e normalizações.",
+      "Salvar criação ou edição com versão; inativar sem excluir."
+    ],
+    "alternativas": "Documento inválido: 400. Documento já registrado, inclusive em inativo: 409. Alteração concorrente: reler.",
+    "pos": "Cliente disponível conforme situação; histórico anterior mantido.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Clientes/MongoClientes.cs"
+  },
+  {
+    "id": "UC07",
+    "titulo": "Consultar histórico do cliente",
+    "atores": "Administrador, Vendedor",
+    "rastreio": "RF-06; RN-07/17; CA-04/13",
+    "pre": "Cliente consultável e sessão válida.",
+    "fluxo": [
+      "Abrir a ficha do cliente.",
+      "Solicitar histórico de vendas e aplicar período/paginação.",
+      "API filtra propriedade antes de contar e paginar.",
+      "Exibir resumos e permitir abrir venda autorizada."
+    ],
+    "alternativas": "Sem vendas: lista vazia. Vendedor não recebe vendas de outros nem seus totais. Data inválida: validação.",
+    "pos": "Consulta sem alteração comercial.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsClientes.cs"
+  },
+  {
+    "id": "UC08",
+    "titulo": "Manter categorias",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-07; RN-08/12; CA-05",
+    "pre": "Perfil com Produtos.Gerenciar.",
+    "fluxo": [
+      "Listar/pesquisar categorias ou abrir cadastro.",
+      "Informar nome e salvar.",
+      "Editar nome ou situação com versão atual.",
+      "Conferir unicidade normalizada e dependências antes da inativação."
+    ],
+    "alternativas": "Nome duplicado, inclusive em inativo: conflito. Produto ativo vinculado impede inativar categoria. Nome fora de 2–80 caracteres: validação.",
+    "pos": "Referência mantida sem excluir vínculos históricos.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs"
+  },
+  {
+    "id": "UC09",
+    "titulo": "Manter marcas",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-07; RN-08/12; CA-05",
+    "pre": "Perfil com Produtos.Gerenciar.",
+    "fluxo": [
+      "Abrir manutenção de marcas.",
+      "Cadastrar nome normalizado único.",
+      "Editar com versão ou alterar situação.",
+      "Verificar produtos ativos vinculados antes de inativar."
+    ],
+    "alternativas": "Nome duplicado ou dependência ativa: 409. Cadastro de marca é independente de categoria. Marca é opcional no produto.",
+    "pos": "Marca atualizada e referências preservadas.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs"
+  },
+  {
+    "id": "UC10",
+    "titulo": "Manter produtos",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-08; RN-01/08/12/19; CA-05/17",
+    "pre": "Categoria ativa; marca ativa quando informada.",
+    "fluxo": [
+      "Informar SKU, nome, descrição opcional, categoria, marca opcional, preço e mínimo.",
+      "API converte exatamente preço em reais para centavos.",
+      "Validar referências e SKU normalizado único.",
+      "Criar saldo incorporado zero ou editar campos cadastrais com versão, preservando saldo."
+    ],
+    "alternativas": "Preço com fração de centavo ou fora do limite: 400. SKU duplicado/inativo vinculado/conflito de versão: recusar. Saldo não é editável pelo cadastro.",
+    "pos": "Produto gravado e auditado; estoque alterado somente por operação própria.",
+    "codigo": "backend/GestaoComercial.Domain/Cadastros/DadosProduto.cs; backend/GestaoComercial.Infrastructure/Produtos/MongoProdutos.cs"
+  },
+  {
+    "id": "UC11",
+    "titulo": "Gerenciar imagem do produto",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-08; RN-19; CA-17",
+    "pre": "Produto e versão conhecidos.",
+    "fluxo": [
+      "Selecionar JPEG/PNG permitido e enviar arquivo e versão.",
+      "API valida conteúdo, dimensões e tamanho e converte para PNG.",
+      "Armazenar arquivo privado e atualizar metadados/auditoria.",
+      "Para remoção, solicitar exclusão do metadado/arquivo substituível com versão."
+    ],
+    "alternativas": "Acima de 2 MiB: 413; tipo inválido: 415 ou validação de conteúdo 400. Dimensão acima de 4096: recusar. Falha de arquivo não deve criar metadado de sucesso.",
+    "pos": "Imagem acessível por rota autenticada ou removida; produto/histórico permanecem.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsProdutos.cs"
+  },
+  {
+    "id": "UC12",
+    "titulo": "Consultar produtos",
+    "atores": "Administrador, Vendedor, Estoquista",
+    "rastreio": "RF-08; RN-08/12; CA-05",
+    "pre": "Produtos.Ler.",
+    "fluxo": [
+      "Aplicar busca por prefixo do nome ou SKU exato, situação e referências.",
+      "Consultar página de produtos.",
+      "Abrir ficha com preço, situação, saldo e imagem quando existente."
+    ],
+    "alternativas": "Nenhum resultado: estado vazio. Falha da API: permitir repetir consulta. Leitura não concede manutenção ao Vendedor.",
+    "pos": "Informação exibida sem alteração do produto.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsProdutos.cs"
+  },
+  {
+    "id": "UC13",
+    "titulo": "Consultar saldos",
+    "atores": "Administrador, Vendedor, Estoquista",
+    "rastreio": "RF-12; RN-02/09; CA-06/15",
+    "pre": "Estoque.Ler.",
+    "fluxo": [
+      "Abrir Estoque.",
+      "Filtrar nome/SKU, situação e opção saldo no mínimo ou abaixo.",
+      "Consultar página com saldo e mínimo em UN."
+    ],
+    "alternativas": "Saldo atual não é reserva nem promessa de disponibilidade futura. Página vazia é resultado válido; indisponibilidade não deve aparentar saldo zero.",
+    "pos": "Consulta sem movimento.",
+    "codigo": "frontend/GestaoComercial.Web/Components/Pages/Estoque.razor"
+  },
+  {
+    "id": "UC14",
+    "titulo": "Consultar movimentos de estoque",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-12; RN-07/09/20; CA-06/15",
+    "pre": "Estoque.Historico.",
+    "fluxo": [
+      "Abrir histórico e informar filtros de produto, tipo e período.",
+      "API aplica intervalo e paginação estável.",
+      "Exibir delta, saldos, motivo, ator, data e referência comercial."
+    ],
+    "alternativas": "Intervalo inválido: 400. Movimento inexistente: 404. Não há ação de editar/apagar movimento no fluxo comercial.",
+    "pos": "Histórico preservado.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsEstoque.cs"
+  },
+  {
+    "id": "UC15",
+    "titulo": "Registrar entrada manual",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-09; RN-02/05/09/14; CA-06/11",
+    "pre": "Produto ativo e saldo incorporado válido.",
+    "fluxo": [
+      "Selecionar produto e quantidade positiva de 1 a 1.000.000.",
+      "Informar motivo de 10–500 caracteres.",
+      "Enviar intenção com chave UUID.",
+      "Em transação, somar saldo, gravar movimento, auditoria e recibo."
+    ],
+    "alternativas": "Overflow de saldo: recusar integralmente. Chave repetida compatível: recibo original. Mesmo UUID com dados divergentes: 409.",
+    "pos": "Saldo acrescido uma vez e movimento de Entrada positivo.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs"
+  },
+  {
+    "id": "UC16",
+    "titulo": "Registrar saída manual",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-10; RN-02/05/09/14; CA-06/07",
+    "pre": "Produto ativo com quantidade suficiente.",
+    "fluxo": [
+      "Selecionar produto, quantidade positiva e motivo.",
+      "Enviar chave da intenção.",
+      "Aplicar baixa condicional dentro da transação.",
+      "Registrar movimento SaidaManual negativo, auditoria e recibo."
+    ],
+    "alternativas": "Saldo insuficiente ou ausente: conflito sem movimento. Saída manual não representa confirmação de venda e não deve duplicar sua baixa.",
+    "pos": "Saldo reduzido sem ficar negativo; histórico conciliável.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Estoque/MongoEstoque.cs"
+  },
+  {
+    "id": "UC17",
+    "titulo": "Ajustar estoque por delta",
+    "atores": "Administrador",
+    "rastreio": "RF-11; RN-02/09/14; CA-06/07/13",
+    "pre": "Produto ativo e divergência identificada.",
+    "fluxo": [
+      "Consultar saldo e determinar diferença a corrigir.",
+      "Informar delta assinado não zero entre -1.000.000 e 1.000.000.",
+      "Informar motivo e confirmar intenção.",
+      "Aplicar delta e gerar novo movimento de Ajuste na transação."
+    ],
+    "alternativas": "Delta que tornaria saldo negativo ou excederia Int32: recusar. Estoquista/Vendedor: 403. Nunca reescrever movimento antigo.",
+    "pos": "Correção explícita incorporada à razão e ao saldo.",
+    "codigo": "backend/GestaoComercial.Domain/Estoque/Movimentacao.cs"
+  },
+  {
+    "id": "UC18",
+    "titulo": "Criar e editar rascunho de venda",
+    "atores": "Administrador, Vendedor em vendas próprias",
+    "rastreio": "RF-13; RN-01/10/11/17; CA-08",
+    "pre": "Cliente selecionado; produtos incluídos devem estar ativos.",
+    "fluxo": [
+      "Abrir nova venda, selecionar cliente e adicionar produtos/quantidades.",
+      "Salvar rascunho com chave de criação.",
+      "Servidor obtém preços atuais e retorna snapshots e totais.",
+      "Editar enviando lista completa e versão; salvar para revisar novos preços."
+    ],
+    "alternativas": "Produto repetido, quantidade inválida ou mais de 100 itens: 400. Rascunho vazio é permitido pela API, sem confirmação. Não há reserva. Versão antiga: reler.",
+    "pos": "Rascunho persistido, sem baixa de estoque.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs; frontend/GestaoComercial.Web/Components/Pages/VendaDetalhe.razor"
+  },
+  {
+    "id": "UC19",
+    "titulo": "Confirmar venda",
+    "atores": "Administrador, Vendedor em vendas próprias",
+    "rastreio": "RF-14; RN-02/03/04/05/10/11; CA-08/09/10/11",
+    "pre": "Rascunho revisado com cliente ativo e ao menos um item.",
+    "fluxo": [
+      "Revisar cupom e acionar Concluir venda.",
+      "Enviar versão esperada e chave preservada por intenção.",
+      "Revalidar sessão, propriedade, estado, referências e preço.",
+      "Baixar todos os saldos e gravar movimentos, snapshots, confirmação, auditoria e recibo em uma transação.",
+      "Exibir resultado e reconsultar o estado quando necessário."
+    ],
+    "alternativas": "PRECO_ALTERADO exige salvar/revisar explicitamente. ESTOQUE_INSUFICIENTE reverte tudo. Resultado desconhecido exige repetir mesma intenção, sem nova chave. Venda alheia: 404.",
+    "pos": "Venda Confirmada e uma baixa por item, ou nenhuma alteração parcial.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs; backend/GestaoComercial.Infrastructure/Persistence/OperacoesComerciais.cs"
+  },
+  {
+    "id": "UC20",
+    "titulo": "Consultar venda",
+    "atores": "Administrador, Vendedor em vendas próprias",
+    "rastreio": "RF-15; RN-07/17/20; CA-08/13/14",
+    "pre": "Vendas.Ler e propriedade permitida.",
+    "fluxo": [
+      "Filtrar lista por cliente, estado e período de criação.",
+      "Abrir detalhe.",
+      "Exibir itens, valores históricos e eventos do ciclo.",
+      "Usar Atualizar venda para obter o estado atual."
+    ],
+    "alternativas": "UUID fora do escopo do Vendedor: 404. Não inferir estado atual exclusivamente de recibo antigo. Consulta histórica conserva snapshots.",
+    "pos": "Leitura sem alteração.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsVendas.cs"
+  },
+  {
+    "id": "UC21",
+    "titulo": "Descartar rascunho",
+    "atores": "Administrador, Vendedor em vendas próprias",
+    "rastreio": "RF-13; RN-07/10/17; CA-08",
+    "pre": "Venda Rascunho e versão atual.",
+    "fluxo": [
+      "Solicitar descarte e informar motivo.",
+      "Confirmar comando com versão e chave.",
+      "Registrar evento de descarte, estado, auditoria e recibo."
+    ],
+    "alternativas": "Venda já confirmada ou encerrada: 409. Motivo fora de 10–500: validação. Descarte não cancela venda confirmada.",
+    "pos": "Venda Descartada preservada, sem movimento de estoque.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs"
+  },
+  {
+    "id": "UC22",
+    "titulo": "Cancelar venda confirmada",
+    "atores": "Administrador",
+    "rastreio": "RF-16; RN-05/06/07/10; CA-12/13",
+    "pre": "Venda Confirmada; versão conhecida.",
+    "fluxo": [
+      "Abrir a área Cancelar venda no detalhe.",
+      "Informar motivo e confirmar a ação no formulário.",
+      "Enviar versão esperada e chave da intenção.",
+      "Estornar integralmente quantidades e registrar evento, auditoria e recibo na mesma transação."
+    ],
+    "alternativas": "Produto inativo não bloqueia estorno. Capacidade excedida ou falha de auditoria: rollback integral. Repetição compatível não duplica. Nova chave em Cancelada: estado inválido.",
+    "pos": "Venda Cancelada, baixa original mantida e um EstornoVenda por item.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Vendas/MongoVendas.cs"
+  },
+  {
+    "id": "UC23",
+    "titulo": "Consultar dashboard",
+    "atores": "Administrador",
+    "rastreio": "RF-17/18; RN-13/20; CA-14/15",
+    "pre": "Dashboard.Ler e persistência inicializada.",
+    "fluxo": [
+      "Abrir dashboard e selecionar período; ausência usa mês corrente.",
+      "Converter datas civis no fuso configurado.",
+      "Consultar indicadores, evolução, ranking, vendas recentes e estoque baixo.",
+      "Exibir receita e ticket segundo fórmulas oficiais."
+    ],
+    "alternativas": "Cancelada contribui zero na receita do período de confirmação. Estoque baixo exige ativo e saldo <= mínimo. Instalação incompleta retorna indisponibilidade, sem zeros aparentes.",
+    "pos": "Visão atual do conjunto, sem fechamento contábil.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Dashboard/MongoDashboard.cs"
+  },
+  {
+    "id": "UC24",
+    "titulo": "Consultar relatórios comerciais",
+    "atores": "Administrador",
+    "rastreio": "RF-19, incremento ADR-36; RN-13/20; CA-14/15",
+    "pre": "Relatorios.Vendas.",
+    "fluxo": [
+      "Selecionar vendas, operadores ou produtos.",
+      "Informar início/fim e filtros compatíveis.",
+      "Consultar linhas paginadas e totais do filtro inteiro.",
+      "Usar snapshots e contribuição líquida conforme situação atual."
+    ],
+    "alternativas": "Intervalo acima de 366 dias ou filtro desconhecido: 400. Início inclusivo e fim exclusivo. Vendedor e Estoquista não recebem esses relatórios.",
+    "pos": "Consulta comercial rastreável aos filtros e ao instante de geração.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsRelatorios.cs"
+  },
+  {
+    "id": "UC25",
+    "titulo": "Consultar relatórios de estoque e movimentos",
+    "atores": "Administrador, Estoquista",
+    "rastreio": "RF-20; RN-09/19/20; CA-15/17",
+    "pre": "Policy específica Relatorios.Estoque ou Relatorios.Movimentos.",
+    "fluxo": [
+      "Selecionar saldo atual ou movimentações.",
+      "Aplicar filtros próprios do tipo escolhido.",
+      "Consultar páginas e totais gerais.",
+      "Conferir geradoEm e período/fuso quando aplicável."
+    ],
+    "alternativas": "Estoque não é retroativo; movimentos usam ocorridoEm. Sem resultados: página vazia. Datas inválidas ou ordenação desconhecida: validação.",
+    "pos": "Leitura sem alteração de saldo.",
+    "codigo": "backend/GestaoComercial.Infrastructure/Relatorios/MongoRelatorios.cs"
+  },
+  {
+    "id": "UC26",
+    "titulo": "Exportar relatório em CSV",
+    "atores": "Administrador; Estoquista somente estoque/movimentos",
+    "rastreio": "RF-19/20; RN-19; CA-15/17",
+    "pre": "Filtros válidos e policy do relatório.",
+    "fluxo": [
+      "Solicitar exportação com os filtros da consulta.",
+      "API reaplica autorização e limite de 10.000 linhas.",
+      "Gerar CSV UTF-8 com separador ponto e vírgula e metadados.",
+      "Entregar download autenticado pelo Web."
+    ],
+    "alternativas": "Acima do limite: EXPORTACAO_EXCEDE_LIMITE sem truncamento. Falha retorna ProblemDetails. Campos textuais são neutralizados contra interpretação de fórmula.",
+    "pos": "Arquivo obtido, sem mudança comercial.",
+    "codigo": "backend/GestaoComercial.Api/Acesso/EndpointsRelatorios.cs; frontend/GestaoComercial.Web/Security/DownloadsRelatorios.cs"
+  },
+  {
+    "id": "UC27",
+    "titulo": "Gerar ou retomar carga demonstrativa",
+    "atores": "Administrador",
+    "rastreio": "M09; ADR-37; RF comerciais reutilizados",
+    "pre": "Banco existente inicializado; página administrativa acessível.",
+    "fluxo": [
+      "Consultar estado e última conclusão.",
+      "Acionar geração na página Dados de Demonstração.",
+      "Executar etapas identificadas usando serviços existentes e dados fictícios.",
+      "Retomar etapas concluídas sem duplicar e registrar conclusão."
+    ],
+    "alternativas": "Outra operação em andamento: 409. Interrupção permite retomar. Carga não equivale a limpar; mantém dados manuais. Senhas aleatórias não são retornadas.",
+    "pos": "Cenário demonstrativo gerado ou parcialmente retomável com proveniência.",
+    "codigo": "backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs"
+  },
+  {
+    "id": "UC28",
+    "titulo": "Restaurar carga demonstrativa",
+    "atores": "Administrador",
+    "rastreio": "M09; ADR-37; preservação manual",
+    "pre": "Carga identificada; confirmação explícita de restauração.",
+    "fluxo": [
+      "Solicitar restauração confirmada.",
+      "Verificar proveniência, alterações e dependências de registros demonstrativos.",
+      "Remover somente o conjunto demonstrativo comprovado quando seguro.",
+      "Preservar auditoria e permitir geração posterior separada."
+    ],
+    "alternativas": "Dependência ou alteração manual impede remoção destrutiva e gera conflito integral. Sem confirmação: recusar. Não é restauração de backup completo.",
+    "pos": "Carga demonstrativa restaurada sem apagar dados manuais, ou operação recusada.",
+    "codigo": "backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs"
+  },
+  {
+    "id": "UC29",
+    "titulo": "Limpar dados da demonstração",
+    "atores": "Administrador executor",
+    "rastreio": "RF-ADR39; RN-ADR39; CA-ADR39; ADR-39",
+    "pre": "Troca concluída; confirmação textual APAGAR DADOS; UUID não vazio.",
+    "fluxo": [
+      "Exibir área destrutiva e exigir confirmação explícita.",
+      "Revalidar administrador e coordenar exclusão com operações concorrentes.",
+      "Em transação, apagar dados comerciais/histórico/manual e demais contas conforme ADR-39.",
+      "Preservar executor, funcionário vinculado, sessão atual, estrutura técnica e recibos DemoLimpa.",
+      "Registrar UUID concluído e manter nova geração como ação separada."
+    ],
+    "alternativas": "Confirmação inválida: 400 sem efeito. Perfis negados: 403. Falha na auditoria: rollback. Repetição de UUID concluído preserva dados criados depois da limpeza.",
+    "pos": "Limpeza delimitada concluída uma vez; demais acessos revogados. Arquivos de imagens não são apagados por essa operação de banco.",
+    "codigo": "backend/GestaoComercial.Infrastructure/DadosDemonstracao.cs"
+  }
+]
